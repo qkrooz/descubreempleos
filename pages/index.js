@@ -2,6 +2,9 @@ import React, { useContext } from "react";
 import { MainContext } from "../public/resources/MainContext";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import Login from "./login";
+import "semantic-ui-css/semantic.min.css";
+
 const Home = React.memo(() => {
   const router = useRouter();
   const { userInfoState } = useContext(MainContext);
@@ -17,9 +20,10 @@ const Home = React.memo(() => {
         <title>Descubre | Inicio</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main>
+      {/* <main>
         <h1>Main</h1>
-      </main>
+      </main> */}
+      <Login></Login>
     </div>
   );
 });
