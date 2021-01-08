@@ -26,5 +26,6 @@ export const LoginStyle = styled.div`
   }
   .textwhite {
     color: white;
+    margin-top: 12px;
   }
 `;

@@ -3,6 +3,7 @@ import { MainContext } from "../public/resources/MainContext";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import Login from "./login";
+import RegistroEmpresa from "./registro-empresa/index";
 import "semantic-ui-css/semantic.min.css";
 
 const Home = React.memo(() => {
@@ -23,7 +24,7 @@ const Home = React.memo(() => {
       {/* <main>
         <h1>Main</h1>
       </main> */}
-      <Login></Login>
+      <RegistroEmpresa></RegistroEmpresa>
     </div>
   );
 });
