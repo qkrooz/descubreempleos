@@ -55,4 +55,29 @@ export const Employee = styled.div`
       }
     }
   }
+  @media screen and (max-width: 600px) {
+    overflow-x: hidden;
+    background: #cf0022;
+    img {
+      width: 326px;
+      margin-top: -62px;
+      margin-bottom: -104px;
+    }
+    .textwhite1 {
+      display: none;
+    }
+    h2 {
+      margin-bottom: 56px !important;
+      width: 85%;
+    }
+    .form {
+      padding: 10% !important;
+      & ul {
+        padding-inline-start: 18px !important;
+      }
+    }
+    .input {
+      margin-bottom: -19px;
+    }
+  }
 `;

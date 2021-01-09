@@ -31,7 +31,7 @@ const RegistroTrabajador = React.memo(() => {
               <Grid columns={2} stackable>
                 <Grid.Column>
                   <Form.Field>
-                    <input placeholder="Nombres" />
+                    <input placeholder="Nombres" className="input" />
                   </Form.Field>
                 </Grid.Column>
                 <Grid.Column>
