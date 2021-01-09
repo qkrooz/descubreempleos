@@ -27,9 +27,10 @@ export const CompanyStyle = styled.div`
     & .textleft1 {
       text-align: left;
       margin-top: 15px;
-      & span {
-        color: red;
-      }
+      margin-bottom: auto;
+    }
+    & .process {
+      color: red;
     }
     & .photo {
       width: 163px;
@@ -37,13 +38,18 @@ export const CompanyStyle = styled.div`
       margin: 0 auto;
       text-align: center;
       padding: 10px;
+      & input {
+        display: none;
+      }
+      & .img {
+        width: 50px;
+        height: 50px;
+        margin-bottom: auto;
+        margin-top: auto;
+        cursor: pointer;
+      }
     }
-    & .img {
-      width: 50px;
-      height: 50px;
-      margin-bottom: auto;
-      margin-top: auto;
-    }
+
     & .textcenter {
       text-align: center;
       width: 663px;
@@ -60,6 +66,8 @@ export const CompanyStyle = styled.div`
   .textwhite {
     color: white;
     margin-top: 21px;
+    font-size: 18px;
+    font-weight: bold;
   }
   ul {
     text-align: left;

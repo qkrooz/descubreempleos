@@ -12,20 +12,29 @@ export const LoginStyle = styled.div`
 
   form {
     margin: 0 auto;
-    width: 40%;
+    width: 32%;
     background-color: white;
     padding: 3%;
     border-radius: 10px;
-    & .button {
-      color: black;
-      background-color: #f2ab0a;
+    & button {
+      margin-bottom: 6px !important;
     }
-    & .button:hover {
-      background-color: #f2ab0a;
+    & .buttonsregister {
+      display: flex;
+      justify-content: space-around;
+      & .button {
+        color: black;
+        background-color: #f2ab0a;
+      }
+      & .button:hover {
+        background-color: #f2ab0a;
+      }
     }
   }
   .textwhite {
     color: white;
-    margin-top: 12px;
+    margin-top: 31px;
+    font-size: 18px;
+    font-weight: bold;
   }
 `;

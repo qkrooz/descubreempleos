@@ -51,8 +51,9 @@ const RegistroEmpresa = React.memo(() => {
               <p className="textleft1">
                 Recomendamos subir una imagen de su logotipo para mejorar su
                 relación con los candidatos y poderse hacer notar entre las
-                otras empresas. <span>Proceso opcional*</span>
+                otras empresas.
               </p>
+              <p className="process">Proceso opcional*</p>
             </Form.Field>
           </Grid.Column>
           <Grid.Column>
@@ -64,7 +65,10 @@ const RegistroEmpresa = React.memo(() => {
                 <li>Mínimo de 8 caracteres</li>
               </ul>
               <div className="photo">
-                <img src="/iconadd.svg" className="img"></img>
+                <label for="file-input">
+                  <img src="/iconadd.svg" className="img"></img>
+                </label>
+                <input id="file-input" type="file" />
                 <p>Logotipo en JPG o PNG</p>
               </div>
             </Form.Field>
