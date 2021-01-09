@@ -8,7 +8,7 @@ import RegistroTrabajador from "./registro-trabajador/index";
 
 import "semantic-ui-css/semantic.min.css";
 import { GeneralLayout } from "./globalstyles";
-import { Router, Link } from "@reach/router";
+import { Router } from "@reach/router";
 
 const Home = React.memo(() => {
   const router = useRouter();
@@ -27,7 +27,6 @@ const Home = React.memo(() => {
       </Head>
       <Router>
         <Login path="/"></Login>
-
         <RegistroEmpresa path="/registro-empresa" />
         <RegistroTrabajador path="/registro-trabajador" />
       </Router>
