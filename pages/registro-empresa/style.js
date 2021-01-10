@@ -52,7 +52,7 @@ export const CompanyStyle = styled.div`
 
     & .textcenter {
       text-align: center;
-      width: 663px;
+      width: 72%;
       margin: 0 auto;
       margin-top: 11px;
       margin-bottom: 9px;
@@ -71,5 +71,23 @@ export const CompanyStyle = styled.div`
   }
   ul {
     text-align: left;
+  }
+
+  @media screen and (max-width: 600px) {
+    img {
+      width: 274px !important;
+      margin-bottom: -48px;
+      margin-top: auto;
+    }
+    .form {
+      padding: 7%;
+      & .img {
+        width: 50px !important;
+        height: 50px !important;
+        margin-bottom: auto !important;
+        margin-top: auto !important;
+        cursor: pointer !important;
+      }
+    }
   }
 `;
