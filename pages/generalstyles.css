@@ -13,22 +13,22 @@
     src: local("MyriadPro-Regular"),
       url(/fonts/MyriadPro-Regular.otf) format("truetype");
   }
-  .input {
+  input {
     border-radius: 50px !important;
     border: 1px solid black !important;
   }
-  .select {
+  select {
     border-radius: 50px !important;
     border: 1px solid black !important;
   }
-  .button {
+  button {
     border-radius: 12px !important;
   }
-  .h3 {
+  h3 {
     font-family: MyriadPro-Bold;
     margin-bottom: auto;
   }
-  .h2 {
+  h2 {
     font-family: MyriadPro-Bold;
     margin-bottom: auto;
   }

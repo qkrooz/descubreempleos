@@ -1,9 +1,11 @@
 import React from "react";
 import { Button, Form, Grid, Icon, Image } from "semantic-ui-react";
 import { CompanyStyle } from "./style";
+import style from "./style.module.css";
+
 const RegistroEmpresa = React.memo(() => {
   return (
-    <CompanyStyle>
+    <div className="companystyle">
       <div className="background">.</div>
       <img src="/icon-white2.png"></img>
       <Form>
@@ -86,7 +88,7 @@ const RegistroEmpresa = React.memo(() => {
         <Icon className="copyright outline"></Icon> Todos los derechos
         reservados - Descubre Sa. de CV.
       </p>
-    </CompanyStyle>
+    </div>
   );
 });
 export default RegistroEmpresa;
