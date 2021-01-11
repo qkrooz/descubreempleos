@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { MainContext } from "../public/resources/MainContext.js";
+import "./generalstyles.css"
+
 export default function MyApp({ Component, pageProps }) {
   const [userInfo, setUserInfo] = useState({ id: 1 });
   return (

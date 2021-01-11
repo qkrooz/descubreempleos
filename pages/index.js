@@ -5,9 +5,7 @@ import { useRouter } from "next/router";
 import Login from "./login";
 import RegistroEmpresa from "./registro-empresa/index";
 import RegistroTrabajador from "./registro-trabajador/index";
-
 import "semantic-ui-css/semantic.min.css";
-import { GeneralLayout } from "./globalstyles";
 import { Router } from "@reach/router";
 
 const Home = React.memo(() => {
@@ -20,7 +18,7 @@ const Home = React.memo(() => {
     }
   }, []);
   return (
-    <GeneralLayout>
+    <div className="general">
       <Head>
         <title>Descubre | Inicio</title>
         <link rel="icon" href="/favicon.ico" />
@@ -30,7 +28,7 @@ const Home = React.memo(() => {
         <RegistroEmpresa path="/registro-empresa" />
         <RegistroTrabajador path="/registro-trabajador" />
       </Router>
-    </GeneralLayout>
+    </div>
   );
 });
 export default Home;
