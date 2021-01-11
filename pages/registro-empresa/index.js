@@ -1,16 +1,15 @@
 import React from "react";
 import { Button, Form, Grid, Icon, Image } from "semantic-ui-react";
-import { CompanyStyle } from "./style";
 import style from "./style.module.css";
 
 const RegistroEmpresa = React.memo(() => {
   return (
-    <div className="companystyle">
-      <div className="background">.</div>
-      <img src="/icon-white2.png"></img>
-      <Form>
-        <div className="textleft">
-          <h3>Registrate como empresa </h3>Si lo que buscas es un trabajo
+    <div className={style.companystyle}>
+      <div className={style.background}>.</div>
+      <img className={style.img} src="/icon-white2.png"></img>
+      <Form className={style.form}>
+        <div className={style.textleft}>
+          <h3>Regístrate como empresa </h3>Si lo que buscas es un trabajo
           <a href=""> regístrate como trabajador aquí</a>
         </div>
         <Grid columns={4} stackable>
@@ -50,33 +49,33 @@ const RegistroEmpresa = React.memo(() => {
             </Form.Field>
             <Form.Field>
               <input placeholder="Contraseña" />
-              <p className="textleft1">
+              <p className={style.textleft1}>
                 Recomendamos subir una imagen de su logotipo para mejorar su
                 relación con los candidatos y poderse hacer notar entre las
                 otras empresas.
               </p>
-              <p className="process">Proceso opcional*</p>
+              <p className={style.process}>Proceso opcional*</p>
             </Form.Field>
           </Grid.Column>
           <Grid.Column>
             <Form.Field>
               <input placeholder="Teléfono" />
-              <ul>
+              <ul className={style.ul}>
                 <li>Al menos un número</li>
                 <li>Al menos una letra mayúscula</li>
                 <li>Mínimo de 8 caracteres</li>
               </ul>
-              <div className="photo">
+              <div className={style.photo}>
                 <label for="file-input">
-                  <img src="/iconadd.svg" className="img"></img>
+                  <img src="/iconadd.svg" className={style.img1}></img>
                 </label>
-                <input id="file-input" type="file" />
+                <input id="file-input" type="file" className={style.input} />
                 <p>Logotipo en JPG o PNG</p>
               </div>
             </Form.Field>
           </Grid.Column>
         </Grid>
-        <p className="textcenter">
+        <p className={style.textcenter}>
           Al registrarte con nosotros declaras haber leído y estar de acuerdo
           con nuestra <a href="">Política de privacidad</a> así como nuestros
           <a href=""> Términos y condiciones </a>los cuales son accesibles a
@@ -84,7 +83,7 @@ const RegistroEmpresa = React.memo(() => {
         </p>
         <Button secondary>Regístrate</Button>
       </Form>
-      <p className="textwhite">
+      <p className={style.textwhite}>
         <Icon className="copyright outline"></Icon> Todos los derechos
         reservados - Descubre Sa. de CV.
       </p>

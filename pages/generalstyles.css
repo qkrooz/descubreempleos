@@ -25,12 +25,12 @@
     border-radius: 12px !important;
   }
   h3 {
-    font-family: MyriadPro-Bold;
-    margin-bottom: auto;
+    font-family: MyriadPro-Bold !important;
+    margin-bottom: auto !important;
   }
   h2 {
-    font-family: MyriadPro-Bold;
-    margin-bottom: auto;
+    font-family: MyriadPro-Bold !important;
+    margin-bottom: auto !important;
   }
 .general{  max-height: 102vh;  font-family: MyriadPro-Regular;
 }

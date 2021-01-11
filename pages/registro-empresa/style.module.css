@@ -8,13 +8,13 @@
   z-index: -1;
   height: 102vh;
 }
-form {
+.form {
   width: 70%;
   margin: 0 auto;
   background-color: white;
   padding: 2%;
   border-radius: 20px;}
-   p {
+   .p {
     text-align: left;
   }
    .textleft {
@@ -28,6 +28,7 @@ form {
   }
    .process {
     color: red;
+    text-align: left;
   }
    .photo {
     width: 163px;
@@ -35,10 +36,10 @@ form {
     margin: 0 auto;
     text-align: center;
     padding: 10px;}
-     input {
+     .input {
       display: none;
     }
-     .img {
+     .img1 {
       width: 50px;
       height: 50px;
       margin-bottom: auto;
@@ -50,12 +51,12 @@ form {
    .textcenter {
     text-align: center;
     width: 72%;
-    margin: 0 auto;
-    margin-top: 11px;
-    margin-bottom: 9px;
+    margin: 0 auto  !important;
+    margin-top: 11px  !important;
+    margin-bottom: 9px  !important;
   }
 
-img {
+.img {
   margin-bottom: -130px;
   margin-top: -135px;
   width: 500px;
@@ -66,12 +67,12 @@ img {
   font-size: 18px;
   font-weight: bold;
 }
-ul {
+.ul {
   text-align: left;
 }
 
 @media screen and (max-width: 600px) {
-  img {
+  .img {
     width: 274px !important;
     margin-bottom: -48px;
     margin-top: auto;
