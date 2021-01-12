@@ -66,7 +66,7 @@ const RegistroEmpresa = React.memo(() => {
                 <li>Mínimo de 8 caracteres</li>
               </ul>
               <div className={style.photo}>
-                <label for="file-input">
+                <label htmlFor="file-input">
                   <img src="/iconadd.svg" className={style.img1}></img>
                 </label>
                 <input id="file-input" type="file" className={style.input} />
