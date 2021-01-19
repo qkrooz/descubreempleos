@@ -1,12 +1,12 @@
 import React from "react";
-import { Button, Form, Grid, Icon, Image } from "semantic-ui-react";
-import style from "./style.module.css";
+import { Button, Form, Grid, Icon } from "semantic-ui-react";
+import style from "../../styles/registroEmpresa_style.module.css";
 
 const RegistroEmpresa = React.memo(() => {
   return (
     <div className={style.companystyle}>
       <div className={style.background}>.</div>
-      <img className={style.img} src="/icon-white2.png"></img>
+      <img className={style.img} src="./icon-white2.png" />
       <Form className={style.form}>
         <div className={style.textleft}>
           <h3>Regístrate como empresa </h3>Si lo que buscas es un trabajo
@@ -67,7 +67,7 @@ const RegistroEmpresa = React.memo(() => {
               </ul>
               <div className={style.photo}>
                 <label htmlFor="file-input">
-                  <img src="/iconadd.svg" className={style.img1}></img>
+                  <img src="./iconadd.svg" className={style.img1}></img>
                 </label>
                 <input id="file-input" type="file" className={style.input} />
                 <p>Logotipo en JPG o PNG</p>

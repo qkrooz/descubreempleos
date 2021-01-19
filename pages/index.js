@@ -2,11 +2,9 @@ import React, { useContext } from "react";
 import { MainContext } from "../public/resources/MainContext";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import Login from "./login";
-import RegistroEmpresa from "./registro-empresa/index";
-import RegistroTrabajador from "./registro-trabajador/index";
-import { Router } from "@reach/router";
-
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import main from "../styles/main.module.css";
+import header from "../styles/header.module.css";
 const Home = React.memo(() => {
   const router = useRouter();
   const { userInfoState } = useContext(MainContext);
@@ -17,17 +15,33 @@ const Home = React.memo(() => {
     }
   }, []);
   return (
-    <div className="general">
+    <>
       <Head>
         <title>Descubre | Inicio</title>
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       <Router>
-        <Login path="/"></Login>
-        <RegistroEmpresa path="/registro-empresa" />
-        <RegistroTrabajador path="/registro-trabajador" />
+        <header className={header.container}>
+          <div className={header.logo}></div>
+          <nav className={header.navContainer}>
+            <button>Buscar</button>
+            <button>Inicio</button>
+            <button>Usuario</button>
+          </nav>
+          <div className={header.controlsContainer}></div>
+        </header>
+        <main className={main.container}>
+          <h1>Main aqui</h1>
+          <Switch>
+            <Route />
+            <Route />
+            <Route />
+          </Switch>
+        </main>
       </Router>
-    </div>
+      <footer>
+        <h1>Footer aqui</h1>
+      </footer>
+    </>
   );
 });
 export default Home;

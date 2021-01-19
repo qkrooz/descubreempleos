@@ -1,19 +1,19 @@
 import Head from "next/head";
 import { Button, Form, Icon } from "semantic-ui-react";
 import { Link } from "@reach/router";
-import style from "./style.module.css"
+import style from "../../styles/login_style.module.css";
 
 export default function Login() {
   return (
     <div className={style.loginstyle}>
-      <img className={style.img} src="/thumbnailIconos.png"></img>
+      <img className={style.img} src="./thumbnailIconos.png" />
       <Head></Head>
       <Form className={style.form}>
         <Form.Field>
-          <input   placeholder="Correo electrónico" />
+          <input placeholder="Correo electrónico" />
         </Form.Field>
         <Form.Field>
-          <input icon="eye" placeholder="Contraseña"   />
+          <input icon="eye" placeholder="Contraseña" />
         </Form.Field>
         <Button type="submit" secondary className={style.buttonblack}>
           INICIAR
@@ -35,6 +35,6 @@ export default function Login() {
         <Icon className="copyright outline"></Icon> Todos los derechos
         reservados - Descubre Sa. de CV
       </p>
-     </div>
+    </div>
   );
 }

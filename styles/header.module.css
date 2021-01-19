@@ -1,0 +1,11 @@
+.container {
+  display: flex;
+  width: 100vw;
+  justify-content: space-between;
+}
+.logo {
+}
+.navContianer {
+}
+.controlsContainer {
+}
