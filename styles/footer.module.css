@@ -1,4 +1,12 @@
 .container {
   background-color: #c40033;
   color: white;
+  padding-left: 21px;
+  padding-right: 21px;
+}
+.icon {
+  width: 69px;
+}
+.floatimg {
+  float: right;
 }
