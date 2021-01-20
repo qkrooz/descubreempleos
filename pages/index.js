@@ -4,7 +4,8 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import main from "../styles/main.module.css";
-import header from "../styles/header.module.css";
+import { HeaderComponent } from "./components/header";
+import { FooterContainer } from "./components/footer";
 const Home = React.memo(() => {
   const router = useRouter();
   const { userInfoState } = useContext(MainContext);
@@ -20,15 +21,7 @@ const Home = React.memo(() => {
         <title>Descubre | Inicio</title>
       </Head>
       <Router>
-        <header className={header.container}>
-          <div className={header.logo}></div>
-          <nav className={header.navContainer}>
-            <button>Buscar</button>
-            <button>Inicio</button>
-            <button>Usuario</button>
-          </nav>
-          <div className={header.controlsContainer}></div>
-        </header>
+        <HeaderComponent></HeaderComponent>
         <main className={main.container}>
           <h1>Main aqui</h1>
           <Switch>
@@ -38,9 +31,7 @@ const Home = React.memo(() => {
           </Switch>
         </main>
       </Router>
-      <footer>
-        <h1>Footer aqui</h1>
-      </footer>
+      <FooterContainer></FooterContainer>
     </>
   );
 });
