@@ -1,8 +1,20 @@
+import { Collapse } from "antd";
 import React from "react";
 import { Card, Grid } from "semantic-ui-react";
 import style from "../../styles/inicio.module.css";
+import "antd/dist/antd.css";
+import { CaretRightOutlined } from "@ant-design/icons";
 
 export const InicioComponent = () => {
+  const { Panel } = Collapse;
+  function callback(key) {
+    console.log(key);
+  }
+  const text = `
+A dog is a type of domesticated animal.
+Known for its loyalty and faithfulness,
+it can be found as a welcome guest in many households across the world.
+`;
   return (
     <div>
       Recomendación del día
@@ -18,6 +30,39 @@ export const InicioComponent = () => {
             </Card.Content>
           </Card>
           Empleos a los que has aplicado
+          <Collapse
+            defaultActiveKey={["2"]}
+            onChange={callback}
+            expandIcon={({ isActive }) => (
+              <CaretRightOutlined rotate={isActive ? 90 : 0} />
+            )}
+          >
+            <Panel header="This is panel header 1" key="1">
+              <p>{text}</p>
+            </Panel>
+          </Collapse>
+          <Collapse
+            defaultActiveKey={["2"]}
+            onChange={callback}
+            expandIcon={({ isActive }) => (
+              <CaretRightOutlined rotate={isActive ? 90 : 0} />
+            )}
+          >
+            <Panel header="This is panel header 1" key="1">
+              <p>{text}</p>
+            </Panel>
+          </Collapse>
+          <Collapse
+            defaultActiveKey={["2"]}
+            onChange={callback}
+            expandIcon={({ isActive }) => (
+              <CaretRightOutlined rotate={isActive ? 90 : 0} />
+            )}
+          >
+            <Panel header="This is panel header 1" key="1">
+              <p>{text}</p>
+            </Panel>
+          </Collapse>
         </Grid.Column>
         <Grid.Column>
           <Card className={style.card}>

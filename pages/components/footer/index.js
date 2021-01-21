@@ -8,11 +8,11 @@ export const FooterContainer = () => {
       <footer className={footer.container}>
         <Grid columns={2} stackable>
           <Grid.Column>
-            <h3>
+            <h3 className={footer.h3}>
               Acerca de nosotros | Términos y condiciones | Politica de
               privacidad | Contáctanos
             </h3>
-            <h4>
+            <h4 className={footer.h4}>
               <Icon className="copyright outline"></Icon>Todos los derechos
               reservados - Descubre Sa. de CV.
             </h4>
