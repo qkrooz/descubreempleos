@@ -23,11 +23,10 @@ select {
 button {
   border-radius: 12px !important;
 }
-h3 {
-  font-family: MyriadPro-Bold !important;
-  margin-bottom: auto !important;
-}
-h2 {
+
+h2,
+h3,
+h1 {
   font-family: MyriadPro-Bold !important;
   margin-bottom: auto !important;
 }
@@ -37,13 +36,18 @@ h2 {
 }
 
 .ant-collapse-arrow {
-  left: 619px !important;
+  left: 641px !important;
   font-size: 37px !important;
-  top: -8.9995px !important;
+  top: -1.9995px !important;
   color: #c1c4cc !important;
 }
 .ant-collapse {
   background-color: white !important;
-  margin-bottom: 33px !important;
+  margin-bottom: 16px !important;
   border-radius: 7px !important;
+}
+
+.ant-collapse-header {
+  font-weight: bold;
+  font-size: 22px;
 }

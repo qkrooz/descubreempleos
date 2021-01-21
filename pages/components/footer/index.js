@@ -6,8 +6,8 @@ export const FooterContainer = () => {
   return (
     <div>
       <footer className={footer.container}>
-        <Grid columns={2} stackable>
-          <Grid.Column>
+        <Grid columns={"equal"} stackable>
+          <Grid.Column width={10}>
             <h3 className={footer.h3}>
               Acerca de nosotros | Términos y condiciones | Politica de
               privacidad | Contáctanos

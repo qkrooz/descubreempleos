@@ -3,8 +3,6 @@
   color: white;
   padding-left: 21px;
   padding-right: 21px;
-  position: fixed;
-  bottom: 0;
   width: 100%;
   padding-top: 20px;
   padding-bottom: 15px;
@@ -20,4 +18,6 @@
 }
 .h4 {
   color: white !important;
+  margin-top: 17px;
+  font-weight: bold;
 }
