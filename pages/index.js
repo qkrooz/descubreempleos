@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import main from "../styles/main.module.css";
 import { HeaderComponent } from "./components/header";
 import { FooterContainer } from "./components/footer";
+import { InicioComponent } from "./inicio";
 const Home = React.memo(() => {
   const router = useRouter();
   const { userInfoState } = useContext(MainContext);
@@ -23,7 +24,8 @@ const Home = React.memo(() => {
       <Router>
         <HeaderComponent></HeaderComponent>
         <main className={main.container}>
-          <h1>Main aqui</h1>
+          {/* <h1>Main aqui</h1> */}
+          <InicioComponent></InicioComponent>
           <Switch>
             <Route />
             <Route />

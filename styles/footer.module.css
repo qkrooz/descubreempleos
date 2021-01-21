@@ -3,6 +3,11 @@
   color: white;
   padding-left: 21px;
   padding-right: 21px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  padding-top: 20px;
+  padding-bottom: 15px;
 }
 .icon {
   width: 69px;

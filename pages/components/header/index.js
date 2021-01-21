@@ -17,7 +17,7 @@ export const HeaderComponent = () => {
               <img src="/icon-search.png" className={header.icon}></img>
               <a className={header.link}>Buscar</a>
               <img src="/icon-info.png" className={header.icon}></img>
-              <a className={header.link}>Usuario</a>
+              <a className={header.link}>Mis datos</a>
             </div>
           </Grid.Column>
           <Grid.Column>
