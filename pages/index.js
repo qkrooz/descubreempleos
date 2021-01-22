@@ -7,6 +7,7 @@ import main from "../styles/main.module.css";
 import { HeaderComponent } from "./components/header";
 import { FooterContainer } from "./components/footer";
 import { InicioComponent } from "./inicio";
+import { BusquedaComponent } from "./busqueda";
 const Home = React.memo(() => {
   const router = useRouter();
   const { userInfoState } = useContext(MainContext);
@@ -25,7 +26,8 @@ const Home = React.memo(() => {
         <HeaderComponent></HeaderComponent>
         <main className={main.container}>
           {/* <h1>Main aqui</h1> */}
-          <InicioComponent></InicioComponent>
+          {/* <InicioComponent></InicioComponent> */}
+          <BusquedaComponent></BusquedaComponent>
           <Switch>
             <Route />
             <Route />
