@@ -56,7 +56,6 @@ export const BusquedaComponent = () => {
                   </Grid.Column>
                   <Grid.Column>
                     <h1>
-                      {" "}
                       Encargado de marketing digital Salario no específico
                     </h1>
                   </Grid.Column>
