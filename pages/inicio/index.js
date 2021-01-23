@@ -20,6 +20,7 @@ it can be found as a welcome guest in many households across the world.
       <Grid columns={"equal"} stackable>
         <Grid.Column width={9}>
           <p className={style.redtext}> Recomendación del día</p>
+
           <Card className={style.card}>
             <Card.Content>
               <Card.Description>
@@ -47,6 +48,7 @@ it can be found as a welcome guest in many households across the world.
               </Card.Description>
             </Card.Content>
           </Card>
+
           <p className={style.redtext}>Empleos a los que has aplicado</p>
           <Collapse
             defaultActiveKey={["2"]}

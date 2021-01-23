@@ -1,0 +1,18 @@
+.searchbackground {
+  background-color: #000929;
+  color: white;
+}
+
+.title {
+  color: white;
+  font-weight: bold;
+}
+.card {
+  width: 100% !important;
+}
+.image {
+  width: 100px;
+}
+.textrigth {
+  text-align: right;
+}
