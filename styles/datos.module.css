@@ -1,0 +1,26 @@
+.card {
+  width: 100% !important;
+}
+.profilecontainer {
+  text-align: center;
+}
+.profile {
+  width: 219px;
+  height: 219px;
+  -moz-border-radius: 50px;
+  border-radius: 108px;
+  margin-top: 25px;
+  margin-bottom: 23px;
+}
+.h3 {
+  margin-bottom: 10px !important;
+}
+.linkcv {
+  color: #1098ff;
+  text-decoration: underline;
+  font-weight: bold;
+}
+.yellowtext {
+  color: #ecb83c;
+  margin-top: 24px;
+}
