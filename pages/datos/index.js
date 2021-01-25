@@ -22,6 +22,33 @@ export const DatoComponent = () => {
           </Card>
         </Grid.Column>
         <Grid.Column>
+          <Card className={style.card}>
+            <Card.Content>
+              <Card.Description>
+                <h3 className={style.h3}> José Antonio Higuera Vázquez</h3>
+                <h3 className={style.h3}>Diseñador Gráfico</h3>
+                <a className={style.linkcv}> CV.PDF</a>
+              </Card.Description>
+            </Card.Content>
+          </Card>
+          <Card className={style.card}>
+            <Card.Content>
+              <Card.Description>
+                <h3 className={style.h3}> José Antonio Higuera Vázquez</h3>
+                <h3 className={style.h3}>Diseñador Gráfico</h3>
+                <a className={style.linkcv}> CV.PDF</a>
+              </Card.Description>
+            </Card.Content>
+          </Card>
+          <Card className={style.card}>
+            <Card.Content>
+              <Card.Description>
+                <h3 className={style.h3}> José Antonio Higuera Vázquez</h3>
+                <h3 className={style.h3}>Diseñador Gráfico</h3>
+                <a className={style.linkcv}> CV.PDF</a>
+              </Card.Description>
+            </Card.Content>
+          </Card>
           Experiencia laboral Aún no has agregado ninguna experiencia laborarl
           Aumenta tus probabilidades de exito agregando experiencia en este
           campo Grado educativo Aún no has agregado ningun grado educativo
