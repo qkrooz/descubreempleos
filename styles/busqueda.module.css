@@ -1,6 +1,11 @@
 .searchbackground {
   background-color: #000929;
   color: white;
+  margin-top: -32px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 65px;
+  padding-right: 65px;
 }
 
 .title {
@@ -10,9 +15,14 @@
 .card {
   width: 100% !important;
 }
+.card1 {
+  width: 100% !important;
+  text-align: center;
+}
 .image {
   width: 100px;
 }
 .textrigth {
   text-align: right;
 }
+.h1{color: #c40033;}
