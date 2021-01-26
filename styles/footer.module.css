@@ -23,3 +23,9 @@
   margin-top: 17px;
   font-weight: bold;
 }
+@media screen and (max-width: 1000px) {
+  .container {
+    position: static;
+    margin-top: 50px;
+  }
+}

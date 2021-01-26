@@ -28,7 +28,7 @@ it can be found as a welcome guest in many households across the world.
                   <Grid.Column width={3}>
                     <img
                       className={style.image}
-                      src="https://lh3.googleusercontent.com/proxy/ok0Z75SXz0VuV0KSEPGKgbY3lrA1FMN3vBY0ZvaMuyLAlwr3R4os327W07ig3QIVmeHY6_VFwTC39Ee1A6a4uGCn92APynKhncuXaFof6yE0pBr-wkjEyS_ExqN2a1X19NE-Jac4MDL1_m_J785SFE5drCBfdHFuCqfQDwO1b8nxArEa"
+                      src="https://ingenieria.udd.cl/files/2020/09/walmart-logo-1-1.jpg"
                     ></img>
                   </Grid.Column>
                   <Grid.Column>

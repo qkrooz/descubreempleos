@@ -28,9 +28,9 @@ const Home = React.memo(() => {
         <HeaderComponent></HeaderComponent>
         <main className={main.container}>
           {/* <h1>Main aqui</h1> */}
-          {/* <InicioComponent></InicioComponent> */}
+          <InicioComponent></InicioComponent>
           {/* <BusquedaComponent></BusquedaComponent> */}
-          <DatoComponent></DatoComponent>
+          {/* <DatoComponent></DatoComponent> */}
           <Switch>
             <Route />
             <Route />

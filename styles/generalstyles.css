@@ -37,7 +37,7 @@ h4 {
 }
 
 .ant-collapse-arrow {
-  left: 641px !important;
+  left: 93% !important;
   font-size: 37px !important;
   top: -1.9995px !important;
   color: #c1c4cc !important;
@@ -54,4 +54,13 @@ h4 {
 }
 input ~ label:after {
   background: #ecb83c !important;
+}
+
+@media screen and (max-height: 1000px) {
+  .ant-collapse-arrow {
+    left: 87% !important;
+  }
+  .ant-collapse-header {
+    font-size: 19px;
+  }
 }
