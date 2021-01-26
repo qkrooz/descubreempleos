@@ -1,6 +1,10 @@
 .card {
   width: 100% !important;
 }
+.card1 {
+  width: 100% !important;
+  margin-bottom: 41px !important;
+}
 .profilecontainer {
   text-align: center;
 }
@@ -21,6 +25,21 @@
   font-weight: bold;
 }
 .yellowtext {
-  color: #ecb83c;
+  color: #c1c4cc;
+  margin-right: 10px;
+}
+.container {
+  width: 94%;
+  margin: 0 auto;
+}
+
+.edit {
+  right: 11px;
+  position: absolute;
+}
+.flextoggle {
   margin-top: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

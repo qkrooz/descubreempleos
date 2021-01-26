@@ -6,6 +6,8 @@
   width: 100%;
   padding-top: 20px;
   padding-bottom: 15px;
+  position: fixed;
+  bottom: 0;
 }
 .icon {
   width: 69px;

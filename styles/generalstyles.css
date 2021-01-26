@@ -26,7 +26,8 @@ button {
 
 h2,
 h3,
-h1 ,h4{
+h1,
+h4 {
   font-family: MyriadPro-Bold !important;
   margin-bottom: auto !important;
 }
@@ -50,4 +51,7 @@ h1 ,h4{
 .ant-collapse-header {
   font-weight: bold;
   font-size: 22px;
+}
+input ~ label:after {
+  background: #ecb83c !important;
 }
