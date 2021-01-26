@@ -3,7 +3,7 @@ import { Card, Checkbox, Grid, Icon } from "semantic-ui-react";
 import style from "../../styles/datos.module.css";
 import { PlusCircleOutlined } from "@ant-design/icons";
 
-export const DatoComponent = () => {
+export default function DatoComponent() {
   return (
     <div className={style.container}>
       <Grid columns={"equal"} stackable>
@@ -77,4 +77,4 @@ export const DatoComponent = () => {
       </Grid>
     </div>
   );
-};
+}

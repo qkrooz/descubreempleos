@@ -56,7 +56,7 @@ input ~ label:after {
   background: #ecb83c !important;
 }
 
-@media screen and (max-height: 1000px) {
+@media screen and (max-width: 600px) {
   .ant-collapse-arrow {
     left: 87% !important;
   }

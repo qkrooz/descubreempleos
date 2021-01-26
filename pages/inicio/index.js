@@ -5,7 +5,7 @@ import style from "../../styles/inicio.module.css";
 import "antd/dist/antd.css";
 import { CaretRightOutlined } from "@ant-design/icons";
 
-export const InicioComponent = () => {
+export default function InicioComponent() {
   const { Panel } = Collapse;
   function callback(key) {
     console.log(key);
@@ -110,4 +110,4 @@ it can be found as a welcome guest in many households across the world.
       </Grid>
     </div>
   );
-};
+}

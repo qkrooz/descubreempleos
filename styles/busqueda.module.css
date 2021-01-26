@@ -12,6 +12,7 @@
   margin: 0 auto;
   margin-top: 50px;
   margin-bottom: 20px;
+  height: 88vh;
 }
 .title {
   color: white;
@@ -83,4 +84,14 @@
 
 .sort {
   margin-right: 33px;
+}
+
+@media screen and (max-width: 600px) {
+  .searchbackground {
+    padding-left: 23px;
+    padding-right: 23px;
+  }
+  .container {
+    height: 279vh;
+  }
 }

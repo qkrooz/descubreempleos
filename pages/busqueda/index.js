@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Card, Grid, Icon, Input } from "semantic-ui-react";
 import style from "../../styles/busqueda.module.css";
 
-export const BusquedaComponent = () => {
+export default function BusquedaComponent() {
   return (
     <div>
       <div className={style.searchbackground}>
@@ -188,4 +188,4 @@ export const BusquedaComponent = () => {
       </div>
     </div>
   );
-};
+}
