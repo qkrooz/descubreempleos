@@ -47,10 +47,10 @@ export default function BusquedaComponent() {
         <Grid columns={"equal"} stackable>
           <Grid.Column width={10}>
             <div className={style.order}>
-              <p>349 Resultados </p>
-              <p className={style.sort}>
+              <p className={style.results}>349 Resultados </p>
+              <div className={style.sort}>
                 Ordenar por <img src="/sort.png"></img>
-              </p>
+              </div>
             </div>
             <Card className={style.card}>
               <Card.Content>

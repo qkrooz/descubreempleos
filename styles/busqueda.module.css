@@ -12,7 +12,7 @@
   margin: 0 auto;
   margin-top: 50px;
   margin-bottom: 20px;
-  height: 88vh;
+  height: 100vh;
 }
 .title {
   color: white;
@@ -84,8 +84,12 @@
 
 .sort {
   margin-right: 33px;
+  display: flex;
+  align-items: center;
 }
-
+.results {
+  margin-bottom: 0;
+}
 @media screen and (max-width: 600px) {
   .searchbackground {
     padding-left: 23px;
