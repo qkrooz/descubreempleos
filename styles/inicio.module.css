@@ -7,6 +7,7 @@
 .container {
   width: 94%;
   margin: 0 auto;
+  height: 79vh;
 }
 
 .textrigth {
@@ -37,4 +38,9 @@
 .yellowtext {
   color: #ecb83c;
   margin-top: 24px;
+}
+@media screen and (max-width: 600px) {
+  .container {
+    height: 166vh;
+  }
 }
