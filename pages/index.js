@@ -19,6 +19,13 @@ const Home = React.memo(() => {
       router.push("/login");
     }
   }, []);
+  const chat = () => {
+    document.getElementById("myForm").style.display = "block";
+  };
+
+  const closeChat = () => {
+    document.getElementById("myForm").style.display = "none";
+  };
   return (
     <>
       <Head>
@@ -48,12 +55,41 @@ const Home = React.memo(() => {
             </Grid.Column>
             <Grid.Column>
               <div className={header.containericons}>
-                <img src="/icon-message.png" className={header.icon}></img>
+                <img
+                  onClick={() => chat()}
+                  src="/icon-message.png"
+                  className={header.icon}
+                ></img>
                 <img src="/icon-lamp-white.png" className={header.icon}></img>
                 <img src="/icon-list.png" className={header.icon}></img>
               </div>
             </Grid.Column>
           </Grid>
+          <div className={header.chatpopup} id="myForm">
+            <form action="/action_page.php" className={header.formcontainer}>
+              <h1>Chat</h1>
+
+              <label for="msg">
+                <b>Message</b>
+              </label>
+              <textarea
+                placeholder="Type message.."
+                name="msg"
+                required
+              ></textarea>
+
+              <button type="submit" className={header.btn}>
+                Send
+              </button>
+              <button
+                type="button"
+                className={header.btn + ' ' + header.cancel}
+                onClick={() => closeChat()}
+              >
+                Close
+              </button>
+            </form>
+          </div>
         </header>
         <Switch>
           <Route exact path="/" component={InicioComponent} />
