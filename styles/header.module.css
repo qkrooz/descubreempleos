@@ -49,7 +49,14 @@
   padding: 10px;
   background-color: white;
 }
-
+.formcontainer1 {
+  max-width: 300px;
+  width: 300px;
+  padding: 10px;
+  background-color: white;
+  color: black;
+  display: flex;
+}
 /* Full-width textarea */
 .formcontainer textarea {
   width: 100%;
@@ -70,7 +77,6 @@
 /* Set a style for the submit/send button */
 .formcontainer .btn {
   background-color: #4caf50;
-  color: white;
   padding: 16px 20px;
   border: none;
   cursor: pointer;
@@ -87,6 +93,13 @@
 /* Add some hover effects to buttons */
 .formcontainer .btn:hover {
   opacity: 1;
+}
+
+.button {
+  height: 25px;
+  width: 25px;
+  display: flex;
+  align-items: center;
 }
 
 .containericons {

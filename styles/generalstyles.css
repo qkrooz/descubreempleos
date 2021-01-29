@@ -55,6 +55,15 @@ h4 {
 input ~ label:after {
   background: #ecb83c !important;
 }
+ul {
+  color: black;
+}
+li {
+  background-color: gray;
+}
+li:hover {
+  background-color: white;
+}
 
 @media screen and (max-width: 600px) {
   .ant-collapse-arrow {

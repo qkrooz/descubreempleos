@@ -25,7 +25,6 @@ const Home = React.memo(() => {
   const chat1 = () => {
     document.getElementById("myForm1").style.display = "block";
     document.getElementById("myForm").style.display = "none";
-
   };
   const closeChat = () => {
     document.getElementById("myForm").style.display = "none";
@@ -73,11 +72,40 @@ const Home = React.memo(() => {
             </Grid.Column>
           </Grid>
           <div className={header.chatpopup} id="myForm">
-           <ul><li onClick={()=>chat1()}>1</li></ul>
-           <button onClick={()=>closeChat()}>Cerrar</button>
+            <div className={header.formcontainer1}>
+              <ul>
+                <li onClick={() => chat1()}>
+
+                  Walmart México Tú: Muchas graci.... L Nos comunicare....
+                  Woolworld L Hasta luego Lacoste Tú: Ahí estare, gr....
+                  Starbucks L Tú: Si claro, yo lo
+                </li>
+                <li onClick={() => chat1()}>
+
+                  Walmart México Tú: Muchas graci.... L Nos comunicare....
+                  Woolworld L Hasta luego Lacoste Tú: Ahí estare, gr....
+                  Starbucks L Tú: Si claro, yo lo
+                </li>
+                <li onClick={() => chat1()}>
+
+                  Walmart México Tú: Muchas graci.... L Nos comunicare....
+                  Woolworld L Hasta luego Lacoste Tú: Ahí estare, gr....
+                  Starbucks L Tú: Si claro, yo lo
+                </li>
+                <li onClick={() => chat1()}>
+
+                  Walmart México Tú: Muchas graci.... L Nos comunicare....
+                  Woolworld L Hasta luego Lacoste Tú: Ahí estare, gr....
+                  Starbucks L Tú: Si claro, yo lo
+                </li>
+              </ul>
+              <button className={header.button} onClick={() => closeChat()}>
+                X
+              </button>
+            </div>
           </div>
           <div className={header.chatpopup1} id="myForm1">
-            <form action="/action_page.php" className={header.formcontainer}>
+            <form className={header.formcontainer}>
               <h1>Chat</h1>
 
               <label for="msg">
@@ -94,7 +122,7 @@ const Home = React.memo(() => {
               </button>
               <button
                 type="button"
-                className={header.btn + ' ' + header.cancel}
+                className={header.btn + " " + header.cancel}
                 onClick={() => closeChat1()}
               >
                 Close
