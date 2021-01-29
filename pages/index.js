@@ -22,9 +22,16 @@ const Home = React.memo(() => {
   const chat = () => {
     document.getElementById("myForm").style.display = "block";
   };
+  const chat1 = () => {
+    document.getElementById("myForm1").style.display = "block";
+    document.getElementById("myForm").style.display = "none";
 
+  };
   const closeChat = () => {
     document.getElementById("myForm").style.display = "none";
+  };
+  const closeChat1 = () => {
+    document.getElementById("myForm1").style.display = "none";
   };
   return (
     <>
@@ -66,6 +73,10 @@ const Home = React.memo(() => {
             </Grid.Column>
           </Grid>
           <div className={header.chatpopup} id="myForm">
+           <ul><li onClick={()=>chat1()}>1</li></ul>
+           <button onClick={()=>closeChat()}>Cerrar</button>
+          </div>
+          <div className={header.chatpopup1} id="myForm1">
             <form action="/action_page.php" className={header.formcontainer}>
               <h1>Chat</h1>
 
@@ -84,7 +95,7 @@ const Home = React.memo(() => {
               <button
                 type="button"
                 className={header.btn + ' ' + header.cancel}
-                onClick={() => closeChat()}
+                onClick={() => closeChat1()}
               >
                 Close
               </button>
