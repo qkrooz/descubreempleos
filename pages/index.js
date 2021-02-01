@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { MainContext } from "../public/resources/MainContext";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -8,7 +8,7 @@ import InicioComponent from "./inicio";
 import BusquedaComponent from "./busqueda";
 import DatoComponent from "./datos";
 import header from "../styles/header.module.css";
-import { Grid } from "semantic-ui-react";
+import { Button, Grid, Input } from "semantic-ui-react";
 
 const Home = React.memo(() => {
   const router = useRouter();
@@ -19,6 +19,9 @@ const Home = React.memo(() => {
       router.push("/login");
     }
   }, []);
+
+  const [show, setShow] = useState(false);
+
   const chat = () => {
     document.getElementById("myForm").style.display = "block";
   };
@@ -67,68 +70,125 @@ const Home = React.memo(() => {
                   className={header.icon}
                 ></img>
                 <img src="/icon-lamp-white.png" className={header.icon}></img>
-                <img src="/icon-list.png" className={header.icon}></img>
+                <img
+                  src="/icon-list.png"
+                  className={header.icon}
+                  onClick={() => {
+                    setShow(!show);
+                  }}
+                ></img>
               </div>
             </Grid.Column>
           </Grid>
           <div className={header.chatpopup} id="myForm">
             <div className={header.formcontainer1}>
-              <ul>
-                <li onClick={() => chat1()}>
-
-                  Walmart México Tú: Muchas graci.... L Nos comunicare....
-                  Woolworld L Hasta luego Lacoste Tú: Ahí estare, gr....
-                  Starbucks L Tú: Si claro, yo lo
-                </li>
-                <li onClick={() => chat1()}>
-
-                  Walmart México Tú: Muchas graci.... L Nos comunicare....
-                  Woolworld L Hasta luego Lacoste Tú: Ahí estare, gr....
-                  Starbucks L Tú: Si claro, yo lo
-                </li>
-                <li onClick={() => chat1()}>
-
-                  Walmart México Tú: Muchas graci.... L Nos comunicare....
-                  Woolworld L Hasta luego Lacoste Tú: Ahí estare, gr....
-                  Starbucks L Tú: Si claro, yo lo
-                </li>
-                <li onClick={() => chat1()}>
-
-                  Walmart México Tú: Muchas graci.... L Nos comunicare....
-                  Woolworld L Hasta luego Lacoste Tú: Ahí estare, gr....
-                  Starbucks L Tú: Si claro, yo lo
-                </li>
-              </ul>
+              <div className={header.containerchats}>
+                <div className={header.triangulo}>.</div>
+                {[
+                  {
+                    icon: "/icon-lamp-blue.png",
+                    title: "Walmart México",
+                    message: "Tú: Muchas graci....",
+                  },
+                  {
+                    icon: "/icon-lamp-blue.png",
+                    title: "Walmart México",
+                    message: "Tú: Muchas graci....",
+                  },
+                  {
+                    icon: "/icon-lamp-blue.png",
+                    title: "Walmart México",
+                    message: "Tú: Muchas graci....",
+                  },
+                  {
+                    icon: "/icon-lamp-white.png",
+                    title: "Walmart México",
+                    message: "Tú: Muchas graci....",
+                  },
+                  {
+                    icon: "/icon-lamp-blue.png",
+                    title: "Walmart México",
+                    message: "Tú: Muchas graci....",
+                  },
+                ].map((item, index) => {
+                  return (
+                    <div
+                      key={index}
+                      className={header.chatcontent}
+                      onClick={() => chat1()}
+                    >
+                      <img
+                        className={header.imagechat}
+                        src="https://ingenieria.udd.cl/files/2020/09/walmart-logo-1-1.jpg"
+                      ></img>
+                      <div className={header.margintext}>
+                        <h4> {item.title}</h4>
+                        <p> {item.message}</p>
+                      </div>
+                      <img className={header.lampblue} src={item.icon}></img>
+                    </div>
+                  );
+                })}
+                <div></div>
+              </div>
               <button className={header.button} onClick={() => closeChat()}>
                 X
               </button>
             </div>
           </div>
           <div className={header.chatpopup1} id="myForm1">
+            <div className={header.triangulo1}>.</div>
             <form className={header.formcontainer}>
-              <h1>Chat</h1>
+              <div className={header.flextitle}>
+                <img
+                  className={header.logochat}
+                  src="https://ingenieria.udd.cl/files/2020/09/walmart-logo-1-1.jpg"
+                ></img>
 
-              <label for="msg">
-                <b>Message</b>
-              </label>
-              <textarea
-                placeholder="Type message.."
-                name="msg"
-                required
-              ></textarea>
+                <h3 className={header.title}>Walmart México</h3>
+                <button className={header.button} onClick={() => closeChat1()}>
+                  X
+                </button>
+              </div>
+              <div className={header.chatbox}>.</div>
 
-              <button type="submit" className={header.btn}>
-                Send
-              </button>
-              <button
-                type="button"
-                className={header.btn + " " + header.cancel}
-                onClick={() => closeChat1()}
-              >
-                Close
-              </button>
+              <div className={header.flexsend}>
+                <Input
+                  type="text"
+                  placeholder="Escribe tu mensaje.."
+                  required
+                ></Input>
+                <Button type="submit" className={header.btn}>
+                  Enviar
+                </Button>
+              </div>
             </form>
           </div>
+          {show ? (
+            <div id="menu" className={header.menu}>
+              <div className={header.texticons}>
+                <p className={header.textblack}>Por salud mental</p>
+                <img
+                  className={header.menuicon}
+                  src="/icon-lamp-ligthblue.png"
+                ></img>
+              </div>
+              <div className={header.texticons}>
+                <p className={header.textblack}>Blog Descubre</p>
+                <img className={header.menuicon} src="/b.png"></img>
+              </div>
+              <hr className={header.hr}></hr>
+              <div className={header.texticons}>
+                <p className={header.textblack}>Configuración</p>
+                <img className={header.menuicon} src="/config.png"></img>
+              </div>
+              <p className={header.textblack}>Reportar problema</p>
+              <hr className={header.hr}></hr>
+              <p className={header.redtext}>Cerrar sesión</p>
+            </div>
+          ) : (
+            ""
+          )}
         </header>
         <Switch>
           <Route exact path="/" component={InicioComponent} />
