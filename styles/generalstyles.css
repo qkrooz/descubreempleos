@@ -55,6 +55,9 @@ h4 {
 input ~ label:after {
   background: #ecb83c !important;
 }
+button:focus {
+  outline: 0px;
+}
 
 @media screen and (max-width: 600px) {
   .ant-collapse-arrow {
