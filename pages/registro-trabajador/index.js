@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Form, Icon, Input } from "semantic-ui-react";
 import { Employee } from "./style";
-import style from "./style.module.css"
+import style from "../../styles/registroTrabajador_style.module.css";
 import { Grid } from "semantic-ui-react";
 
 const RegistroTrabajador = React.memo(() => {
@@ -11,8 +11,10 @@ const RegistroTrabajador = React.memo(() => {
       <Grid columns={2} stackable>
         <Grid.Column>
           <div>
-            <img className={style.img} src="/icon-white2.png"></img>
-            <h2 className={style.h2}>Las oportunidades de empleo que tenemos para ti</h2>
+            <img className={style.img} src="./icon-white2.png" />
+            <h2 className={style.h2}>
+              Las oportunidades de empleo que tenemos para ti
+            </h2>
             <p className={style.textwhite1}>
               <Icon className="copyright outline"></Icon> Todos los derechos
               reservados - Descubre Sa. de CV.
@@ -41,7 +43,7 @@ const RegistroTrabajador = React.memo(() => {
                   </Form.Field>
                 </Grid.Column>
               </Grid>
-              <Form.Field >
+              <Form.Field>
                 <input
                   placeholder="Correo electrónico
 "

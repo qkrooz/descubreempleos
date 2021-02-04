@@ -1,0 +1,29 @@
+.container {
+  background-color: #c40033;
+  color: white;
+  padding-left: 21px;
+  padding-right: 21px;
+  width: 100%;
+  padding-top: 20px;
+  padding-bottom: 15px;
+}
+.icon {
+  width: 69px;
+}
+.floatimg {
+  float: right;
+}
+.h3 {
+  color: white !important;
+}
+.h4 {
+  color: white !important;
+  margin-top: 17px;
+  font-weight: bold;
+}
+@media screen and (max-width: 1000px) {
+  .container {
+    position: static;
+    margin-top: 50px;
+  }
+}

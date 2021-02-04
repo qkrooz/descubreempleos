@@ -1,0 +1,212 @@
+.container {
+  width: 100%;
+  background-color: #c40033;
+  color: white;
+  padding: 10px;
+  margin-bottom: 32px;
+  padding-top: 0px;
+  padding-bottom: 1px;
+}
+.logo {
+  width: 346px;
+  margin-top: -100px;
+  margin-bottom: -100px;
+}
+.icon {
+  width: 46px;
+  cursor: pointer;
+}
+.link {
+  color: white;
+  font-weight: bold;
+  font-size: 22px;
+}
+.navContainer {
+  align-items: center;
+  display: flex;
+  height: 71px;
+  justify-content: space-around;
+}
+
+/* The popup chat - hidden by default */
+.chatpopup1 {
+  display: none;
+  position: absolute;
+  right: 37px;
+  z-index: 9;
+  border-radius: 13px;
+  border: 1px solid #c1c4cc;
+  width: 309px;
+  top: 94px;
+}
+.chatpopup {
+  display: none;
+  position: absolute;
+  top: 94px;
+  right: 37px;
+  z-index: 9;
+  width: 309px;
+  border-radius: 13px;
+  border: 1px solid #c1c4cc;
+}
+
+/* Add styles to the form container */
+.formcontainer {
+  background-color: white;
+  border-radius: 13px;
+  color: black;
+  border-radius: 13px;
+}
+.formcontainer1 {
+  padding: 10px;
+  background-color: white;
+  color: black;
+  display: flex;
+  border-radius: 13px;
+  justify-content: space-between;
+}
+
+/* Set a style for the submit/send button */
+.formcontainer .btn {
+  background-color: black !important;
+  color: white !important;
+  opacity: 1;
+}
+
+/* Add some hover effects to buttons */
+.formcontainer .btn:hover {
+  opacity: 0.8;
+  background-color: black;
+  color: white;
+}
+
+.button {
+  height: 25px;
+  width: 25px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.containericons {
+  float: right;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.containerchats {
+  color: black;
+}
+.chatcontent {
+  cursor: pointer;
+  background-color: #c1c4cc;
+  margin-bottom: 9px;
+  display: flex;
+  align-items: center;
+}
+.imagechat {
+  width: 100px;
+}
+.lampblue {
+  width: 25px;
+  height: 25px;
+  margin-bottom: 16px;
+}
+.triangulo {
+  width: 100px;
+  height: 100px;
+  border: 1px solid #c1c4cc;
+  background: #fff;
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  transform: rotate(135deg);
+  position: absolute;
+  bottom: 262px;
+  z-index: -1;
+  right: 42px;
+}
+.triangulo1 {
+  width: 100px;
+  height: 100px;
+  border: 1px solid #c1c4cc;
+  background: #c40033;
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  transform: rotate(135deg);
+  position: absolute;
+  bottom: 262px;
+  z-index: -1;
+  right: 42px;
+}
+.flextitle {
+  display: flex;
+  align-items: center;
+  background-color: #c40033;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  padding: 10px;
+  justify-content: space-between;
+}
+.title {
+  margin-bottom: 0 !important;
+}
+.flexsend {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding-bottom: 13px;
+}
+.logochat {
+  width: 104px;
+}
+.chatbox {
+  height: 70px;
+  height: 217px;
+  color: transparent;
+}
+
+.margintext {
+  margin-left: 8px;
+}
+
+.menu {
+  position: absolute;
+  color: black;
+  right: 1px;
+  z-index: 1;
+  border: 1px solid #c1c4cc;
+  background-color: #fff;
+  border-radius: 5px;
+  padding: 15px;
+}
+.menuicon {
+  width: 27px;
+}
+.redtext {
+  color: #c40033;
+  text-align: center;
+}
+.hr {
+  border: 1px solid;
+  width: 80%;
+}
+.textblack {
+  margin-bottom: 0;
+}
+.texticons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+@media screen and (max-width: 1000px) {
+  .logo {
+    width: 310px;
+    margin-top: -67px;
+  }
+  .link {
+    font-size: 16px;
+  }
+}

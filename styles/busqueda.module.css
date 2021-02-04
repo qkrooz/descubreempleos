@@ -1,0 +1,101 @@
+.searchbackground {
+  background-color: #000929;
+  color: white;
+  margin-top: -32px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 203px;
+  padding-right: 203px;
+}
+.container {
+  width: 94%;
+  margin: 0 auto;
+  margin-top: 50px;
+  margin-bottom: 20px;
+  height: 100vh;
+}
+.title {
+  color: white;
+  font-weight: bold;
+}
+.card {
+  width: 97% !important;
+  margin-bottom: 21px !important;
+}
+.card1 {
+  width: 100% !important;
+  text-align: center;
+  margin-bottom: 36px !important;
+}
+.card2 {
+  text-align: center;
+  width: 518px !important;
+  margin: 0 auto !important;
+}
+
+.image {
+  width: 100px;
+}
+.textrigth {
+  text-align: right;
+}
+.h1 {
+  color: #c40033;
+  margin-top: 21px;
+}
+
+.order {
+  display: flex;
+  justify-content: space-between;
+  color: #cb2551;
+  align-items: center;
+}
+
+.input {
+  width: 100%;
+}
+
+.buttonwhite {
+  width: 46%;
+  display: flex !important;
+  justify-content: space-between !important;
+  background-color: white !important;
+  color: #000929 !important;
+}
+.buttonyellow {
+  width: 46%;
+  display: flex !important;
+  justify-content: space-between !important;
+  background-color: #ecb83c !important;
+  color: #000929 !important;
+}
+
+.marginbuttons {
+  margin-top: 21px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.active {
+  margin-top: 30px !important;
+  background-color: #ecb83c !important;
+  color: #000929 !important;
+}
+
+.sort {
+  margin-right: 33px;
+  display: flex;
+  align-items: center;
+}
+.results {
+  margin-bottom: 0;
+}
+@media screen and (max-width: 600px) {
+  .searchbackground {
+    padding-left: 23px;
+    padding-right: 23px;
+  }
+  .container {
+    height: 279vh;
+  }
+}
