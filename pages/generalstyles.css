@@ -1,36 +1,37 @@
 @font-face {
-    font-family: "HelveticaNeue";
-    src: local("HelveticaNeue"),
-      url(/fonts/HelveticaNeue.ttf) format("truetype");
-  }
-  @font-face {
-    font-family: "MyriadPro-Bold";
-    src: local("MyriadPro-Bold"),
-      url(/fonts/MyriadPro-Bold.otf) format("truetype");
-  }
-  @font-face {
-    font-family: "MyriadPro-Regular";
-    src: local("MyriadPro-Regular"),
-      url(/fonts/MyriadPro-Regular.otf) format("truetype");
-  }
-  input {
-    border-radius: 50px !important;
-    border: 1px solid black !important;
-  }
-  select {
-    border-radius: 50px !important;
-    border: 1px solid black !important;
-  }
-  button {
-    border-radius: 12px !important;
-  }
-  h3 {
-    font-family: MyriadPro-Bold !important;
-    margin-bottom: auto !important;
-  }
-  h2 {
-    font-family: MyriadPro-Bold !important;
-    margin-bottom: auto !important;
-  }
-.general{  max-height: 102vh;  font-family: MyriadPro-Regular;
+  font-family: "HelveticaNeue";
+  src: local("HelveticaNeue"), url(/fonts/HelveticaNeue.ttf) format("truetype");
+}
+@font-face {
+  font-family: "MyriadPro-Bold";
+  src: local("MyriadPro-Bold"),
+    url(/fonts/MyriadPro-Bold.otf) format("truetype");
+}
+@font-face {
+  font-family: "MyriadPro-Regular";
+  src: local("MyriadPro-Regular"),
+    url(/fonts/MyriadPro-Regular.otf) format("truetype");
+}
+input {
+  border-radius: 50px !important;
+  border: 1px solid black !important;
+}
+select {
+  border-radius: 50px !important;
+  border: 1px solid black !important;
+}
+button {
+  border-radius: 12px !important;
+}
+h3 {
+  font-family: MyriadPro-Bold !important;
+  margin-bottom: auto !important;
+}
+h2 {
+  font-family: MyriadPro-Bold !important;
+  margin-bottom: auto !important;
+}
+.general {
+  max-height: 102vh;
+  font-family: MyriadPro-Regular;
 }
