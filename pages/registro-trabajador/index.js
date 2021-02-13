@@ -1,10 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
+import Link from "next/link";
 import { Button, Form, Icon, Input } from "semantic-ui-react";
-import { Employee } from "./style";
 import style from "../../styles/registroTrabajador_style.module.css";
 import { Grid } from "semantic-ui-react";
-
+import axios from "axios";
 const RegistroTrabajador = React.memo(() => {
+  const [passwordInputType, setPasswordInputType] = useState("password");
+  const [formData, setFormData] = useState({
+    names: "",
+    surname: "",
+    lastname: "",
+    email: "",
+    password: "",
+  });
+  const SetFormData = (e, { name, value }) => {
+    setFormData({ [name]: value });
+  };
+  const ChangeInputPasswordType = () => {
+    if (passwordInputType === "password") {
+      setPasswordInputType("text");
+    } else {
+      setPasswordInputType("password");
+    }
+  };
+  const SubmitForm = () => {};
   return (
     <div className={style.employeecontainer}>
       <div className={style.background}>.</div>
@@ -24,13 +43,16 @@ const RegistroTrabajador = React.memo(() => {
         <Grid.Column>
           <div className={style.containerform}>
             <Form className={style.form}>
-              <div className={style.registerleft}>
+              <div className={style.formHeader}>
                 <h3> Regístrate como trabajador</h3>
                 <p>
-                  Si lo que buscas es reclutar
-                  <a href=""> regístrate como empresa aquí</a>
+                  Si lo que buscas es reclutar{" "}
+                  <Link href="/registro-empresa" style={{ zIndex: 9899999 }}>
+                    regístrate como empresa aquí
+                  </Link>
                 </p>
               </div>
+              <div className={style.formBody}></div>
               <Grid columns={2} stackable>
                 <Grid.Column>
                   <Form.Field className={style.field}>
@@ -39,7 +61,12 @@ const RegistroTrabajador = React.memo(() => {
                 </Grid.Column>
                 <Grid.Column>
                   <Form.Field className={style.field}>
-                    <input placeholder="Apellidos" />
+                    <input placeholder="Apellido materno" />
+                  </Form.Field>
+                </Grid.Column>
+                <Grid.Column>
+                  <Form.Field className={style.field}>
+                    <input placeholder="Apellido paterno" />
                   </Form.Field>
                 </Grid.Column>
               </Grid>
@@ -52,7 +79,17 @@ const RegistroTrabajador = React.memo(() => {
               <Grid columns={2} stackable>
                 <Grid.Column>
                   <Form.Field>
-                    <Input icon="eye" placeholder="Contraseña" />
+                    <Input
+                      icon={
+                        <Icon
+                          name="eye"
+                          link
+                          onClick={ChangeInputPasswordType}
+                        />
+                      }
+                      placeholder="Contraseña"
+                      type={passwordInputType}
+                    />
                   </Form.Field>
                 </Grid.Column>
                 <Grid.Column>

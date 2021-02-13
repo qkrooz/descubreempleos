@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { MainContext } from "../public/resources/MainContext";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -14,7 +14,7 @@ const Home = React.memo(() => {
   const router = useRouter();
   const { userInfoState } = useContext(MainContext);
   const [userInfo, setUserInfo] = userInfoState;
-  React.useEffect(() => {
+  useEffect(() => {
     if (Object.keys(userInfo).length === 0) {
       router.push("/login");
     }

@@ -4,7 +4,7 @@ import "../styles/generalstyles.css";
 import "semantic-ui-css/semantic.min.css";
 
 export default function MyApp({ Component, pageProps }) {
-  const [userInfo, setUserInfo] = useState({ id: 1 });
+  const [userInfo, setUserInfo] = useState({});
   return (
     <MainContext.Provider value={{ userInfoState: [userInfo, setUserInfo] }}>
       <div suppressHydrationWarning>
