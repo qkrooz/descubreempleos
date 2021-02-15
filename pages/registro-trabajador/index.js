@@ -28,7 +28,7 @@ const RegistroTrabajador = React.memo(() => {
     <div className={style.employeecontainer}>
       <div className={style.background}>.</div>
       <Grid columns={2} stackable>
-        <Grid.Column>
+        <Grid.Column className={style.columnpadding}>
           <div>
             <img className={style.img} src="./icon-white2.png" />
             <h2 className={style.h2}>
@@ -40,20 +40,20 @@ const RegistroTrabajador = React.memo(() => {
             </p>
           </div>
         </Grid.Column>
-        <Grid.Column>
+        <Grid.Column className={style.columnpadding}>
           <div className={style.containerform}>
             <Form className={style.form}>
               <div className={style.formHeader}>
                 <h3> Regístrate como trabajador</h3>
                 <p>
                   Si lo que buscas es reclutar{" "}
-                  <Link href="/registro-empresa" style={{ zIndex: 9899999 }}>
+                  <Link href="/registro-empresa">
                     regístrate como empresa aquí
                   </Link>
                 </p>
               </div>
               <div className={style.formBody}></div>
-              <Grid columns={2} stackable>
+              <Grid columns={3} stackable>
                 <Grid.Column>
                   <Form.Field className={style.field}>
                     <input placeholder="Nombres" className={style.input} />
