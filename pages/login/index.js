@@ -1,9 +1,9 @@
 import Head from "next/head";
 import { Button, Form, Icon } from "semantic-ui-react";
-import { Link } from "@reach/router";
 import style from "../../styles/login_style.module.css";
-
+import { useRouter } from "next/router";
 export default function Login() {
+  const router = useRouter();
   return (
     <div className={style.loginstyle}>
       <img className={style.img} src="./thumbnailIconos.png" />
@@ -23,10 +23,20 @@ export default function Login() {
         <hr></hr>
         <p> ¿No tienes cuenta aún? Regístrate como</p>
         <div className={style.buttonsregister}>
-          <Button className={style.button} as={Link} to="/registro-trabajador">
+          <Button
+            className={style.button}
+            onClick={() => {
+              router.push("/registro-trabajador");
+            }}
+          >
             Trabajador
           </Button>
-          <Button className={style.button} as={Link} to="/registro-empresa">
+          <Button
+            className={style.button}
+            onClick={() => {
+              router.push("/registro-empresa");
+            }}
+          >
             Empresa
           </Button>
         </div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button, Form, Icon, Input } from "semantic-ui-react";
 import style from "../../styles/registroTrabajador_style.module.css";
@@ -13,8 +13,11 @@ const RegistroTrabajador = React.memo(() => {
     email: "",
     password: "",
   });
-  const SetFormData = (e, { name, value }) => {
-    setFormData({ [name]: value });
+  const SetFormData = (e) => {
+    let key = e.target.name;
+    let temporalObj = { ...formData };
+    temporalObj[key] = e.target.value;
+    setFormData(temporalObj);
   };
   const ChangeInputPasswordType = () => {
     if (passwordInputType === "password") {
@@ -24,6 +27,9 @@ const RegistroTrabajador = React.memo(() => {
     }
   };
   const SubmitForm = () => {};
+  useEffect(() => {
+    console.log(formData);
+  }, [formData]);
   return (
     <div className={style.employeecontainer}>
       <div className={style.background}>.</div>
@@ -42,7 +48,7 @@ const RegistroTrabajador = React.memo(() => {
         </Grid.Column>
         <Grid.Column className={style.columnpadding}>
           <div className={style.containerform}>
-            <Form className={style.form}>
+            <Form className={style.form} onSubmit={SubmitForm}>
               <div className={style.formHeader}>
                 <h3> Regístrate como trabajador</h3>
                 <p>
@@ -55,25 +61,42 @@ const RegistroTrabajador = React.memo(() => {
               <div className={style.formBody}></div>
               <Grid columns={3} stackable>
                 <Grid.Column>
-                  <Form.Field className={style.field}>
-                    <input placeholder="Nombres" className={style.input} />
+                  <Form.Field
+                    className={style.field}
+                    onChange={SetFormData}
+                    name="names"
+                  >
+                    <input
+                      placeholder="Nombres"
+                      className={style.input}
+                      name="names"
+                    />
                   </Form.Field>
                 </Grid.Column>
                 <Grid.Column>
                   <Form.Field className={style.field}>
-                    <input placeholder="Apellido materno" />
+                    <input
+                      placeholder="Apellido materno"
+                      name="surname"
+                      onChange={SetFormData}
+                    />
                   </Form.Field>
                 </Grid.Column>
                 <Grid.Column>
                   <Form.Field className={style.field}>
-                    <input placeholder="Apellido paterno" />
+                    <input
+                      placeholder="Apellido paterno"
+                      name="lastname"
+                      onChange={SetFormData}
+                    />
                   </Form.Field>
                 </Grid.Column>
               </Grid>
               <Form.Field>
                 <input
-                  placeholder="Correo electrónico
-"
+                  placeholder="Correo electrónico"
+                  name="email"
+                  onChange={SetFormData}
                 />
               </Form.Field>
               <Grid columns={2} stackable>
@@ -87,8 +110,10 @@ const RegistroTrabajador = React.memo(() => {
                           onClick={ChangeInputPasswordType}
                         />
                       }
+                      name="password"
                       placeholder="Contraseña"
                       type={passwordInputType}
+                      onChange={SetFormData}
                     />
                   </Form.Field>
                 </Grid.Column>
