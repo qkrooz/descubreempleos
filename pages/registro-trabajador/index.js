@@ -26,7 +26,9 @@ const RegistroTrabajador = React.memo(() => {
       setPasswordInputType("password");
     }
   };
-  const SubmitForm = () => {};
+  const SubmitForm = () => {
+    console.log(formData);
+  };
   useEffect(() => {
     console.log(formData);
   }, [formData]);
