@@ -26,7 +26,21 @@ const Header = React.memo(() => {
         }}
       >
         {userInfo.TYPE === "user" ? (
-          <a href="#">Inicio</a>
+          <a
+            href="#"
+            style={{
+              color: "white",
+              textDecoration: "none",
+              fontWeight: "bold",
+            }}
+          >
+            <img
+              src="./icons/home.png"
+              alt="home-icon"
+              style={{ width: "2em" }}
+            />{" "}
+            Inicio
+          </a>
         ) : userInfo.TYPE === "enterprise" ? (
           <a href="#">Estadisticas</a>
         ) : null}
