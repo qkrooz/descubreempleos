@@ -1,11 +1,5 @@
-import Head from "next/head";
-export default function Login() {
-  return (
-    <div>
-      <Head></Head>
-      <main>
-        <h1>Main</h1>
-      </main>
-    </div>
-  );
-}
+import React from "react";
+const Login = React.memo(() => {
+  return <>Aqui iniciamos sesion</>;
+});
+export default Blog;

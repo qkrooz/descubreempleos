@@ -1,26 +1,21 @@
-import React, { useContext } from "react";
-import { MainContext } from "../public/resources/MainContext";
-import Head from "next/head";
-import { useRouter } from "next/router";
-const Home = React.memo(() => {
-  const router = useRouter();
-  const { userInfoState } = useContext(MainContext);
-  const [userInfo, setUserInfo] = userInfoState;
-  React.useEffect(() => {
-    if (Object.keys(userInfo).length === 0) {
-      router.push("/login");
-    }
-  }, []);
+import React from "react";
+import Link from "next/link";
+import { MemoryRouter as Router, Switch, Route } from "react-router-dom";
+// components
+import Header from "./_api/components/Header";
+import Footer from "./_api/components/Footer";
+// screens
+const Index = React.memo(() => {
   return (
-    <div>
-      <Head>
-        <title>Descubre | Inicio</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <main>
-        <h1>Main</h1>
-      </main>
-    </div>
+    <Router>
+      <Header />
+      <span>Esto es Index</span>
+      <Link href="/login">Ir a iniciar sesion</Link>
+      <Link href="/blog">Ir al Blog</Link>
+      <Link href="/descubre">Ir al portal descubre</Link>
+      <Switch></Switch>
+      <Footer />
+    </Router>
   );
 });
-export default Home;
+export default Index;
