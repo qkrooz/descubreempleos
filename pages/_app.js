@@ -1,12 +1,42 @@
-import { useState } from "react";
-import { MainContext } from "../public/resources/MainContext.js";
+import { useState, useEffect } from "react";
+import { MainContext } from "./components/resources/MainContext.js";
+import { useRouter } from "next/router";
 import "../styles/generalstyles.css";
 import "semantic-ui-css/semantic.min.css";
-
+import axios from "axios";
 export default function MyApp({ Component, pageProps }) {
+  const router = useRouter();
+
   const [userInfo, setUserInfo] = useState({});
+  // functions
+  const SubmitLoginForm = (data) => {
+    axios
+      .post(
+        `http://165.227.57.231/webServices/apis/descubrempleos/login.php`,
+        data
+      )
+      .then((response) => setUserInfo(response.data.userInfo[0]))
+      .catch((error) => console.log(error));
+  };
+  // effects
+  useEffect(() => {
+    if (Object.keys(userInfo).length === 0) {
+      router.push("/login");
+    } else {
+      router.push("/");
+    }
+  }, [userInfo]);
+  useEffect(() => {
+    console.log(userInfo);
+  }, [userInfo]);
   return (
-    <MainContext.Provider value={{ userInfoState: [userInfo, setUserInfo] }}>
+    <MainContext.Provider
+      value={{
+        userInfoState: [userInfo, setUserInfo],
+        // functions
+        SubmitLoginForm: SubmitLoginForm,
+      }}
+    >
       <div suppressHydrationWarning>
         {typeof window === "undefined" ? null : <Component {...pageProps} />}
       </div>

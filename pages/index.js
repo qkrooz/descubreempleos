@@ -1,7 +1,5 @@
-import React, { useContext, useState, useEffect } from "react";
-import { MainContext } from "../public/resources/MainContext";
+import React, { useState } from "react";
 import Head from "next/head";
-import { useRouter } from "next/router";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { FooterContainer } from "./components/footer";
 import InicioComponent from "./inicio";
@@ -11,17 +9,7 @@ import header from "../styles/header.module.css";
 import { Button, Grid, Input } from "semantic-ui-react";
 
 const Home = React.memo(() => {
-  const router = useRouter();
-  const { userInfoState } = useContext(MainContext);
-  const [userInfo, setUserInfo] = userInfoState;
-  useEffect(() => {
-    if (Object.keys(userInfo).length === 0) {
-      router.push("/login");
-    }
-  }, []);
-
   const [show, setShow] = useState(false);
-
   const chat = () => {
     document.getElementById("myForm").style.display = "block";
   };

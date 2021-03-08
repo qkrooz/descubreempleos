@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { MainContext } from "../components/resources/MainContext";
 import Head from "next/head";
 import { Button, Form, Icon, Input } from "semantic-ui-react";
 import style from "../../styles/login_style.module.css";
 import { useRouter } from "next/router";
 export default function Login() {
+  const { SubmitLoginForm } = useContext(MainContext);
   const router = useRouter();
   const [passwordInputType, setPasswordInputType] = useState("password");
   const [formData, setFormData] = useState({
@@ -23,16 +25,18 @@ export default function Login() {
       setPasswordInputType("password");
     }
   };
-  const SubmitForm = () => {
-    console.log(formData);
-  };
   return (
     <div className={style.loginstyle}>
       <img className={style.img} src="./thumbnailIconos.png" />
       <Head>
         <title>Iniciar sesión</title>
       </Head>
-      <Form className={style.form} onSubmit={SubmitForm}>
+      <Form
+        className={style.form}
+        onSubmit={() => {
+          SubmitLoginForm(formData);
+        }}
+      >
         <Form.Field>
           <input
             placeholder="Correo electrónico"
