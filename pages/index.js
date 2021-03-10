@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import Head from "next/head";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import { FooterContainer } from "./_api/components/Footer";
-
-import header from "../styles/header.module.css";
-import { Button, Grid, Input } from "semantic-ui-react";
+import { MemoryRouter as Router, Switch, Route } from "react-router-dom";
 // screens
 import InicioComponent from "./_api/screens/Inicio";
 import BusquedaComponent from "./_api/screens/Explore";
