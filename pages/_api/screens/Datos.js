@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, Checkbox, Grid, Icon } from "semantic-ui-react";
-import style from "../../styles/datos.module.css";
+import style from "../../../styles/datos.module.css";
 import { PlusCircleOutlined } from "@ant-design/icons";
 
 export default function DatoComponent() {

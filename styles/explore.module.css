@@ -1,11 +1,7 @@
 .searchbackground {
   background-color: #000929;
   color: white;
-  margin-top: -32px;
-  padding-top: 20px;
-  padding-bottom: 20px;
-  padding-left: 203px;
-  padding-right: 203px;
+  padding: 2% 3%;
 }
 .container {
   width: 94%;

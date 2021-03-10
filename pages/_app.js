@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { MainContext } from "./components/resources/MainContext.js";
+import { MainContext } from "./_api/resources/MainContext.js";
 import { useRouter } from "next/router";
 import "../styles/generalstyles.css";
 import "semantic-ui-css/semantic.min.css";
@@ -15,7 +15,9 @@ export default function MyApp({ Component, pageProps }) {
         `http://165.227.57.231/webServices/apis/descubrempleos/login.php`,
         data
       )
-      .then((response) => setUserInfo(response.data.userInfo[0]))
+      .then(({ data }) => {
+        data.code === 200 ? setUserInfo(data.userInfo[0]) : setUserInfo({});
+      })
       .catch((error) => console.log(error));
   };
   // effects

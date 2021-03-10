@@ -1,7 +1,7 @@
 import { Collapse } from "antd";
 import React from "react";
 import { Card, Grid } from "semantic-ui-react";
-import style from "../../styles/inicio.module.css";
+import style from "../../../styles/inicio.module.css";
 import "antd/dist/antd.css";
 import { CaretRightOutlined } from "@ant-design/icons";
 

@@ -1,25 +1,49 @@
 .container {
-  width: 100%;
+  width: 100vw;
   background-color: #c40033;
   color: white;
-  padding: 10px;
-  margin-bottom: 32px;
-  padding-top: 0px;
-  padding-bottom: 1px;
 }
-.logo {
-  width: 346px;
-  margin-top: -100px;
-  margin-bottom: -100px;
+.containerInner {
+  padding: 0 0.5em;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+.logoContainer > a {
+  margin: 0;
+  color: white;
+  font-size: 3em;
 }
 .icon {
-  width: 46px;
+  width: 3em;
   cursor: pointer;
+}
+.linkContainer {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 25%;
+  display: flex;
+  justify-content: space-between;
 }
 .link {
   color: white;
   font-weight: bold;
   font-size: 22px;
+}
+.navButtonsContainer {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+.navButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.navButton:focus {
+  outline: none;
 }
 .navContainer {
   align-items: center;
