@@ -17,16 +17,16 @@ import {
 import axios from "axios";
 const RegistroTrabajador = React.memo(() => {
   const route = useRouter();
-  const [passwordInputType, setPasswordInputType] = useState("password");
+  const [passwordInputType, setPasswordInputType] = useState("PASSWORD");
   const [retroModalVisibility, setRetroModalVisibility] = useState(false);
   const [retroModal2Visibility, setRetroModal2Visibility] = useState(false);
   const [formData, setFormData] = useState({
-    names: "",
-    lastname: "",
-    mothersLastname: "",
-    email: "",
-    password: "",
-    password2: "",
+    NAMES: "",
+    LAST_NAME: "",
+    MOTHERS_LAST_NAME: "",
+    EMAIL: "",
+    PASSWORD: "",
+    PASSWORD2: "",
   });
   const [errors, setErrors] = useState({
     empty: false,
@@ -38,28 +38,28 @@ const RegistroTrabajador = React.memo(() => {
     setFormData({ ...formData, [e.target.name]: e.target.value.toLowerCase() });
   };
   const ChangeInputPasswordType = () => {
-    if (passwordInputType === "password") {
+    if (passwordInputType === "PASSWORD") {
       setPasswordInputType("text");
     } else {
-      setPasswordInputType("password");
+      setPasswordInputType("PASSWORD");
     }
   };
   const SubmitForm = () => {
     if (
-      formData.names !== "" &&
-      formData.lastname !== "" &&
-      formData.mothersLastname !== "" &&
-      formData.email !== "" &&
-      formData.password !== "" &&
-      formData.password2 !== ""
+      formData.NAMES !== "" &&
+      formData.LAST_NAME !== "" &&
+      formData.MOTHERS_LAST_NAME !== "" &&
+      formData.EMAIL !== "" &&
+      formData.PASSWORD !== "" &&
+      formData.PASSWORD2 !== ""
     ) {
       setErrors({ ...errors, empty: false });
       let regex = /\d/;
-      if (regex.test(formData.password) && regex.test(formData.password2)) {
+      if (regex.test(formData.PASSWORD) && regex.test(formData.PASSWORD2)) {
         setErrors({ ...errors, passwordContainsNumber: false });
-        if (formData.password.length > 8) {
+        if (formData.PASSWORD.length > 8) {
           setErrors({ ...errors, password8characters: false });
-          if (formData.password === formData.password2) {
+          if (formData.PASSWORD === formData.PASSWORD2) {
             setErrors({
               empty: false,
               passwordContainsNumber: false,
@@ -67,7 +67,7 @@ const RegistroTrabajador = React.memo(() => {
               passwordEqual: false,
             });
             axios
-              .post(`${apiRoute}/userExists.php`, { email: formData.email })
+              .post(`${apiRoute}/userExists.php`, { EMAIL: formData.EMAIL })
               .then(({ data }) => {
                 console.log(data);
                 if (data.code === 200) {
@@ -130,7 +130,7 @@ const RegistroTrabajador = React.memo(() => {
                     <input
                       placeholder="Nombres"
                       className={style.input}
-                      name="names"
+                      name="NAMES"
                     />
                   </Form.Field>
                 </Grid.Column>
@@ -138,7 +138,7 @@ const RegistroTrabajador = React.memo(() => {
                   <Form.Field className={style.field}>
                     <input
                       placeholder="Apellido paterno"
-                      name="lastname"
+                      name="LAST_NAME"
                       onChange={SetFormData}
                     />
                   </Form.Field>
@@ -147,7 +147,7 @@ const RegistroTrabajador = React.memo(() => {
                   <Form.Field className={style.field}>
                     <input
                       placeholder="Apellido materno"
-                      name="mothersLastname"
+                      name="MOTHERS_LAST_NAME"
                       onChange={SetFormData}
                     />
                   </Form.Field>
@@ -156,7 +156,7 @@ const RegistroTrabajador = React.memo(() => {
               <Form.Field>
                 <input
                   placeholder="Correo electrónico"
-                  name="email"
+                  name="EMAIL"
                   onChange={SetFormData}
                 />
               </Form.Field>
@@ -171,7 +171,7 @@ const RegistroTrabajador = React.memo(() => {
                           onClick={ChangeInputPasswordType}
                         />
                       }
-                      name="password"
+                      name="PASSWORD"
                       placeholder="Contraseña"
                       type={passwordInputType}
                       onChange={SetFormData}
@@ -186,7 +186,7 @@ const RegistroTrabajador = React.memo(() => {
                           onClick={ChangeInputPasswordType}
                         />
                       }
-                      name="password2"
+                      name="PASSWORD2"
                       placeholder="Repite contraseña"
                       type={passwordInputType}
                       onChange={SetFormData}
@@ -250,7 +250,7 @@ const RegistroTrabajador = React.memo(() => {
               Hemos enviado un correo electrónico de confirmación al correo:
             </span>
             <br />
-            <span style={{ fontWeight: "bold" }}>{formData.email}</span>
+            <span style={{ fontWeight: "bold" }}>{formData.EMAIL}</span>
           </ModalBody>
           <ModalFooter>
             <Button
