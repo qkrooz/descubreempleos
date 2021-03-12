@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { MainContext } from "../_api/resources/MainContext";
 import Link from "next/link";
 import { Button, Form, Icon, Input } from "semantic-ui-react";
 import style from "../../styles/registroTrabajador_style.module.css";
@@ -16,6 +17,8 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 const RegistroTrabajador = React.memo(() => {
+  const { userInfoState } = useContext(MainContext);
+  const [, setUserInfo] = userInfoState;
   const route = useRouter();
   const [passwordInputType, setPasswordInputType] = useState("PASSWORD");
   const [retroModalVisibility, setRetroModalVisibility] = useState(false);
@@ -66,10 +69,10 @@ const RegistroTrabajador = React.memo(() => {
               password8characters: false,
               passwordEqual: false,
             });
+            console.log("aqui llego");
             axios
               .post(`${apiRoute}/userExists.php`, { EMAIL: formData.EMAIL })
               .then(({ data }) => {
-                console.log(data);
                 if (data.code === 200) {
                   setRetroModal2Visibility(true);
                 } else {
@@ -77,7 +80,13 @@ const RegistroTrabajador = React.memo(() => {
                   setRetroModalVisibility(true);
                   axios
                     .post(`${apiRoute}/register.php`, formData)
-                    .then(({ data }) => console.log(data))
+                    .then(({ data }) => {
+                      if (data.code === 200) {
+                        setTimeout(() => {
+                          setUserInfo(data.userInfo);
+                        }, 2000);
+                      }
+                    })
                     .catch((error) => console.log(error));
                 }
               })
@@ -243,25 +252,21 @@ const RegistroTrabajador = React.memo(() => {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Confirmar correo electrónico</ModalHeader>
+          <ModalHeader>¡Registro exitoso!</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <span>
-              Hemos enviado un correo electrónico de confirmación al correo:
-            </span>
-            <br />
-            <span style={{ fontWeight: "bold" }}>{formData.EMAIL}</span>
+            <span>Serás redireccionado a la página principal en breve.</span>
           </ModalBody>
           <ModalFooter>
             <Button
               mr={3}
-              onClose={() => {
+              onClick={() => {
                 setRetroModalVisibility(false);
+                setFormData({});
               }}
             >
-              Close
+              Cerrar
             </Button>
-            <Button variant="ghost">Secondary Action</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

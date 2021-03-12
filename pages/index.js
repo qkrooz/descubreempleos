@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { MainContext } from "./_api/resources/MainContext";
 import Head from "next/head";
 import { MemoryRouter as Router, Switch, Route } from "react-router-dom";
 // screens
@@ -6,8 +7,10 @@ import InicioComponent from "./_api/screens/Inicio";
 import BusquedaComponent from "./_api/screens/Explore";
 import DatoComponent from "./_api/screens/Datos";
 // components
-import Header from "./_api/components/Header";
+import Header, { EnterpriseHeader } from "./_api/components/Header";
 const Home = React.memo(() => {
+  const { userInfoState } = useContext(MainContext);
+  const [userInfo] = userInfoState;
   const [show, setShow] = useState(false);
   const chat = () => {
     document.getElementById("myForm").style.display = "block";
@@ -27,7 +30,7 @@ const Home = React.memo(() => {
       <Head>
         <title>Descubre | Inicio</title>
       </Head>
-      <Header />
+      {userInfo.USER_TYPE === "trabajador" ? <Header /> : <EnterpriseHeader />}
       {/* <header className={header.container}>
         <Grid columns={3} stackable>
           <Grid.Column>
@@ -178,9 +181,15 @@ const Home = React.memo(() => {
         )}
       </header> */}
       <Switch>
-        <Route exact path="/" component={InicioComponent} />
-        <Route path="/search" component={BusquedaComponent}></Route>
-        <Route path="/data" component={DatoComponent} />
+        {userInfo.USER_TYPE === "trabajador" ? (
+          <>
+            <Route exact path="/" component={InicioComponent} />
+            <Route path="/search" component={BusquedaComponent}></Route>
+            <Route path="/data" component={DatoComponent} />
+          </>
+        ) : (
+          <></>
+        )}
       </Switch>
     </Router>
   );

@@ -31,6 +31,8 @@
   color: white;
   font-weight: bold;
   font-size: 22px;
+  display: flex;
+  align-items: center;
 }
 .navButtonsContainer {
   display: flex;

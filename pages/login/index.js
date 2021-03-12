@@ -1,10 +1,10 @@
-import { useState, useContext } from "react";
+import React, { useState, useContext } from "react";
 import { MainContext } from "../_api/resources/MainContext";
 import Head from "next/head";
 import { Button, Form, Icon, Input } from "semantic-ui-react";
 import style from "../../styles/login_style.module.css";
 import { useRouter } from "next/router";
-export default function Login() {
+const Login = React.memo(() => {
   const { SubmitLoginForm } = useContext(MainContext);
   const router = useRouter();
   const [passwordInputType, setPasswordInputType] = useState("password");
@@ -85,4 +85,5 @@ export default function Login() {
       </p>
     </div>
   );
-}
+});
+export default Login;
