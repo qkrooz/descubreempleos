@@ -24,9 +24,11 @@
   text-align: left;
   margin-bottom: 15px;
 }
+.textleft > a {
+  color: rgb(51, 164, 230);
+}
 .textleft1 {
   text-align: left;
-  margin-top: 15px;
   margin-bottom: auto;
 }
 .process {
@@ -35,10 +37,26 @@
 }
 .photo {
   width: 163px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   background: #bfc1c8;
   margin: 0 auto;
   text-align: center;
   padding: 10px;
+}
+.inputContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.formInput {
+  outline: none;
+  padding: 0.5em;
+  height: auto;
+  height: 3em;
+  border-radius: 10px !important;
 }
 .input {
   display: none;
@@ -72,6 +90,7 @@
 }
 .ul {
   text-align: left;
+  margin-left: 1em;
 }
 
 @media screen and (max-width: 600px) {
