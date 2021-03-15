@@ -3,12 +3,14 @@
   width: 100%;
 }
 .left {
-  width: 25%;
+  width: auto;
   padding-left: 2em;
   padding-top: 2em;
+  padding-bottom: 2em;
 }
 .rigth {
   flex-grow: 1;
+  padding: 2em;
 }
 .card {
   width: 100% !important;
@@ -19,6 +21,8 @@
 }
 .h3 {
   margin-bottom: 1em !important;
+  display: flex;
+  align-items: center;
 }
 .edit {
   right: 11px;
@@ -29,4 +33,29 @@
   .container {
     height: 162vh;
   }
+}
+
+/* personal */
+.personalLabel {
+  font-weight: bold;
+  font-size: 1.1em;
+}
+.personalTbody > tr > td:first-child {
+  text-align: end;
+}
+
+/* secondary */
+.dataCardHeader {
+  display: flex;
+  align-items: center;
+  padding: 0.5em;
+}
+.dataCardHeader > h1 {
+  margin: 0 !important;
+  font-size: 1.2em !important;
+}
+.enableEditButton {
+  background: none;
+  border: none;
+  cursor: pointer;
 }
