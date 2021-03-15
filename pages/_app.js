@@ -10,15 +10,7 @@ export default function MyApp({ Component, pageProps }) {
   const router = useRouter();
   // states
   const [userInfo, setUserInfo] = useState({});
-  // functions
-  const SubmitLoginForm = (data) => {
-    axios
-      .post(`${apiRoute}/login.php`, data)
-      .then(({ data }) => {
-        data.code === 200 ? setUserInfo(data.userInfo[0]) : setUserInfo({});
-      })
-      .catch((error) => console.log(error));
-  };
+  const [secondaryInfo, setSecondaryInfo] = useState({});
   // effects
   useEffect(() => {
     if (Object.keys(userInfo).length === 0) {
@@ -32,8 +24,8 @@ export default function MyApp({ Component, pageProps }) {
       <MainContext.Provider
         value={{
           userInfoState: [userInfo, setUserInfo],
+          secondaryInfoState: [secondaryInfo, setSecondaryInfo],
           // functions
-          SubmitLoginForm: SubmitLoginForm,
         }}
       >
         <div suppressHydrationWarning>

@@ -1,31 +1,25 @@
 import React from "react";
-import { Grid, Icon } from "semantic-ui-react";
+import { Icon } from "semantic-ui-react";
 import footer from "../../../styles/footer.module.css";
-
-export const FooterContainer = () => {
+const Footer = React.memo(() => {
   return (
-    <div>
-      <footer className={footer.container}>
-        <Grid columns={"equal"} stackable>
-          <Grid.Column width={10}>
-            <h3 className={footer.h3}>
-              Acerca de nosotros | Términos y condiciones | Politica de
-              privacidad | Contáctanos
-            </h3>
-            <h4 className={footer.h4}>
-              <Icon className="copyright outline"></Icon>Todos los derechos
-              reservados - Descubre Sa. de CV.
-            </h4>
-          </Grid.Column>
-          <Grid.Column>
-            <div className={footer.floatimg}>
-              <img src="/icon-facebook-blue.png" className={footer.icon}></img>
-              <img src="/icon-youtube-white.png" className={footer.icon}></img>
-              <img src="/icon-twitter-blue.png" className={footer.icon}></img>
-            </div>
-          </Grid.Column>
-        </Grid>
-      </footer>
-    </div>
+    <footer className={footer.container}>
+      <div>
+        <h3 className={footer.h3}>
+          Acerca de nosotros | Términos y condiciones | Politica de privacidad |
+          Contáctanos
+        </h3>
+        <h4 className={footer.h4}>
+          <Icon className="copyright outline" />
+          Todos los derechos reservados - Descubre Sa. de CV.
+        </h4>
+      </div>
+      <div className={footer.iconsContainer}>
+        <Icon name="facebook" size="big" style={{ marginRight: "1em" }} />
+        <Icon name="youtube" size="big" style={{ marginRight: "1em" }} />
+        <Icon name="twitter" size="big" />
+      </div>
+    </footer>
   );
-};
+});
+export default Footer;

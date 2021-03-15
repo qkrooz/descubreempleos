@@ -1,17 +1,45 @@
 import React, { useState, useContext } from "react";
 import { MainContext } from "../_api/resources/MainContext";
+import apiRoute from "../_api/resources/apiRoute";
 import Head from "next/head";
 import { Button, Form, Icon, Input } from "semantic-ui-react";
 import style from "../../styles/login_style.module.css";
 import { useRouter } from "next/router";
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalCloseButton,
+} from "@chakra-ui/react";
+import axios from "axios";
 const Login = React.memo(() => {
-  const { SubmitLoginForm } = useContext(MainContext);
+  const [userDontExistsModal, setDontUserExistsModal] = useState(false);
+  const { userInfoState, secondaryInfoState } = useContext(MainContext);
+  const [, setUserInfo] = userInfoState;
+  const [, setSecondaryInfo] = secondaryInfoState;
   const router = useRouter();
   const [passwordInputType, setPasswordInputType] = useState("password");
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+  const SubmitLoginForm = (data) => {
+    axios
+      .post(`${apiRoute}/login.php`, data)
+      .then(({ data }) => {
+        if (data.code === 200) {
+          setUserInfo(data.userInfo);
+          setSecondaryInfo(data.secondaryInfo);
+        } else {
+          setDontUserExistsModal(true);
+          setUserInfo({});
+          setSecondaryInfo({});
+        }
+      })
+      .catch((error) => console.log(error));
+  };
   const SetFormData = (e) => {
     let key = e.target.name;
     let temporalObj = { ...formData };
@@ -83,6 +111,21 @@ const Login = React.memo(() => {
         <Icon className="copyright outline"></Icon> Todos los derechos
         reservados - Descubre Sa. de CV
       </p>
+      <Modal
+        isOpen={userDontExistsModal}
+        onClose={() => {
+          setDontUserExistsModal(false);
+        }}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Este usuario no existe</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody style={{ marginBottom: "1em" }}>
+            <span>Usuario no registrado</span>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </div>
   );
 });

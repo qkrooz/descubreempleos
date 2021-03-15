@@ -1,17 +1,17 @@
 .container {
   background-color: #c40033;
   color: white;
-  padding-left: 21px;
-  padding-right: 21px;
   width: 100%;
-  padding-top: 20px;
-  padding-bottom: 15px;
+  padding: 1em;
+  display: flex;
 }
 .icon {
   width: 69px;
 }
-.floatimg {
-  float: right;
+.iconsContainer {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
 }
 .h3 {
   color: white !important;

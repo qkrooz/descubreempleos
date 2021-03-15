@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState, useContext } from "react";
+import { MainContext } from "../_api/resources/MainContext";
 import Head from "next/head";
 import Link from "next/link";
 import apiRoute from "../_api/resources/apiRoute";
@@ -7,7 +8,21 @@ import style from "../../styles/registroEmpresa_style.module.css";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+} from "@chakra-ui/react";
+import { useRouter } from "next/router";
 const RegistroEmpresa = React.memo(() => {
+  const route = useRouter();
+  const [userExistsModal, setUserExistsModal] = useState(false);
+  const { userInfoState } = useContext(MainContext);
+  const [, setUserInfo] = userInfoState;
   const ValidationSchema = Yup.object().shape({
     NAMES: Yup.string().required("Required"),
     LAST_NAME: Yup.string().required("Required"),
@@ -27,13 +42,21 @@ const RegistroEmpresa = React.memo(() => {
     axios
       .post(`${apiRoute}/userExists.php`, { EMAIL: values.EMAIL })
       .then(({ data }) => {
-        data.code === 200 ? RegisterCompany(values) : null;
+        data.code !== 200 ? RegisterCompany(values) : setUserExistsModal(true);
         return response;
       })
       .catch((error) => error);
   };
   const RegisterCompany = (values) => {
-    console.log(values);
+    values["USER_TYPE"] = "empresa";
+    axios
+      .post(`${apiRoute}/register.php`, values)
+      .then(({ data }) => {
+        setUserInfo(data.userInfo);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
   return (
     <>
@@ -225,6 +248,31 @@ const RegistroEmpresa = React.memo(() => {
           reservados - Descubre Sa. de CV.
         </p>
       </div>
+      <Modal
+        isOpen={userExistsModal}
+        onClose={() => {
+          setUserExistsModal(false);
+        }}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Usuario registrado</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <span>Este usuario ya existe</span>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              mr={3}
+              onClick={() => {
+                route.push("/login");
+              }}
+            >
+              Ir al inicio de sesion
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   );
 });

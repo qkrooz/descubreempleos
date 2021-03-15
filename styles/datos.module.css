@@ -1,3 +1,15 @@
+.container {
+  display: flex;
+  width: 100%;
+}
+.left {
+  width: 25%;
+  padding-left: 2em;
+  padding-top: 2em;
+}
+.rigth {
+  flex-grow: 1;
+}
 .card {
   width: 100% !important;
 }
@@ -5,44 +17,12 @@
   width: 100% !important;
   margin-bottom: 41px !important;
 }
-.profilecontainer {
-  text-align: center;
-}
-.profile {
-  width: 219px;
-  height: 219px;
-  -moz-border-radius: 50px;
-  border-radius: 108px;
-  margin-top: 25px;
-  margin-bottom: 23px;
-}
 .h3 {
-  margin-bottom: 10px !important;
+  margin-bottom: 1em !important;
 }
-.linkcv {
-  color: #1098ff;
-  text-decoration: underline;
-  font-weight: bold;
-}
-.yellowtext {
-  color: #c1c4cc;
-  margin-right: 10px;
-}
-.container {
-  width: 94%;
-  margin: 0 auto;
-  height: 79vh;
-}
-
 .edit {
   right: 11px;
   position: absolute;
-}
-.flextoggle {
-  margin-top: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 @media screen and (max-width: 600px) {

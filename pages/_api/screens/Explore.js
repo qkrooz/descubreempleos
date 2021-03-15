@@ -1,7 +1,8 @@
 import React from "react";
 import { Button, Card, Grid, Icon, Input } from "semantic-ui-react";
 import explore from "../../../styles/explore.module.css";
-
+// components
+import Footer from "../components/Footer";
 export default function BusquedaComponent() {
   return (
     <>
@@ -186,6 +187,7 @@ export default function BusquedaComponent() {
           </Grid.Column>
         </Grid>
       </div>
+      <Footer />
     </>
   );
 }

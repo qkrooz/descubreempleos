@@ -78,13 +78,14 @@ const RegistroTrabajador = React.memo(() => {
                 } else {
                   setRetroModal2Visibility(false);
                   setRetroModalVisibility(true);
+                  formData["USER_TYPE"] = "trabajador";
                   axios
                     .post(`${apiRoute}/register.php`, formData)
                     .then(({ data }) => {
                       if (data.code === 200) {
                         setTimeout(() => {
                           setUserInfo(data.userInfo);
-                        }, 2000);
+                        }, 1000);
                       }
                     })
                     .catch((error) => console.log(error));
