@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { MainContext } from "../resources/MainContext";
 import { Card, Icon } from "semantic-ui-react";
 import { Formik, Form, Field } from "formik";
+import moment from "moment";
 import * as Yup from "yup";
 import {
   Modal,
@@ -338,13 +339,29 @@ const Datos = React.memo(() => {
   );
 });
 const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
+  const [years, setYears] = useState([]);
+  const [days, setDays] = useState();
+  const [selectedYear, setSelectedYear] = useState(moment(new Date()).year());
+  const [selectedMonth, setSelectedMonth] = useState("01");
+  const [selectedDay, setSelectedDay] = useState("01");
   const [habilities, setHabilities] = useState([]);
   const { userInfoState, secondaryInfoState } = useContext(MainContext);
   const [userInfo] = userInfoState;
   const [secondaryInfo] = secondaryInfoState;
   useEffect(() => {
     setHabilities(secondaryInfo.HABILIDADES);
+    let years = [];
+    let limit = moment(new Date()).year() - 80;
+    for (let i = moment(new Date()).year(); i > limit; i--) {
+      years.push(i);
+    }
+    setYears(years);
   }, []);
+  useEffect(() => {
+    setDays(
+      moment(`${selectedYear},${selectedMonth}`, "YYYY-MM").daysInMonth()
+    );
+  }, [selectedYear, selectedMonth]);
   return (
     <Formik
       initialValues={{
@@ -373,8 +390,58 @@ const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
             <ModalCloseButton />
             <ModalBody>
               <Form id="modal2Form">
-                <div>
+                <div style={{ display: "flex", flexDirection: "column" }}>
                   <span>Fecha de nacimiento</span>
+                  <div>
+                    <select
+                      aria-label="Año"
+                      onChange={(e) => setSelectedYear(e.target.value)}
+                    >
+                      {years.map((key) => (
+                        <option key={key} value={key}>
+                          {key}
+                        </option>
+                      ))}
+                    </select>
+                    <select
+                      aria-label="Año"
+                      onChange={(e) => setSelectedMonth(e.target.value)}
+                    >
+                      <option value="01">Enero</option>
+                      <option value="02">Febrero</option>
+                      <option value="03">Marzo</option>
+                      <option value="04">Abril</option>
+                      <option value="05">Mayo</option>
+                      <option value="06">Junio</option>
+                      <option value="07">Julio</option>
+                      <option value="08">Agosto</option>
+                      <option value="09">Septiembre</option>
+                      <option value="10">Octubre</option>
+                      <option value="11">Noviembre</option>
+                      <option value="12">Diciembre</option>
+                    </select>
+                    <select>
+                      {Array(days)
+                        .fill(0)
+                        .map((_, i) => (
+                          <option
+                            key={(i + 1).toLocaleString("en-US", {
+                              minimumIntegerDigits: 2,
+                              useGrouping: false,
+                            })}
+                            value={(i + 1).toLocaleString("en-US", {
+                              minimumIntegerDigits: 2,
+                              useGrouping: false,
+                            })}
+                          >
+                            {(i + 1).toLocaleString("en-US", {
+                              minimumIntegerDigits: 2,
+                              useGrouping: false,
+                            })}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
                 </div>
               </Form>
             </ModalBody>
