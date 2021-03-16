@@ -15,6 +15,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { Field, Form, Formik } from "formik";
+import * as Yup from "yup";
 const UserCard = React.memo(() => {
   // states
   const [userImgError, setUserImgError] = useState(false);
@@ -45,9 +46,6 @@ const UserCard = React.memo(() => {
       ? setDisponibleState(1)
       : setDisponibleState(0);
   }, [secondaryInfo]);
-  useEffect(() => {
-    console.log(secondaryInfo);
-  }, [secondaryInfo]);
   return (
     <>
       <Card className={style.profileContainer}>
@@ -76,8 +74,8 @@ const UserCard = React.memo(() => {
           className={style.h3}
           style={{ textTransform: "capitalize" }}
         >{`${userInfo.NAMES} ${userInfo.LAST_NAME} ${userInfo.MOTHERS_LAST_NAME}`}</h3>
-        {userInfo.TITLE ? (
-          <h3 className={style.h3}>{userInfo.TITLE}</h3>
+        {secondaryInfo.TITULO ? (
+          <h3 className={style.h3}>{secondaryInfo.TITULO}</h3>
         ) : (
           <h3
             className={style.h3}
@@ -97,22 +95,67 @@ const UserCard = React.memo(() => {
           />
         </div>
       </Card>
+      <Modal1
+        editModalVisibility={editModalVisibility}
+        userImgError={userImgError}
+        setEditModalVisibility={setEditModalVisibility}
+      />
+    </>
+  );
+});
+const Modal1 = React.memo(
+  ({ editModalVisibility, userImgError, setEditModalVisibility }) => {
+    const RetroError = () => {
+      return (
+        <span style={{ color: "red", fontSize: "0.8em" }}>Requerido*</span>
+      );
+    };
+    const validationSchema = Yup.object().shape({
+      NAMES: Yup.string().required(),
+      LAST_NAME: Yup.string().required(),
+    });
+    const { userInfoState, secondaryInfoState } = useContext(MainContext);
+    const [userInfo, setUserInfo] = userInfoState;
+    const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
+    return (
       <Formik
+        validationSchema={validationSchema}
         initialValues={{
-          NAMES:
-            userInfo.NAMES.charAt(0).toUpperCase() + userInfo.NAMES.slice(1),
-          LAST_NAME:
-            userInfo.LAST_NAME.charAt(0).toUpperCase() +
-            userInfo.LAST_NAME.slice(1),
-          MOTHERS_LAST_NAME:
-            userInfo.MOTHERS_LAST_NAME.charAt(0).toUpperCase() +
-            userInfo.MOTHERS_LAST_NAME.slice(1),
-          TITULO: secondaryInfo.TITULO
-            ? secondaryInfo.TITULO.charAt(0).toUpperCase() +
-              secondaryInfo.TITULO.slice(1)
-            : "",
+          NAMES: userInfo.NAMES,
+          LAST_NAME: userInfo.LAST_NAME,
+          MOTHERS_LAST_NAME: userInfo.MOTHERS_LAST_NAME,
+          TITULO: secondaryInfo.TITULO ? secondaryInfo.TITULO : "",
         }}
-        onSubmit={(values) => console.log(values)}
+        onSubmit={(values) => {
+          if (
+            values.NAME === userInfo.NAME &&
+            values.LAST_NAME === userInfo.LAST_NAME &&
+            values.MOTHERS_LAST_NAME === userInfo.MOTHERS_LAST_NAME &&
+            values.TITULO === secondaryInfo.TITULO
+          ) {
+            setEditModalVisibility(!editModalVisibility);
+          } else {
+            values["ID"] = parseInt(userInfo.ID);
+            axios
+              .post(`${apiRoute}/updatePrimaryInfo.php`, values)
+              .then(({ data }) => {
+                if (data.code === 200) {
+                  let userInfoCopy = { ...userInfo };
+                  let secondaryInfoCopy = { ...secondaryInfo };
+                  userInfoCopy.NAMES = values.NAMES.toLowerCase();
+                  userInfoCopy.LAST_NAME = values.LAST_NAME.toLowerCase();
+                  userInfoCopy.MOTHERS_LAST_NAME = values.MOTHERS_LAST_NAME.toLowerCase();
+                  secondaryInfoCopy.TITULO = values.TITULO.toLowerCase();
+                  setUserInfo(userInfoCopy);
+                  setSecondaryInfo(secondaryInfoCopy);
+                  setEditModalVisibility(false);
+                } else {
+                  console.log("ocurrio un error");
+                }
+              })
+              .catch((error) => console.log(error));
+          }
+        }}
       >
         {({ values, handleChange, errors, handleBlur }) => (
           <>
@@ -152,7 +195,11 @@ const UserCard = React.memo(() => {
                         <Icon name="user" size="huge" color="grey" />
                       </div>
                     )}
-                    <Form style={{ display: "flex", flexDirection: "column" }}>
+                    <Form
+                      style={{ display: "flex", flexDirection: "column" }}
+                      id="modal1Form"
+                    >
+                      {errors.NAMES ? <RetroError /> : null}
                       <Field
                         type="text"
                         placeholder="Nombres"
@@ -160,7 +207,9 @@ const UserCard = React.memo(() => {
                         onChange={handleChange}
                         value={values.NAMES}
                         onBlur={handleBlur}
+                        style={{ textTransform: "capitalize" }}
                       />
+                      {errors.LAST_NAME ? <RetroError /> : null}
                       <Field
                         type="text"
                         placeholder="Apellido"
@@ -168,6 +217,7 @@ const UserCard = React.memo(() => {
                         onChange={handleChange}
                         value={values.LAST_NAME}
                         onBlur={handleBlur}
+                        style={{ textTransform: "capitalize" }}
                       />
                       <Field
                         type="text"
@@ -176,6 +226,7 @@ const UserCard = React.memo(() => {
                         onChange={handleChange}
                         value={values.MOTHERS_LAST_NAME}
                         onBlur={handleBlur}
+                        style={{ textTransform: "capitalize" }}
                       />
                       <Field
                         type="text"
@@ -184,6 +235,7 @@ const UserCard = React.memo(() => {
                         onChange={handleChange}
                         value={values.TITULO}
                         onBlur={handleBlur}
+                        style={{ textTransform: "capitalize" }}
                       />
                     </Form>
                   </div>
@@ -215,7 +267,11 @@ const UserCard = React.memo(() => {
                   >
                     Cancelar
                   </Button>
-                  <Button type="submit" style={{ backgroundColor: "#ECB83C" }}>
+                  <Button
+                    type="submit"
+                    style={{ backgroundColor: "#ECB83C" }}
+                    form="modal1Form"
+                  >
                     Actualizar
                   </Button>
                 </ModalFooter>
@@ -224,7 +280,7 @@ const UserCard = React.memo(() => {
           </>
         )}
       </Formik>
-    </>
-  );
-});
+    );
+  }
+);
 export default UserCard;

@@ -1,20 +1,36 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { MainContext } from "../resources/MainContext";
 import { Card, Icon } from "semantic-ui-react";
-import style from "../../../styles/datos.module.css";
+import { Formik, Form, Field } from "formik";
+import * as Yup from "yup";
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  Button,
+} from "@chakra-ui/react";
+import Estados from "../resources/states_mexico.json";
+import Cities from "../resources/cities_mexico.json";
 // components
 import Footer from "../components/Footer";
 import UserCard from "../components/UserCard";
-export default function DatoComponent() {
+// styles
+import style from "../../../styles/datos.module.css";
+const Datos = React.memo(() => {
   // state
+
   // context
   const { userInfoState, secondaryInfoState } = useContext(MainContext);
   const [userInfo] = userInfoState;
   const [secondaryInfo] = secondaryInfoState;
   const [modalsVisibility, setModalsVisibility] = useState({
-    modal1: false,
     modal2: false,
     modal3: false,
+    modal4: false,
   });
   return (
     <>
@@ -29,7 +45,7 @@ export default function DatoComponent() {
               <button
                 className={style.modalButton}
                 onClick={() => {
-                  setModalsVisibility({ ...modalsVisibility, modal1: true });
+                  setModalsVisibility({ ...modalsVisibility, modal2: true });
                 }}
               >
                 <Icon name="edit" size="large" />
@@ -313,7 +329,76 @@ export default function DatoComponent() {
           </Card>
         </div>
       </div>
+      <Modal2
+        modalsVisibility={modalsVisibility}
+        setModalsVisibility={setModalsVisibility}
+      />
       <Footer />
     </>
   );
-}
+});
+const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
+  const [habilities, setHabilities] = useState([]);
+  const { userInfoState, secondaryInfoState } = useContext(MainContext);
+  const [userInfo] = userInfoState;
+  const [secondaryInfo] = secondaryInfoState;
+  useEffect(() => {
+    setHabilities(secondaryInfo.HABILIDADES);
+  }, []);
+  return (
+    <Formik
+      initialValues={{
+        AGE: userInfo.AGE ? userInfo.AGE : "",
+        GENRE: userInfo.GENRE ? userInfo.GENRE : "",
+        TE_NUMBER: userInfo.TEL_NUMBER ? userInfo.TEL_NUMBER : "",
+        STATE: userInfo.STATE ? userInfo.STATE : "",
+        CITY: userInfo.CITY ? userInfo.CITY : "",
+      }}
+      onSubmit={(values) => console.log(values)}
+    >
+      {({ values, handleChange, errors, handleBlur }) => (
+        <Modal
+          isOpen={modalsVisibility.modal2}
+          onClose={() => {
+            setModalsVisibility({
+              ...modalsVisibility,
+              modal2: false,
+            });
+          }}
+          size="sm"
+        >
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Modifica tus datos personales</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <Form id="modal2Form">
+                <div>
+                  <span>Fecha de nacimiento</span>
+                </div>
+              </Form>
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setEditModalVisibility(!editModalVisibility);
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                style={{ backgroundColor: "#ECB83C" }}
+                form="modal2Form"
+              >
+                Actualizar
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      )}
+    </Formik>
+  );
+});
+export default Datos;
