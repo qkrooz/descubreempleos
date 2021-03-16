@@ -14,19 +14,21 @@ import {
 } from "@ant-design/icons";
 // styles
 import header from "../../../styles/header.module.css";
+import { useRouter } from "next/router";
 const Header = React.memo(() => {
+  const router = useRouter();
   const { userInfoState } = useContext(MainContext);
   const [, setUserInfo] = userInfoState;
   const hamburguerNavMenu = (
     <Menu>
       <Menu.Item>
-        <a rel="noopener noreferrer" href="#">
+        <a rel="noopener noreferrer" href="/salud">
           <BulbOutlined style={{ fontSize: "1.1em" }} />
           Por salud Mental
         </a>
       </Menu.Item>
       <Menu.Item>
-        <a rel="noopener noreferrer" href="#">
+        <a rel="noopener noreferrer" href="/blog">
           <BoldOutlined style={{ fontSize: "1.1em" }} />
           <span>Blog Descubre</span>
         </a>
@@ -38,6 +40,7 @@ const Header = React.memo(() => {
           style={{ color: "red" }}
           onClick={() => {
             setUserInfo({});
+            router.push("/login");
           }}
         >
           <PoweroffOutlined style={{ fontSize: "1.1em" }} />

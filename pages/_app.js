@@ -1,24 +1,18 @@
-import { useState, useEffect } from "react";
+import React from "react";
 import { MainContext } from "./_api/resources/MainContext.js";
 import { useRouter } from "next/router";
 import { ChakraProvider } from "@chakra-ui/react";
-import apiRoute from "./_api/resources/apiRoute";
+import useLocalStorage from "./_api/resources/useLocalStorage";
 import "../styles/generalstyles.css";
 import "semantic-ui-css/semantic.min.css";
-import axios from "axios";
-export default function MyApp({ Component, pageProps }) {
+const App = React.memo(({ Component, pageProps }) => {
   const router = useRouter();
   // states
-  const [userInfo, setUserInfo] = useState({});
-  const [secondaryInfo, setSecondaryInfo] = useState({});
-  // effects
-  useEffect(() => {
-    if (Object.keys(userInfo).length === 0) {
-      router.push("/login");
-    } else {
-      router.push("/");
-    }
-  }, [userInfo]);
+  const [userInfo, setUserInfo] = useLocalStorage("userInfo", {});
+  const [secondaryInfo, setSecondaryInfo] = useLocalStorage(
+    "secondaryInfo",
+    {}
+  );
   return (
     <ChakraProvider>
       <MainContext.Provider
@@ -34,4 +28,5 @@ export default function MyApp({ Component, pageProps }) {
       </MainContext.Provider>
     </ChakraProvider>
   );
-}
+});
+export default App;
