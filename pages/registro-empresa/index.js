@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { MainContext } from "../_api/resources/MainContext";
 import Head from "next/head";
 import Link from "next/link";
@@ -19,10 +19,10 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 const RegistroEmpresa = React.memo(() => {
-  const route = useRouter();
+  const router = useRouter();
   const [userExistsModal, setUserExistsModal] = useState(false);
   const { userInfoState } = useContext(MainContext);
-  const [, setUserInfo] = userInfoState;
+  const [userInfo, setUserInfo] = userInfoState;
   const ValidationSchema = Yup.object().shape({
     NAMES: Yup.string().required("Required"),
     LAST_NAME: Yup.string().required("Required"),
@@ -58,6 +58,12 @@ const RegistroEmpresa = React.memo(() => {
         console.log(error);
       });
   };
+  // effects
+  useEffect(() => {
+    if (Object.keys(userInfo).length !== 0) {
+      router.push("/");
+    }
+  }, [userInfo]);
   return (
     <>
       <Head>

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { MainContext } from "../_api/resources/MainContext";
 import apiRoute from "../_api/resources/apiRoute";
 import Head from "next/head";
@@ -17,7 +17,7 @@ import axios from "axios";
 const Login = React.memo(() => {
   const [userDontExistsModal, setDontUserExistsModal] = useState(false);
   const { userInfoState, secondaryInfoState } = useContext(MainContext);
-  const [, setUserInfo] = userInfoState;
+  const [userInfo, setUserInfo] = userInfoState;
   const [, setSecondaryInfo] = secondaryInfoState;
   const router = useRouter();
   const [passwordInputType, setPasswordInputType] = useState("password");
@@ -53,6 +53,12 @@ const Login = React.memo(() => {
       setPasswordInputType("password");
     }
   };
+  // effects
+  useEffect(() => {
+    if (Object.keys(userInfo).length !== 0) {
+      router.push("/");
+    }
+  }, [userInfo]);
   return (
     <div className={style.loginstyle}>
       <img className={style.img} src="./thumbnailIconos.png" />

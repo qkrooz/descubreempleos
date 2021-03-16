@@ -382,7 +382,10 @@ const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
               <Button
                 variant="ghost"
                 onClick={() => {
-                  setEditModalVisibility(!editModalVisibility);
+                  setModalsVisibility({
+                    ...modalsVisibility,
+                    modal2: false,
+                  });
                 }}
               >
                 Cancelar
