@@ -1,24 +1,16 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { MainContext } from "./_api/resources/MainContext.js";
-import { useRouter } from "next/router";
 import { ChakraProvider } from "@chakra-ui/react";
 import useLocalStorage from "./_api/resources/useLocalStorage";
 import "../styles/generalstyles.css";
 import "semantic-ui-css/semantic.min.css";
 const App = React.memo(({ Component, pageProps }) => {
-  const router = useRouter();
   // states
   const [userInfo, setUserInfo] = useLocalStorage("userInfo", {});
   const [secondaryInfo, setSecondaryInfo] = useLocalStorage(
     "secondaryInfo",
     {}
   );
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      setUserInfo({});
-      setSecondaryInfo({});
-    }
-  }, []);
   return (
     <ChakraProvider>
       <MainContext.Provider
