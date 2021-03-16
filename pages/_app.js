@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { MainContext } from "./_api/resources/MainContext.js";
 import { useRouter } from "next/router";
 import { ChakraProvider } from "@chakra-ui/react";
@@ -13,6 +13,12 @@ const App = React.memo(({ Component, pageProps }) => {
     "secondaryInfo",
     {}
   );
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      setUserInfo({});
+      setSecondaryInfo({});
+    }
+  }, []);
   return (
     <ChakraProvider>
       <MainContext.Provider
