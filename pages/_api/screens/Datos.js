@@ -341,6 +341,8 @@ const Datos = React.memo(() => {
 const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
   const [years, setYears] = useState([]);
   const [days, setDays] = useState();
+  const [selectedCityID, setSelectedCityID] = useState("0");
+  const [selectedStateID, setSelectedStateID] = useState("0");
   const [selectedYear, setSelectedYear] = useState(moment(new Date()).year());
   const [selectedMonth, setSelectedMonth] = useState("01");
   const [selectedDay, setSelectedDay] = useState("01");
@@ -362,16 +364,25 @@ const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
       moment(`${selectedYear},${selectedMonth}`, "YYYY-MM").daysInMonth()
     );
   }, [selectedYear, selectedMonth]);
+  useEffect(() => {
+    console.log(selectedStateID);
+  }, [selectedStateID]);
   return (
     <Formik
       initialValues={{
         AGE: userInfo.AGE ? userInfo.AGE : "",
-        GENRE: userInfo.GENRE ? userInfo.GENRE : "",
+        GENRE: userInfo.GENRE ? userInfo.GENRE : "femenino",
         TE_NUMBER: userInfo.TEL_NUMBER ? userInfo.TEL_NUMBER : "",
         STATE: userInfo.STATE ? userInfo.STATE : "",
         CITY: userInfo.CITY ? userInfo.CITY : "",
       }}
-      onSubmit={(values) => console.log(values)}
+      onSubmit={(values) => {
+        let BIRTH_DATE = `${selectedYear}-${selectedMonth}-${selectedDay}`;
+        values["BIRTH_DATE"] = BIRTH_DATE;
+        values["ID"] = parseInt(userInfo.ID);
+
+        console.log(selectedCityID);
+      }}
     >
       {({ values, handleChange, errors, handleBlur }) => (
         <Modal
@@ -392,10 +403,22 @@ const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
               <Form id="modal2Form">
                 <div style={{ display: "flex", flexDirection: "column" }}>
                   <span>Fecha de nacimiento</span>
-                  <div>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "flex-start",
+                      padding: "0.5em",
+                    }}
+                  >
                     <select
+                      style={{ padding: "0.5em", marginRight: "0.5em" }}
                       aria-label="Año"
                       onChange={(e) => setSelectedYear(e.target.value)}
+                      value={
+                        userInfo.BIRTH_DATE
+                          ? moment(userInfo.BIRTH_DATE).format("YYYY")
+                          : moment(new Date()).format("YYYY")
+                      }
                     >
                       {years.map((key) => (
                         <option key={key} value={key}>
@@ -404,8 +427,14 @@ const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
                       ))}
                     </select>
                     <select
+                      style={{ padding: "0.5em", marginRight: "0.5em" }}
                       aria-label="Año"
                       onChange={(e) => setSelectedMonth(e.target.value)}
+                      value={
+                        userInfo.BIRTH_DATE
+                          ? moment(userInfo.BIRTH_DATE).format("MM")
+                          : moment(new Date()).format("MM")
+                      }
                     >
                       <option value="01">Enero</option>
                       <option value="02">Febrero</option>
@@ -420,7 +449,15 @@ const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
                       <option value="11">Noviembre</option>
                       <option value="12">Diciembre</option>
                     </select>
-                    <select>
+                    <select
+                      style={{ padding: "0.5em", marginRight: "0.5em" }}
+                      onChange={(e) => setSelectedDay(e.target.value)}
+                      value={
+                        userInfo.BIRTH_DATE
+                          ? moment(userInfo.BIRTH_DATE).format("DD")
+                          : moment(new Date()).format("DD")
+                      }
+                    >
                       {Array(days)
                         .fill(0)
                         .map((_, i) => (
@@ -438,6 +475,65 @@ const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
                               minimumIntegerDigits: 2,
                               useGrouping: false,
                             })}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
+                  <span>Género</span>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "flex-start",
+                      padding: "0.5em",
+                    }}
+                  >
+                    <select
+                      name="GENRE"
+                      style={{ padding: "0.5em" }}
+                      value={values.GENRE}
+                      onChange={handleChange}
+                    >
+                      <option value="fenemino">Femenino</option>
+                      <option value="masculino">Masculino</option>
+                      <option value="none">No especificar</option>
+                    </select>
+                  </div>
+                  <span>Número telefónico</span>
+                  <div style={{ padding: "0.5em" }}>
+                    <span style={{ marginRight: "0.5em" }}>(+52)</span>
+                    <input name="TEL_NUMBER" type="number" />
+                  </div>
+                  <span>Estado</span>
+                  <div style={{ padding: "0.5em" }}>
+                    <select
+                      value={selectedStateID}
+                      onChange={(e) => {
+                        setSelectedStateID(e.target.value);
+                      }}
+                    >
+                      {Estados.states.map((key) => {
+                        return (
+                          <option key={key.id} value={key.id}>
+                            {key.name}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
+                  <span>Ciudad</span>
+                  <div style={{ padding: "0.5em" }}>
+                    <select
+                      value={selectedCityID}
+                      onChange={(e) => {
+                        setSelectedCityID(e.target.value);
+                      }}
+                      disabled={!Boolean(selectedStateID)}
+                    >
+                      {Cities.cities
+                        .filter((item) => item.state_id === selectedStateID)
+                        .map((key) => (
+                          <option key={key.id} value={key.id}>
+                            {key.name}
                           </option>
                         ))}
                     </select>
