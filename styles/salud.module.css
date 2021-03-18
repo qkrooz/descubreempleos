@@ -1,0 +1,17 @@
+.header {
+  display: flex;
+  background-color: #004a5b;
+  color: white;
+}
+
+.button {
+  background-color: #004a5b;
+  color: white;
+}
+.flexcontainer {
+  display: flex;
+}
+.footer {
+  background-color: #004a5b;
+  color: white;
+}
