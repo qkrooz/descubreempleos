@@ -7,11 +7,43 @@
 .button {
   background-color: #004a5b;
   color: white;
+  font-weight: bold;
+  margin: 0 auto;
+  padding: 12px;
 }
 .flexcontainer {
   display: flex;
+  justify-content: space-around;
+  align-items: center;
 }
 .footer {
   background-color: #004a5b;
   color: white;
+  font-weight: bold;
+}
+.form {
+  border: 1px solid;
+  border-radius: 20px;
+  padding: 3%;
+}
+.columm1 {
+  width: 30%;
+  padding: 3%;
+}
+.columm2 {
+  width: 70%;
+  padding: 3%;
+}
+.img {
+  width: 200px;
+  margin-top: -38px;
+  margin-bottom: -30px;
+}
+
+.containerbutton {
+  display: flex;
+  justify-content: center;
+}
+.card {
+  text-align: center;
 }
