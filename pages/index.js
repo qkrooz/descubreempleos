@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { MainContext } from "./_api/resources/MainContext";
 import Head from "next/head";
 import { MemoryRouter as Router, Switch, Route } from "react-router-dom";
@@ -25,6 +25,7 @@ const Home = React.memo(() => {
   const closeChat1 = () => {
     document.getElementById("myForm1").style.display = "none";
   };
+
   return (
     <Router>
       <Head>
