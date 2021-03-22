@@ -71,6 +71,7 @@ input ~ label:after {
 button:focus {
   outline: 0px;
 }
+.card{margin-top: 0 !important;}
 
 @media screen and (max-width: 600px) {
   .ant-collapse-arrow {

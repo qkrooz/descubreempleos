@@ -44,15 +44,15 @@ const Salud = React.memo(() => {
           psicológica.</p>
           </div></div>
       </div>
-      <div className={style.flexcontainer}>
+      <div className={style.flexcontainer1}>
         <Card>
           <div className={style.card}>
             <h1>Equipo profesional</h1>
           </div>
           <Card.Content>
-            <h4>Contamos con</h4> Un equipo de psicólogos con Cardersas
+            <div className={style.heigthcard}> <h4 className={style.subtitlecard}>Contamos con</h4> Un equipo de psicólogos con Cardersas
             especialidades y maestrías, originarios de México, Estados Unidos y
-            Cuba
+            Cuba</div>
           </Card.Content>
         </Card>
         <Card>
@@ -60,9 +60,9 @@ const Salud = React.memo(() => {
             <h1> Servicio para candidatos</h1>
           </div>
           <Card.Content>
-            <h4>Brindamos</h4> Terapia individual, de pareja y familiar, en
+            <div className={style.heigthcard}><h4 className={style.subtitlecard}>Brindamos</h4> Terapia individual, de pareja y familiar, en
             modalidad presencial y virtual con precios accesibles que van desde
-            $150.
+            $150.</div>
           </Card.Content>
         </Card>
         <Card>
@@ -70,9 +70,9 @@ const Salud = React.memo(() => {
             <h1>Servicio para empresas</h1>
           </div>
           <Card.Content>
-            <h4>Ofrecemos </h4>Hacer un convenio con tu empresa para cuidar la
+            <div className={style.heigthcard}> <h4 className={style.subtitlecard}>Ofrecemos </h4>Hacer un convenio con tu empresa para cuidar la
             salud mental de tu personal. También te podemos apoyar en evaluar el
-            clima organizacional, así como aplicar la NOM-035
+            clima organizacional, así como aplicar la NOM-035</div>
           </Card.Content>
         </Card>
       </div>
@@ -91,7 +91,7 @@ const Salud = React.memo(() => {
           <img src="./icon-twitter-blue.png" className={style.image}></img>
         </div>
       </footer>
-    </div>
+    </div >
   );
 });
 export default Salud;
