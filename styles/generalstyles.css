@@ -81,3 +81,6 @@ button:focus {
     font-size: 19px;
   }
 }
+@media screen and (max-width: 800px) {
+  .card{margin:0 auto !important; margin-top:20px !important;}
+}

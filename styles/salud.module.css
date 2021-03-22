@@ -133,3 +133,26 @@
   height: 149px;
   padding: 8px 10px;
 }
+
+@media screen and (max-width:800px){
+  .flexcontainer,.flexcontainer1,.footer {
+    display: block;
+  }
+  .background {    
+    width: 100%;
+  }
+  .columm1{width: auto;}
+  .columm2{width: auto;}
+  .imgicon{display: none;}
+  .column2content{
+    margin-left: auto;
+    width: 100%;
+  }
+  .textindex{width: 85%;}
+
+}
+
+@media (min-width:800px) and (max-width:1024px){
+  .background{ width: 543px;}
+  .imgicon{ left: 370px; }
+}
