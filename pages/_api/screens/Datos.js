@@ -3,7 +3,6 @@ import { MainContext } from "../resources/MainContext";
 import { Card, Icon } from "semantic-ui-react";
 import { Formik, Form, Field } from "formik";
 import moment from "moment";
-import * as Yup from "yup";
 import { useToast } from "@chakra-ui/react";
 import {
   Modal,
@@ -59,6 +58,28 @@ const Datos = React.memo(() => {
               <table style={{ width: "100%" }}>
                 <tbody className={style.personalTbody}>
                   <tr>
+                    <td className={style.personalLabel}>Fecha de nacimiento</td>
+                    <td>
+                      <div
+                        style={{
+                          width: "3em",
+                          borderBottom: "2px solid gray",
+                          margin: "0 1em",
+                        }}
+                      />
+                    </td>
+                    <td>
+                      {userInfo.BIRTH_DATE ? (
+                        `${moment(userInfo.BIRTH_DATE).format("DD/MM/YYYY")}`
+                      ) : (
+                        <div>
+                          <Icon name="warning circle" />
+                          <span>No disponible</span>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                  <tr>
                     <td className={style.personalLabel}>Edad</td>
                     <td>
                       <div
@@ -71,7 +92,7 @@ const Datos = React.memo(() => {
                     </td>
                     <td>
                       {userInfo.AGE ? (
-                        userInfo.AGE
+                        `${userInfo.AGE} años`
                       ) : (
                         <div>
                           <Icon name="warning circle" />
@@ -91,9 +112,55 @@ const Datos = React.memo(() => {
                         }}
                       />
                     </td>
-                    <td>
+                    <td style={{ textTransform: "capitalize" }}>
                       {userInfo.GENRE ? (
                         userInfo.GENRE
+                      ) : (
+                        <div>
+                          <Icon name="warning circle" />
+                          <span>No disponible</span>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className={style.personalLabel}>CURP</td>
+                    <td>
+                      <div
+                        style={{
+                          width: "3em",
+                          borderBottom: "2px solid gray",
+                          margin: "0 1em",
+                        }}
+                      />
+                    </td>
+                    <td
+                      style={{ textTransform: "capitalize", fontSize: "0.8em" }}
+                    >
+                      {userInfo.CURP ? (
+                        userInfo.CURP
+                      ) : (
+                        <div>
+                          <Icon name="warning circle" />
+                          <span>No disponible</span>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className={style.personalLabel}>RFC</td>
+                    <td>
+                      <div
+                        style={{
+                          width: "3em",
+                          borderBottom: "2px solid gray",
+                          margin: "0 1em",
+                        }}
+                      />
+                    </td>
+                    <td style={{ textTransform: "capitalize" }}>
+                      {userInfo.RFC ? (
+                        userInfo.RFC
                       ) : (
                         <div>
                           <Icon name="warning circle" />
@@ -135,7 +202,7 @@ const Datos = React.memo(() => {
                         }}
                       />
                     </td>
-                    <td>
+                    <td style={{ textTransform: "capitalize" }}>
                       {userInfo.STATE ? (
                         userInfo.STATE
                       ) : (
@@ -157,7 +224,7 @@ const Datos = React.memo(() => {
                         }}
                       />
                     </td>
-                    <td>
+                    <td style={{ textTransform: "capitalize" }}>
                       {userInfo.CITY ? (
                         userInfo.CITY
                       ) : (
@@ -180,8 +247,25 @@ const Datos = React.memo(() => {
                       />
                     </td>
                     <td>
-                      {secondaryInfo.LANGUAGES ? (
-                        secondaryInfo.LANGUAGES
+                      {secondaryInfo.IDIOMAS ? (
+                        JSON.parse(secondaryInfo.IDIOMAS).length === 0 ? (
+                          <div>
+                            <Icon name="warning circle" />
+                            <span>No disponible</span>
+                          </div>
+                        ) : (
+                          JSON.parse(secondaryInfo.IDIOMAS).map((key) => (
+                            <div
+                              key={key.ID}
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                              }}
+                            >
+                              <span>{key.TITLE}</span>
+                            </div>
+                          ))
+                        )
                       ) : (
                         <div>
                           <Icon name="warning circle" />
@@ -195,22 +279,59 @@ const Datos = React.memo(() => {
             </div>
           </Card>
           <Card style={{ padding: "1em" }}>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginBottom: "0.5em",
+              }}
+            >
               <span style={{ fontWeight: "bold", fontSize: "1.3em" }}>
                 Habilidades
               </span>
               <button
                 className={style.modalButton}
                 onClick={() => {
-                  setModalsVisibility({ ...modalsVisibility, modal2: true });
+                  setModalsVisibility({ ...modalsVisibility, modal3: true });
                 }}
               >
                 <Icon name="edit" size="large" />
               </button>
             </div>
-            <div>
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                justifyContent: "space-around",
+              }}
+            >
               {secondaryInfo.HABILIDADES ? (
-                secondaryInfo.HABILIDADES
+                JSON.parse(secondaryInfo.HABILIDADES).length === 0 ? (
+                  <div>
+                    <Icon name="warning circle" />
+                    <span>No disponible</span>
+                  </div>
+                ) : (
+                  JSON.parse(secondaryInfo.HABILIDADES).map((item) => (
+                    <div
+                      key={item.ID}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        padding: "0.5em",
+                        backgroundColor: "#e2e2e2",
+                        borderRadius: "2em",
+                        marginBottom: "1em",
+                      }}
+                    >
+                      <span
+                        style={{ marginRight: "0.5em", fontWeight: "bold" }}
+                      >
+                        {item.TITLE}
+                      </span>
+                    </div>
+                  ))
+                )
               ) : (
                 <div>
                   <Icon name="warning circle" />
@@ -227,7 +348,7 @@ const Datos = React.memo(() => {
               <button
                 className={style.modalButton}
                 onClick={() => {
-                  setModalsVisibility({ ...modalsVisibility, modal3: true });
+                  setModalsVisibility({ ...modalsVisibility, modal4: true });
                 }}
               >
                 <Icon name="edit" size="large" />
@@ -337,6 +458,10 @@ const Datos = React.memo(() => {
         modalsVisibility={modalsVisibility}
         setModalsVisibility={setModalsVisibility}
       />
+      <Modal3
+        modalsVisibility={modalsVisibility}
+        setModalsVisibility={setModalsVisibility}
+      />
       <Footer />
     </>
   );
@@ -352,36 +477,59 @@ const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
   const [selectedDay, setSelectedDay] = useState("01");
   const [languages, setLanguages] = useState([]);
   const { userInfoState, secondaryInfoState } = useContext(MainContext);
-  const [userInfo] = userInfoState;
-  const [secondaryInfo] = secondaryInfoState;
-  const [habilitiesList, setLanguagesList] = useState([
+  const [userInfo, setUserInfo] = userInfoState;
+  const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
+  const [languagesList, setLanguagesList] = useState([
     { ID: 1, TITLE: "Español", VALUE: "es" },
     { ID: 2, TITLE: "Inglés", VALUE: "en" },
     { ID: 3, TITLE: "Francés", VALUE: "fr" },
     { ID: 4, TITLE: "Chino", VALUE: "zh" },
   ]);
-  const purgeHabilities = (value) => {
-    let optionValue = JSON.parse(value);
-    let habilitiesListCopy = [...habilitiesList];
-    const index = habilitiesListCopy.findIndex(
-      (item) => item.VALUE === optionValue.VALUE
-    );
-    if (index > -1) habilitiesListCopy.splice(index, 1);
-    setLanguagesList(habilitiesListCopy);
-  };
-  const renewHabilitiesList = (value) => {
-    let habilitiesCopy = [...languages];
-    let newArray = habilitiesCopy.filter((item) => item.ID !== value.ID);
-    setLanguages(newArray);
-    setLanguagesList((habilitiesList) => [...habilitiesList, value]);
+  const purgeLanguages = (value) => {
+    let languagesListCopy = [...languagesList];
+    value.forEach((item1) => {
+      let index = languagesListCopy.findIndex(
+        (item2) => item2.VALUE === item1.VALUE
+      );
+      languagesListCopy.splice(index, 1);
+    });
+    setLanguagesList(languagesListCopy);
   };
   useEffect(() => {
-    if (secondaryInfo.HABILIDADES) {
-      let array = JSON.parse(secondaryInfo.HABILIDADES);
-      for (let i = 0; i < array; i++) {
-        purgeHabilities(array[i]);
+    // setting state
+    userInfo.STATE
+      ? setSelectedStateID(
+          Estados.states.filter(
+            (item) => item.name.toLowerCase() === userInfo.STATE
+          )[0].id
+        )
+      : null;
+    // setting city
+    userInfo.CITY
+      ? setSelectedCityID(
+          Cities.cities.filter(
+            (item) => item.name.toLowerCase() === userInfo.CITY
+          )[0].id
+        )
+      : NULL;
+    // setYears
+    userInfo.BIRTH_DATE
+      ? setSelectedYear(moment(userInfo.BIRTH_DATE).format("yyyy"))
+      : null;
+    // setMonth
+    userInfo.BIRTH_DATE
+      ? setSelectedMonth(moment(userInfo.BIRTH_DATE).format("MM"))
+      : null;
+    // setDat
+    userInfo.BIRTH_DATE
+      ? setSelectedDay(moment(userInfo.BIRTH_DATE).format("DD"))
+      : null;
+    if (secondaryInfo.IDIOMAS) {
+      if (JSON.parse(secondaryInfo.IDIOMAS).length !== 0) {
+        let array = JSON.parse(secondaryInfo.IDIOMAS);
+        setLanguages(array);
+        purgeLanguages(array);
       }
-      setLanguages(array);
     } else {
       setLanguages([]);
     }
@@ -400,15 +548,14 @@ const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
   return (
     <Formik
       initialValues={{
-        AGE: userInfo.AGE ? userInfo.AGE : "",
         GENRE: userInfo.GENRE ? userInfo.GENRE : "femenino",
         TEL_NUMBER: userInfo.TEL_NUMBER ? userInfo.TEL_NUMBER : "",
-        STATE: userInfo.STATE ? userInfo.STATE : "",
-        CITY: userInfo.CITY ? userInfo.CITY : "",
+        CURP: userInfo.CURP ? userInfo.CURP : "",
+        RFC: userInfo.RFC ? userInfo.RFC : "",
       }}
       onSubmit={(values) => {
         let BIRTH_DATE = `${selectedYear}-${selectedMonth}-${selectedDay}`;
-        values["IDIOMAS"] = JSON.stringify(languages);
+        values["IDIOMAS"] = languages;
         values["BIRTH_DATE"] =
           moment().diff(BIRTH_DATE, "years") !== 0 ? BIRTH_DATE : null;
         values["ID"] = parseInt(userInfo.ID);
@@ -434,12 +581,46 @@ const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
             : null;
         axios
           .post(`${apiRoute}/updateTrabajadorSecondaryInfo.php`, values)
-          .then(({ data }) => console.log(data))
+          .then(({ data }) => {
+            if (data.code === 200) {
+              let userInfoCopy = { ...userInfo };
+              let secondaryInfoCopy = { ...secondaryInfo };
+              userInfoCopy.AGE = values.AGE;
+              userInfoCopy.BIRTH_DATE = values.BIRTH_DATE;
+              userInfoCopy.GENRE = values.GENRE;
+              userInfoCopy.TEL_NUMBER = values.TEL_NUMBER;
+              userInfoCopy.STATE = values.STATE;
+              userInfoCopy.CITY = values.CITY;
+              userInfoCopy.CURP = values.CURP;
+              userInfoCopy.RFC = values.RFC;
+              secondaryInfoCopy.IDIOMAS = JSON.stringify(values.IDIOMAS);
+              setUserInfo(userInfoCopy);
+              setSecondaryInfo(secondaryInfoCopy);
+              setModalsVisibility({
+                ...modalsVisibility,
+                modal2: false,
+              });
+              toast({
+                title: "Información actualizada",
+                description: "Cambios exitosos",
+                status: "success",
+                duration: 3000,
+                isClosable: true,
+              });
+            } else {
+              toast({
+                title: "Ocurrió un error inesperado",
+                description: "Intenta más tarde",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+              });
+            }
+          })
           .catch((error) => console.log(error));
-        console.log(values);
       }}
     >
-      {({ values, handleChange, errors, handleBlur }) => (
+      {({ values, handleChange }) => (
         <Modal
           isOpen={modalsVisibility.modal2}
           onClose={() => {
@@ -541,10 +722,40 @@ const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
                       <option value="none">No especificar</option>
                     </select>
                   </div>
+                  <span>CURP</span>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "flex-start",
+                      padding: "0.5em",
+                    }}
+                  >
+                    <Field
+                      type="text"
+                      name="CURP"
+                      onChange={handleChange}
+                      value={values.CURP}
+                    />
+                  </div>
+                  <span>RFC</span>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "flex-start",
+                      padding: "0.5em",
+                    }}
+                  >
+                    <Field
+                      type="text"
+                      name="RFC"
+                      onChange={handleChange}
+                      value={values.RFC}
+                    />
+                  </div>
                   <span>Número telefónico</span>
                   <div style={{ padding: "0.5em" }}>
                     <span style={{ marginRight: "0.5em" }}>(+52)</span>
-                    <input
+                    <Field
                       name="TEL_NUMBER"
                       type="number"
                       onChange={handleChange}
@@ -554,7 +765,14 @@ const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
                   <span>Estado</span>
                   <div style={{ padding: "0.5em" }}>
                     <select
-                      value={selectedStateID}
+                      defaultValue={
+                        userInfo.STATE
+                          ? Estados.states.filter(
+                              (item) =>
+                                item.name.toLowerCase() === userInfo.STATE
+                            )[0].id
+                          : selectedStateID
+                      }
                       onChange={(e) => {
                         setSelectedStateID(e.target.value);
                       }}
@@ -571,7 +789,14 @@ const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
                   <span>Ciudad</span>
                   <div style={{ padding: "0.5em" }}>
                     <select
-                      value={selectedCityID}
+                      defaultValue={
+                        userInfo.CITY
+                          ? Cities.cities.filter(
+                              (item) =>
+                                item.name.toLowerCase() === userInfo.CITY
+                            )[0].id
+                          : selectedCityID
+                      }
                       onChange={(e) => {
                         setSelectedCityID(e.target.value);
                       }}
@@ -590,13 +815,19 @@ const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
                 <span>Idiomas</span>
                 <div style={{ display: "flex", flexWrap: "wrap" }}>
                   {languages.length !== 0
-                    ? languages.map((key, i) => (
+                    ? languages.map((key) => (
                         <div className={style.chip} key={key.ID}>
                           <span>{key.TITLE}</span>
                           <button
                             type="button"
                             onClick={() => {
-                              renewHabilitiesList(key);
+                              setLanguagesList((languagesList) => [
+                                ...languagesList,
+                                key,
+                              ]);
+                              setLanguages((languages) =>
+                                languages.filter((item) => item.ID !== key.ID)
+                              );
                             }}
                           >
                             <Icon name="close" />
@@ -610,15 +841,19 @@ const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
                     <select
                       defaultValue="none"
                       onChange={(e) => {
+                        setLanguagesList((languagesList) =>
+                          languagesList.filter(
+                            (item) => item.ID !== JSON.parse(e.target.value).ID
+                          )
+                        );
                         setLanguages((languages) => [
                           ...languages,
                           JSON.parse(e.target.value),
                         ]);
-                        purgeHabilities(e.target.value);
                       }}
                     >
                       <option value="none">Selecciona un idioma</option>
-                      {habilitiesList.map((key) => (
+                      {languagesList.map((key) => (
                         <option value={JSON.stringify(key)} key={key.ID}>
                           {key.TITLE}
                         </option>
@@ -652,6 +887,184 @@ const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
         </Modal>
       )}
     </Formik>
+  );
+});
+const Modal3 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
+  const toast = useToast();
+  const { secondaryInfoState, userInfoState } = useContext(MainContext);
+  const [userInfo] = userInfoState;
+  const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
+  const [habilities, setHabilities] = useState([]);
+  const [habilitiesList, setHabilitiesList] = useState([
+    { ID: 1, TITLE: "Pensamiento Crítico", VALUES: "pensamiento critico" },
+    { ID: 2, TITLE: "Trabajo en equipo", VALUES: "trabajo en equipo" },
+    { ID: 3, TITLE: "Comunicacion", VALUES: "comunicacion" },
+  ]);
+  // funciones
+  const submitHabilities = () => {
+    if (habilities.length !== 0) {
+      axios
+        .post(`${apiRoute}/updateHabilities.php`, {
+          HABILIDADES: habilities,
+          ID: userInfo.ID,
+        })
+        .then(({ data }) => {
+          if (data.code === 200) {
+            let secondaryInfoCopy = { ...secondaryInfo };
+            secondaryInfoCopy.HABILIDADES = JSON.stringify(habilities);
+            setSecondaryInfo(secondaryInfoCopy);
+            setModalsVisibility({ ...modalsVisibility, modal3: false });
+            toast({
+              title: "Información actualizada",
+              description: "Cambios exitosos",
+              status: "success",
+              duration: 3000,
+              isClosable: true,
+            });
+          } else {
+            toast({
+              title: "Ocurrió un error",
+              description: "Intentar más tarde",
+              status: "error",
+              duration: 3000,
+              isClosable: true,
+            });
+          }
+        })
+        .catch((error) => console.log(error));
+    } else {
+      setModalsVisibility({ ...modalsVisibility, modal3: false });
+    }
+  };
+  const purgeHabilities = (array) => {
+    let habilitiesListCopy = [...habilitiesList];
+    array.forEach((item1) => {
+      let index = habilitiesListCopy.findIndex(
+        (item2) => item2.ID === item1.ID
+      );
+      habilitiesListCopy.splice(index, 1);
+    });
+    setHabilitiesList(habilitiesListCopy);
+  };
+  // effects
+  useEffect(() => {
+    if (secondaryInfo.HABILIDADES) {
+      if (JSON.parse(secondaryInfo.HABILIDADES).length !== 0) {
+        let array = JSON.parse(secondaryInfo.HABILIDADES);
+        setHabilities(array);
+        purgeHabilities(array);
+      }
+    } else {
+      setHabilities([]);
+    }
+  }, []);
+  return (
+    <Modal
+      isOpen={modalsVisibility.modal3}
+      onClose={() => {
+        setModalsVisibility({
+          ...modalsVisibility,
+          modal3: false,
+        });
+      }}
+      size="md"
+    >
+      <ModalOverlay />
+      <ModalCloseButton />
+      <ModalContent>
+        <ModalHeader>Actualizar habilidades</ModalHeader>
+        <ModalBody>
+          <div
+            style={{
+              border: "1px solid #e2e2e2",
+              borderRadius: "10px",
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "space-around",
+              padding: "0.5em",
+              marginBottom: "1em",
+            }}
+          >
+            {habilities.length === 0 ? (
+              <span>No hay habilidades seleccionadas</span>
+            ) : (
+              habilities.map((key) => (
+                <div
+                  key={key.ID}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    padding: "0.5em 0.5em 0.5em 1em",
+                    backgroundColor: "#e2e2e2",
+                    borderRadius: "2em",
+                    marginBottom: "1em",
+                  }}
+                >
+                  <span style={{ marginRight: "0.5em", fontWeight: "bold" }}>
+                    {key.TITLE}
+                  </span>
+                  <button
+                    onClick={() => {
+                      setHabilities((habilities) =>
+                        habilities.filter((item) => item.ID !== key.ID)
+                      );
+                      setHabilitiesList((habilitiesList) => [
+                        ...habilitiesList,
+                        key,
+                      ]);
+                    }}
+                  >
+                    <Icon name="close" />
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+          {habilitiesList.length === 0 ? null : (
+            <select
+              name="HABILIDADES"
+              onChange={(e) => {
+                setHabilitiesList((habilitiesList) =>
+                  habilitiesList.filter(
+                    (item) => item.ID !== JSON.parse(e.target.value).ID
+                  )
+                );
+                setHabilities((habilities) => [
+                  ...habilities,
+                  JSON.parse(e.target.value),
+                ]);
+              }}
+            >
+              <option value="none">Selecciona una habilidad</option>
+              {habilitiesList.map((key) => (
+                <option key={key.ID} value={JSON.stringify(key)}>
+                  {key.TITLE}
+                </option>
+              ))}
+            </select>
+          )}
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            variant="ghost"
+            onClick={() => {
+              setModalsVisibility({
+                ...modalsVisibility,
+                modal3: false,
+              });
+            }}
+          >
+            Cancelar
+          </Button>
+          <Button
+            onClick={submitHabilities}
+            style={{ backgroundColor: "#ECB83C" }}
+          >
+            Actualizar
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   );
 });
 export default Datos;
