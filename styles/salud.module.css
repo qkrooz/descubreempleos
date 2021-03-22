@@ -17,6 +17,13 @@
   justify-content: space-around;
   align-items: center;
 }
+.flexcontainer1 {
+  display: flex;
+  justify-content: space-around;
+  background-color: #002627;
+  padding-bottom: 30px;    
+  padding-top: 44px;
+}
 .footer {
   background-color: #004a5b;
   color: white;
@@ -24,7 +31,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0px 50px;
+  padding: 10px 50px;
+  font-size: 20px;
+  line-height: 35px;
 }
 .form {
   border: 1px solid;
@@ -39,6 +48,13 @@
 .columm2 {
   width: 65%;
   padding: 3%;
+  background-image: url('../public/salud-mental.jpg');
+  background-size: cover;    
+  height: 504px;    
+  opacity: 0.9;
+  z-index: -1;
+  display: flex;
+  align-items: center;
 }
 .img {
   width: 200px;
@@ -54,7 +70,8 @@
   text-align: center;
   background-color: #004a5b;
   color: white;
-  padding: 13px;
+  padding: 13px;    
+  font-size: 24px;
 }
 .image {
   width: 80px;
@@ -108,4 +125,11 @@
   font-weight: bold;
   margin: 0 auto;   
   margin-top: 26px;
+}
+.subtitlecard{    font-size: 22px;
+}
+
+.heigthcard{    
+  height: 149px;
+  padding: 8px 10px;
 }
