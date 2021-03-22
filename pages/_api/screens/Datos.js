@@ -14,6 +14,7 @@ import {
   ModalCloseButton,
   Button,
 } from "@chakra-ui/react";
+import * as Yup from "yup";
 import Estados from "../resources/states_mexico.json";
 import Cities from "../resources/cities_mexico.json";
 // components
@@ -459,6 +460,10 @@ const Datos = React.memo(() => {
         setModalsVisibility={setModalsVisibility}
       />
       <Modal3
+        modalsVisibility={modalsVisibility}
+        setModalsVisibility={setModalsVisibility}
+      />
+      <Modal4
         modalsVisibility={modalsVisibility}
         setModalsVisibility={setModalsVisibility}
       />
@@ -1065,6 +1070,211 @@ const Modal3 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
         </ModalFooter>
       </ModalContent>
     </Modal>
+  );
+});
+const Modal4 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
+  const toast = useToast();
+  const validationSchema = Yup.object({
+    PASSWORD1: Yup.string().required("Password es requerida"),
+    PASSWORD2: Yup.string().oneOf(
+      [Yup.ref("PASSWORD1"), null],
+      "Las contraseñas tienen que ser iguales"
+    ),
+  });
+  const { userInfoState } = useContext(MainContext);
+  const [userInfo] = userInfoState;
+  return (
+    <Formik
+      validationSchema={validationSchema}
+      initialValues={{
+        EMAIL: userInfo.EMAIL,
+        PASSWORD1: "",
+        PASSWORD2: "",
+        OLDPASSWORD: "",
+      }}
+      onSubmit={(values) => {
+        if (values.OLDPASSWORD === userInfo.PASSWORD) {
+          axios
+            .post(`${apiRoute}/updatePassword.php`, {
+              ID: userInfo.ID,
+              PASSWORD: values.PASSWORD2,
+            })
+            .then(({ data }) => {
+              if (data.code === 200) {
+                setModalsVisibility({ ...modalsVisibility, modal4: false });
+                let userInfoCopy = { ...userInfo };
+                userInfoCopy.PASSWORD = values.PASSWORD2;
+                setUserInfo(userInfoCopy);
+                toast({
+                  title: "Información actualizada",
+                  description: "Cambios exitosos",
+                  status: "success",
+                  duration: 3000,
+                  isClosable: true,
+                });
+              } else {
+                toast({
+                  title: "Ocurrió un error inesperado",
+                  description: "Favor de intentar mas tarde",
+                  status: "error",
+                  duration: 3000,
+                  isClosable: true,
+                });
+              }
+            })
+            .catch((error) => console.log(error));
+        } else {
+          setModalsVisibility({ ...modalsVisibility, modal4: false });
+        }
+      }}
+    >
+      {({ values, handleChange, errors }) => (
+        <Modal
+          isOpen={modalsVisibility.modal4}
+          onClose={() => {
+            setModalsVisibility({ ...modalsVisibility, modal4: false });
+          }}
+        >
+          <ModalOverlay />
+          <ModalCloseButton />
+          <ModalContent>
+            <ModalHeader>Actualizar Información</ModalHeader>
+            <ModalBody>
+              <Form id="modal4Form" style={{ width: "100%" }}>
+                <div
+                  style={{
+                    width: "100%",
+                    marginBottom: "1em",
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <span style={{ marginRight: "1em" }}>Email</span>
+                  <Field
+                    name="EMAIL"
+                    type="email"
+                    onChange={handleChange}
+                    value={values.EMAIL}
+                    readOnly
+                  />
+                </div>
+                <div
+                  style={{
+                    width: "100%",
+                    marginBottom: "1em",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <span style={{ marginRight: "1em" }}>
+                    Contraseña anterior
+                  </span>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <Field
+                      name="OLDPASSWORD"
+                      type="password"
+                      onChange={handleChange}
+                      value={values.OLDPASSWORD}
+                    />
+                    {errors.OLDPASSWORD ? (
+                      <span style={{ color: "red" }}>Campo requerido</span>
+                    ) : null}
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    width: "100%",
+                    marginBottom: "1em",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <span style={{ marginRight: "1em" }}>Nueva Contraseña</span>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <Field
+                      name="PASSWORD1"
+                      type="password"
+                      onChange={handleChange}
+                      value={values.PASSWORD1}
+                    />
+                    {errors.PASSWORD1 ? (
+                      <span style={{ color: "red" }}>Campo requerido</span>
+                    ) : null}
+                  </div>
+                </div>
+                <div
+                  style={{
+                    width: "100%",
+                    marginBottom: "1em",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <span style={{ marginRight: "1em" }}>
+                    Repita nueva contraseña
+                  </span>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <Field
+                      name="PASSWORD2"
+                      type="password"
+                      value={values.PASSWORD2}
+                      onChange={handleChange}
+                    />
+                    {errors.PASSWORD1 ? (
+                      <span style={{ color: "red" }}>
+                        Las contraseñas tienen que ser iguales*
+                      </span>
+                    ) : null}
+                  </div>
+                </div>
+              </Form>
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setModalsVisibility({
+                    ...modalsVisibility,
+                    modal4: false,
+                  });
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                style={{ backgroundColor: "#ECB83C" }}
+                form="modal4Form"
+              >
+                Actualizar
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      )}
+    </Formik>
   );
 });
 export default Datos;
