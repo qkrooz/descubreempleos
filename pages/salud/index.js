@@ -16,19 +16,19 @@ const Salud = React.memo(() => {
               <h3> ¿Quieres más información?</h3>
             </div>
             <Form.Field>
-              <label className={style.label}>Nombre</label> <input></input>
+              <label className={style.label}>Nombre</label> <input type="text" placeholder="Nonbre Completo"></input>
             </Form.Field>
             <Form.Field>
               <label className={style.label}>Número de teléfono</label>
-              <input></input>
+              <input type="text" placeholder="Teléfono con código de área"></input>
             </Form.Field>
             <Form.Field>
               <label className={style.label}> Correo electrónico</label>
-              <input></input>
+              <input type="text" placeholder="Correo"></input>
             </Form.Field>
             <Form.Field>
               <label className={style.label}>Háblanos de tu problema</label>
-              <input></input>
+              <input type="textarea" placeholder="No es necesario contestar esta casilla" className={style.textarea}></input>
             </Form.Field>
             <div className={style.containerbutton}>
               <button className={style.button}>
@@ -36,12 +36,13 @@ const Salud = React.memo(() => {
               </button>
             </div>
           </Form>
+          <img src="./icon-lamp-white-blue.png" className={style.imgicon}></img>
         </div>
         <div className={style.columm2}>
-          <h1> ¿Estresado por el trabajo?</h1> El estrés, la ansiedad y la
+          <div className={style.column2content}> <h1 className={style.title}> ¿Estresado por el trabajo?</h1> <p className={style.textindex}>El estrés, la ansiedad y la
           depresión, son de los principales motivos de consulta en terapia
-          psicológica.
-        </div>
+          psicológica.</p>
+          </div></div>
       </div>
       <div className={style.flexcontainer}>
         <Card>
