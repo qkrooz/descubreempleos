@@ -20,11 +20,16 @@
   background-color: #004a5b;
   color: white;
   font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0px 50px;
 }
 .form {
   border: 1px solid;
   border-radius: 20px;
-  padding: 3%;
+  padding: 15px 13%;
+  background-color: #f1f2f4;
 }
 .columm1 {
   width: 30%;
@@ -46,4 +51,34 @@
 }
 .card {
   text-align: center;
+  background-color: #004a5b;
+  color: white;
+  padding: 13px;
+}
+.image {
+  width: 80px;
+}
+.flexfooter {
+  display: flex;
+  justify-content: space-around;
+}
+.titleform {
+  text-align: center;
+  font-size: 19px;
+  margin-bottom: 11px;
+}
+.content {
+  color: #002627;
+}
+.label {
+  font-weight: normal !important;
+}
+.background {
+  background-color: #002627;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  position: absolute;
+  width: 50px;
+  height: 397px;
+  left: 0;
 }
