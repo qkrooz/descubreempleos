@@ -4,6 +4,7 @@ import { Card, Icon } from "semantic-ui-react";
 import { Formik, Form, Field } from "formik";
 import moment from "moment";
 import * as Yup from "yup";
+import { useToast } from "@chakra-ui/react";
 import {
   Modal,
   ModalOverlay,
@@ -21,6 +22,8 @@ import Footer from "../components/Footer";
 import UserCard from "../components/UserCard";
 // styles
 import style from "../../../styles/datos.module.css";
+import axios from "axios";
+import apiRoute from "../resources/apiRoute";
 const Datos = React.memo(() => {
   // state
 
@@ -339,6 +342,7 @@ const Datos = React.memo(() => {
   );
 });
 const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
+  const toast = useToast();
   const [years, setYears] = useState([]);
   const [days, setDays] = useState();
   const [selectedCityID, setSelectedCityID] = useState("0");
@@ -346,12 +350,41 @@ const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
   const [selectedYear, setSelectedYear] = useState(moment(new Date()).year());
   const [selectedMonth, setSelectedMonth] = useState("01");
   const [selectedDay, setSelectedDay] = useState("01");
-  const [habilities, setHabilities] = useState([]);
+  const [languages, setLanguages] = useState([]);
   const { userInfoState, secondaryInfoState } = useContext(MainContext);
   const [userInfo] = userInfoState;
   const [secondaryInfo] = secondaryInfoState;
+  const [habilitiesList, setLanguagesList] = useState([
+    { ID: 1, TITLE: "Español", VALUE: "es" },
+    { ID: 2, TITLE: "Inglés", VALUE: "en" },
+    { ID: 3, TITLE: "Francés", VALUE: "fr" },
+    { ID: 4, TITLE: "Chino", VALUE: "zh" },
+  ]);
+  const purgeHabilities = (value) => {
+    let optionValue = JSON.parse(value);
+    let habilitiesListCopy = [...habilitiesList];
+    const index = habilitiesListCopy.findIndex(
+      (item) => item.VALUE === optionValue.VALUE
+    );
+    if (index > -1) habilitiesListCopy.splice(index, 1);
+    setLanguagesList(habilitiesListCopy);
+  };
+  const renewHabilitiesList = (value) => {
+    let habilitiesCopy = [...languages];
+    let newArray = habilitiesCopy.filter((item) => item.ID !== value.ID);
+    setLanguages(newArray);
+    setLanguagesList((habilitiesList) => [...habilitiesList, value]);
+  };
   useEffect(() => {
-    setHabilities(secondaryInfo.HABILIDADES);
+    if (secondaryInfo.HABILIDADES) {
+      let array = JSON.parse(secondaryInfo.HABILIDADES);
+      for (let i = 0; i < array; i++) {
+        purgeHabilities(array[i]);
+      }
+      setLanguages(array);
+    } else {
+      setLanguages([]);
+    }
     let years = [];
     let limit = moment(new Date()).year() - 80;
     for (let i = moment(new Date()).year(); i > limit; i--) {
@@ -364,24 +397,46 @@ const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
       moment(`${selectedYear},${selectedMonth}`, "YYYY-MM").daysInMonth()
     );
   }, [selectedYear, selectedMonth]);
-  useEffect(() => {
-    console.log(selectedStateID);
-  }, [selectedStateID]);
   return (
     <Formik
       initialValues={{
         AGE: userInfo.AGE ? userInfo.AGE : "",
         GENRE: userInfo.GENRE ? userInfo.GENRE : "femenino",
-        TE_NUMBER: userInfo.TEL_NUMBER ? userInfo.TEL_NUMBER : "",
+        TEL_NUMBER: userInfo.TEL_NUMBER ? userInfo.TEL_NUMBER : "",
         STATE: userInfo.STATE ? userInfo.STATE : "",
         CITY: userInfo.CITY ? userInfo.CITY : "",
       }}
       onSubmit={(values) => {
         let BIRTH_DATE = `${selectedYear}-${selectedMonth}-${selectedDay}`;
-        values["BIRTH_DATE"] = BIRTH_DATE;
+        values["IDIOMAS"] = JSON.stringify(languages);
+        values["BIRTH_DATE"] =
+          moment().diff(BIRTH_DATE, "years") !== 0 ? BIRTH_DATE : null;
         values["ID"] = parseInt(userInfo.ID);
-
-        console.log(selectedCityID);
+        values["AGE"] =
+          moment().diff(BIRTH_DATE, "years") !== 0
+            ? moment().diff(BIRTH_DATE, "years")
+            : null;
+        values["CITY"] =
+          selectedCityID === "0"
+            ? Cities.cities
+                .find((item) => item.state_id === selectedStateID)
+                .name.toLowerCase()
+            : Cities.cities
+                .filter((o) => o.id === selectedCityID)[0]
+                .name.toLowerCase();
+        values["STATE"] =
+          Estados.states
+            .filter((o) => o.id === selectedStateID)[0]
+            .name.toLowerCase() !== "todo méxico"
+            ? Estados.states
+                .filter((o) => o.id === selectedStateID)[0]
+                .name.toLowerCase()
+            : null;
+        axios
+          .post(`${apiRoute}/updateTrabajadorSecondaryInfo.php`, values)
+          .then(({ data }) => console.log(data))
+          .catch((error) => console.log(error));
+        console.log(values);
       }}
     >
       {({ values, handleChange, errors, handleBlur }) => (
@@ -414,11 +469,7 @@ const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
                       style={{ padding: "0.5em", marginRight: "0.5em" }}
                       aria-label="Año"
                       onChange={(e) => setSelectedYear(e.target.value)}
-                      value={
-                        userInfo.BIRTH_DATE
-                          ? moment(userInfo.BIRTH_DATE).format("YYYY")
-                          : moment(new Date()).format("YYYY")
-                      }
+                      value={selectedYear}
                     >
                       {years.map((key) => (
                         <option key={key} value={key}>
@@ -430,11 +481,7 @@ const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
                       style={{ padding: "0.5em", marginRight: "0.5em" }}
                       aria-label="Año"
                       onChange={(e) => setSelectedMonth(e.target.value)}
-                      value={
-                        userInfo.BIRTH_DATE
-                          ? moment(userInfo.BIRTH_DATE).format("MM")
-                          : moment(new Date()).format("MM")
-                      }
+                      value={selectedMonth}
                     >
                       <option value="01">Enero</option>
                       <option value="02">Febrero</option>
@@ -452,11 +499,7 @@ const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
                     <select
                       style={{ padding: "0.5em", marginRight: "0.5em" }}
                       onChange={(e) => setSelectedDay(e.target.value)}
-                      value={
-                        userInfo.BIRTH_DATE
-                          ? moment(userInfo.BIRTH_DATE).format("DD")
-                          : moment(new Date()).format("DD")
-                      }
+                      value={selectedDay}
                     >
                       {Array(days)
                         .fill(0)
@@ -501,7 +544,12 @@ const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
                   <span>Número telefónico</span>
                   <div style={{ padding: "0.5em" }}>
                     <span style={{ marginRight: "0.5em" }}>(+52)</span>
-                    <input name="TEL_NUMBER" type="number" />
+                    <input
+                      name="TEL_NUMBER"
+                      type="number"
+                      onChange={handleChange}
+                      value={values.TEL_NUMBER}
+                    />
                   </div>
                   <span>Estado</span>
                   <div style={{ padding: "0.5em" }}>
@@ -538,6 +586,45 @@ const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
                         ))}
                     </select>
                   </div>
+                </div>
+                <span>Idiomas</span>
+                <div style={{ display: "flex", flexWrap: "wrap" }}>
+                  {languages.length !== 0
+                    ? languages.map((key, i) => (
+                        <div className={style.chip} key={key.ID}>
+                          <span>{key.TITLE}</span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              renewHabilitiesList(key);
+                            }}
+                          >
+                            <Icon name="close" />
+                          </button>
+                        </div>
+                      ))
+                    : null}
+                </div>
+                <div style={{ padding: "0.5em" }}>
+                  {languages.length >= 4 ? null : (
+                    <select
+                      defaultValue="none"
+                      onChange={(e) => {
+                        setLanguages((languages) => [
+                          ...languages,
+                          JSON.parse(e.target.value),
+                        ]);
+                        purgeHabilities(e.target.value);
+                      }}
+                    >
+                      <option value="none">Selecciona un idioma</option>
+                      {habilitiesList.map((key) => (
+                        <option value={JSON.stringify(key)} key={key.ID}>
+                          {key.TITLE}
+                        </option>
+                      ))}
+                    </select>
+                  )}
                 </div>
               </Form>
             </ModalBody>

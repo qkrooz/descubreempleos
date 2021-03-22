@@ -16,7 +16,9 @@ import {
 } from "@chakra-ui/react";
 import { Field, Form, Formik } from "formik";
 import * as Yup from "yup";
+import { useToast } from "@chakra-ui/react";
 const UserCard = React.memo(() => {
+  const toast = useToast();
   // states
   const [userImgError, setUserImgError] = useState(false);
   const [disponibleState, setDisponibleState] = useState();
@@ -24,7 +26,7 @@ const UserCard = React.memo(() => {
   // context
   const { userInfoState, secondaryInfoState } = useContext(MainContext);
   const [userInfo] = userInfoState;
-  const [secondaryInfo] = secondaryInfoState;
+  const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
   const ChangeAvailability = () => {
     axios
       .post(`${apiRoute}/changeAvailability.php`, {
@@ -33,6 +35,16 @@ const UserCard = React.memo(() => {
       })
       .then(({ data }) => {
         if (data.code === 200) {
+          toast({
+            title: data.current ? "Disponible para trabajar" : "No disponible",
+            description: "Has cambiado tu disponibilidad de trabajo",
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+          });
+          let secondaryInfoCopy = { ...secondaryInfo };
+          secondaryInfoCopy.DISPONIBLE = data.current.toString();
+          setSecondaryInfo(secondaryInfoCopy);
           setDisponibleState(!Boolean(disponibleState));
         } else {
           console.log("ocurrio un error");
@@ -105,6 +117,7 @@ const UserCard = React.memo(() => {
 });
 const Modal1 = React.memo(
   ({ editModalVisibility, userImgError, setEditModalVisibility }) => {
+    const toast = useToast();
     const RetroError = () => {
       return (
         <span style={{ color: "red", fontSize: "0.8em" }}>Requerido*</span>
@@ -128,13 +141,14 @@ const Modal1 = React.memo(
         }}
         onSubmit={(values) => {
           if (
-            values.NAME === userInfo.NAME &&
+            values.NAMES === userInfo.NAMES &&
             values.LAST_NAME === userInfo.LAST_NAME &&
             values.MOTHERS_LAST_NAME === userInfo.MOTHERS_LAST_NAME &&
             values.TITULO === secondaryInfo.TITULO
           ) {
             setEditModalVisibility(!editModalVisibility);
           } else {
+            console.log("aqui llego");
             values["ID"] = parseInt(userInfo.ID);
             axios
               .post(`${apiRoute}/updatePrimaryInfo.php`, values)
@@ -149,8 +163,20 @@ const Modal1 = React.memo(
                   setUserInfo(userInfoCopy);
                   setSecondaryInfo(secondaryInfoCopy);
                   setEditModalVisibility(false);
+                  toast({
+                    title: "Información actualizada",
+                    description: "Cambios exitosos",
+                    status: "success",
+                    duration: 3000,
+                    isClosable: true,
+                  });
                 } else {
-                  console.log("ocurrio un error");
+                  toast({
+                    title: "Ocurrio un error, intenta mas tarde.",
+                    status: "error",
+                    duration: 3000,
+                    isClosable: true,
+                  });
                 }
               })
               .catch((error) => console.log(error));
