@@ -22,7 +22,13 @@ html {
     url(/fonts/MyriadPro-Regular.otf) format("truetype");
 }
 input {
-  border-radius: 50px !important;
+  border-radius: 10px !important;
+  border: 1px solid gray !important;
+  padding: 0.5em !important;
+  outline: none;
+}
+textarea {
+  border-radius: 5px !important;
   border: 1px solid gray !important;
   padding: 0.5em !important;
   outline: none;
@@ -71,7 +77,9 @@ input ~ label:after {
 button:focus {
   outline: 0px;
 }
-.card{margin-top: 0 !important;}
+.card {
+  margin-top: 0 !important;
+}
 
 @media screen and (max-width: 600px) {
   .ant-collapse-arrow {
@@ -82,5 +90,8 @@ button:focus {
   }
 }
 @media screen and (max-width: 800px) {
-  .card{margin:0 auto !important; margin-top:20px !important;}
+  .card {
+    margin: 0 auto !important;
+    margin-top: 20px !important;
+  }
 }

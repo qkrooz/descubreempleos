@@ -35,7 +35,19 @@ const Datos = React.memo(() => {
     modal2: false,
     modal3: false,
     modal4: false,
+    modal5: false,
+    modal5Edit: false,
   });
+  const [
+    editingObjectExperienciaLaboral,
+    setEditingObjectExperienciaLaboral,
+  ] = useState({});
+  useEffect(() => {
+    console.log(secondaryInfo.EXPERIENCIA_LABORAL);
+  }, [secondaryInfo.EXPERIENCIA_LABORAL]);
+  useEffect(() => {
+    if (!modalsVisibility.modal5Edit) setEditingObjectExperienciaLaboral({});
+  }, [modalsVisibility.modal5Edit]);
   return (
     <>
       <div className={style.container}>
@@ -393,7 +405,12 @@ const Datos = React.memo(() => {
           <Card className={style.card1}>
             <div className={style.dataCardHeader}>
               <h1>Experiencia laboral</h1>
-              <button className={style.enableEditButton}>
+              <button
+                className={style.enableEditButton}
+                onClick={() => {
+                  setModalsVisibility({ ...modalsVisibility, modal5: true });
+                }}
+              >
                 <Icon
                   name="add circle"
                   style={{ marginLeft: "0.5em" }}
@@ -403,11 +420,82 @@ const Datos = React.memo(() => {
             </div>
             <Card.Content>
               <Card.Description>
-                <h3>Aún no has agregado ninguna experiencia laboral</h3>
-                <p>
-                  Aumenta tus probabilidades de exito agregando experiencia en
-                  este campo
-                </p>
+                {secondaryInfo.EXPERIENCIA_LABORAL ? (
+                  JSON.parse(secondaryInfo.EXPERIENCIA_LABORAL).length !== 0 ? (
+                    JSON.parse(secondaryInfo.EXPERIENCIA_LABORAL).map(
+                      (key, i) => (
+                        <div
+                          key={i}
+                          style={{
+                            marginBottom: "0.5em",
+                            borderBottom: "2px solid #e2e2e2",
+                            paddingBottom: "0.5em",
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                            }}
+                          >
+                            <span
+                              style={{ fontSize: "1.2em", fontWeight: "bold" }}
+                            >
+                              {key.PUESTO}
+                            </span>
+                            <button
+                              onClick={() => {
+                                setModalsVisibility({
+                                  ...modalsVisibility,
+                                  modal5Edit: true,
+                                });
+                                setEditingObjectExperienciaLaboral(key);
+                              }}
+                            >
+                              <Icon name="edit" />
+                            </button>
+                          </div>
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                            }}
+                          >
+                            <span style={{ fontWeight: "bold" }}>
+                              {key.EMPRESA}
+                            </span>
+                            <span>
+                              {key.STILLINTHIS
+                                ? `Desde ${key.FROM}`
+                                : `Desde ${key.FROM} hasta ${key.TO}`}
+                            </span>
+                          </div>
+                          <div>
+                            <p style={{ margin: 0, whiteSpace: "pre-wrap" }}>
+                              {key.DESCRIPCION}
+                            </p>
+                          </div>
+                        </div>
+                      )
+                    )
+                  ) : (
+                    <>
+                      <h3>Aún no has agregado ninguna experiencia laboral</h3>
+                      <p>
+                        Aumenta tus probabilidades de exito agregando
+                        experiencia en este campo
+                      </p>
+                    </>
+                  )
+                ) : (
+                  <>
+                    <h3>Aún no has agregado ninguna experiencia laboral</h3>
+                    <p>
+                      Aumenta tus probabilidades de exito agregando experiencia
+                      en este campo
+                    </p>
+                  </>
+                )}
               </Card.Description>
             </Card.Content>
           </Card>
@@ -424,11 +512,29 @@ const Datos = React.memo(() => {
             </div>
             <Card.Content>
               <Card.Description>
-                <h3>Aún no has agregado ningun grado educativo</h3>
-                <p>
-                  Aumenta tus probabilidades de exito agregando experiencia en
-                  este campo
-                </p>
+                {secondaryInfo.GRADO_EDUCATIVO ? (
+                  JSON.parse(secondaryInfo.GRADO_EDUCATIVO).length !== 0 ? (
+                    JSON.parse(secondaryInfo.GRADO_EDUCATIVO).map((key) => (
+                      <>hola</>
+                    ))
+                  ) : (
+                    <>
+                      <h3>Aún no has agregado ningun grado educativo</h3>
+                      <p>
+                        Aumenta tus probabilidades de exito agregando
+                        experiencia en este campo
+                      </p>
+                    </>
+                  )
+                ) : (
+                  <>
+                    <h3>Aún no has agregado ningun grado educativo</h3>
+                    <p>
+                      Aumenta tus probabilidades de exito agregando experiencia
+                      en este campo
+                    </p>
+                  </>
+                )}
               </Card.Description>
             </Card.Content>
           </Card>
@@ -445,11 +551,30 @@ const Datos = React.memo(() => {
             </div>
             <Card.Content>
               <Card.Description>
-                <h3>Aún no has agregado ningun curso o certificación</h3>
-                <p>
-                  Aumenta tus probabilidades de exito agregando experiencia en
-                  este campo
-                </p>
+                {secondaryInfo.CURSOS_CERTIFICACIONES ? (
+                  JSON.parse(secondaryInfo.CURSOS_CERTIFICACIONES).length !==
+                  0 ? (
+                    JSON.parse(
+                      secondaryInfo.CURSOS_CERTIFICACIONES
+                    ).map((key) => <>hola</>)
+                  ) : (
+                    <>
+                      <h3>Aún no has agregado ningun curso o certificación</h3>
+                      <p>
+                        Aumenta tus probabilidades de exito agregando
+                        experiencia en este campo
+                      </p>
+                    </>
+                  )
+                ) : (
+                  <>
+                    <h3>Aún no has agregado ningun curso o certificación</h3>
+                    <p>
+                      Aumenta tus probabilidades de exito agregando experiencia
+                      en este campo
+                    </p>
+                  </>
+                )}
               </Card.Description>
             </Card.Content>
           </Card>
@@ -466,6 +591,15 @@ const Datos = React.memo(() => {
       <Modal4
         modalsVisibility={modalsVisibility}
         setModalsVisibility={setModalsVisibility}
+      />
+      <Modal5
+        modalsVisibility={modalsVisibility}
+        setModalsVisibility={setModalsVisibility}
+      />
+      <Modal5Edit
+        modalsVisibility={modalsVisibility}
+        setModalsVisibility={setModalsVisibility}
+        editingObjectExperienciaLaboral={editingObjectExperienciaLaboral}
       />
       <Footer />
     </>
@@ -1082,7 +1216,7 @@ const Modal4 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
     ),
   });
   const { userInfoState } = useContext(MainContext);
-  const [userInfo] = userInfoState;
+  const [userInfo, setUserInfo] = userInfoState;
   return (
     <Formik
       validationSchema={validationSchema}
@@ -1124,6 +1258,14 @@ const Modal4 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
             })
             .catch((error) => console.log(error));
         } else {
+          toast({
+            title: "No se ha actualizado ningún dato",
+            description:
+              "Ingresa tu contraseña anterior y las nuevas dos contraseñas tienen que ser iguales",
+            status: "info",
+            duration: 3000,
+            isClosable: true,
+          });
           setModalsVisibility({ ...modalsVisibility, modal4: false });
         }
       }}
@@ -1277,4 +1419,624 @@ const Modal4 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
     </Formik>
   );
 });
+const Modal5 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
+  const toast = useToast();
+  const validationSchema = Yup.object().shape({
+    PUESTO: Yup.string().required(),
+    EMPRESA: Yup.string().required(),
+    DESCRIPCION: Yup.string().required(),
+  });
+  // context
+  const { userInfoState, secondaryInfoState } = useContext(MainContext);
+  const [userInfo] = userInfoState;
+  const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
+  // states
+  const [years, setYears] = useState([]);
+  const [from, setFrom] = useState({
+    month: "01",
+    year: moment(new Date()).format("YYYY"),
+  });
+  const [to, setTo] = useState({
+    month: "01",
+    year: moment(new Date()).format("YYYY"),
+  });
+  // effects
+  useEffect(() => {
+    let years = [];
+    let limit = moment(new Date()).year() - 80;
+    for (let i = moment(new Date()).year(); i > limit; i--) {
+      years.push(i);
+    }
+    setYears(years);
+  }, []);
+  return (
+    <Formik
+      validationSchema={validationSchema}
+      initialValues={{
+        PUESTO: "",
+        EMPRESA: "",
+        DESCRIPCION: "",
+        STILLINTHIS: false,
+      }}
+      onSubmit={(values, formikBag) => {
+        let newExperienciaLaboral;
+        values.FROM = `${from.month}/${from.year}`;
+        !values.STILLINTHIS
+          ? (values.TO = `${to.month}/${to.year}`)
+          : delete values.TO;
+        if (secondaryInfo.EXPERIENCIA_LABORAL) {
+          newExperienciaLaboral = JSON.parse(secondaryInfo.EXPERIENCIA_LABORAL);
+          values.ID = newExperienciaLaboral.length;
+          newExperienciaLaboral.push(values);
+        } else {
+          values.ID = 1;
+          newExperienciaLaboral = [];
+          newExperienciaLaboral.push(values);
+        }
+        axios
+          .post(`${apiRoute}/updateExperienciaLaboral.php`, {
+            ID: userInfo.ID,
+            EXPERIENCIA_LABORAL: newExperienciaLaboral,
+          })
+          .then(({ data }) => {
+            if (data.code === 200) {
+              let arraysito;
+              if (secondaryInfo.EXPERIENCIA_LABORAL) {
+                arraysito = JSON.parse(secondaryInfo.EXPERIENCIA_LABORAL);
+                arraysito.push(values);
+                setSecondaryInfo({
+                  ...secondaryInfo,
+                  EXPERIENCIA_LABORAL: JSON.stringify(arraysito),
+                });
+              } else {
+                arraysito = [];
+                arraysito.push(values);
+                setSecondaryInfo({
+                  ...secondaryInfo,
+                  EXPERIENCIA_LABORAL: JSON.stringify(arraysito),
+                });
+              }
+              setModalsVisibility({ modalsVisibility, modal5: false });
+              toast({
+                title: "Información actualizada",
+                description: "Cambios exitosos",
+                status: "success",
+                duration: 3000,
+                isClosable: true,
+              });
+              formikBag.resetForm({
+                PUESTO: "",
+                EMPRESA: "",
+                DESCRIPCION: "",
+                STILLINTHIS: false,
+              });
+            } else {
+              setModalsVisibility({ modalsVisibility, modal5: false });
+              toast({
+                title: "Ocurrio un error en la actualizacion",
+                description: "CIntentar mas tarde",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+              });
+            }
+          })
+          .catch((error) => console.log(error));
+      }}
+    >
+      {({ values, handleChange, errors, resetForm }) => (
+        <Modal
+          isOpen={modalsVisibility.modal5}
+          onClose={() => {
+            setModalsVisibility({ ...modalsVisibility, modal5: false });
+            resetForm({
+              PUESTO: "",
+              EMPRESA: "",
+              DESCRIPCION: "",
+              STILLINTHIS: false,
+            });
+          }}
+          size="xl"
+        >
+          <ModalOverlay />
+          <ModalCloseButton />
+          <ModalContent>
+            <ModalHeader>Experiencia laboral</ModalHeader>
+            <ModalBody>
+              <Form id="modal5Form">
+                <div style={{ display: "flex", marginBottom: "1em" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      flexGrow: 1,
+                      marginRight: "1em",
+                    }}
+                  >
+                    {errors.PUESTO ? (
+                      <span style={{ color: "red" }}>*</span>
+                    ) : null}
+                    <Field
+                      onChange={handleChange}
+                      value={values.PUESTO}
+                      name="PUESTO"
+                      placeholder="Puesto desempeñado"
+                      style={{ marginBottom: "1em" }}
+                    />
+                    {errors.EMPRESA ? (
+                      <span style={{ color: "red" }}>*</span>
+                    ) : null}
+                    <Field
+                      onChange={handleChange}
+                      value={values.EMPRESA}
+                      name="EMPRESA"
+                      placeholder="Nombre de la empresa"
+                    />
+                  </div>
+                  <div style={{ width: "50%" }}>
+                    <div style={{ display: "flex", flexDirection: "column" }}>
+                      <span style={{ fontSize: "0.7em", color: "gray" }}>
+                        Desde:
+                      </span>
+                      <div style={{ marginBottom: "0.5em" }}>
+                        <select
+                          style={{ marginRight: "1em" }}
+                          onChange={(e) => {
+                            setFrom({ ...from, month: e.target.value });
+                          }}
+                        >
+                          <option value="01">Enero</option>
+                          <option value="02">Febrero</option>
+                          <option value="03">Marzo</option>
+                          <option value="04">Abril</option>
+                          <option value="05">Mayo</option>
+                          <option value="06">Junio</option>
+                          <option value="07">Julio</option>
+                          <option value="08">Agosto</option>
+                          <option value="09">Septiembre</option>
+                          <option value="10">Octubre</option>
+                          <option value="11">Noviembre</option>
+                          <option value="12">Diciembre</option>
+                        </select>
+                        <select
+                          style={{ marginRight: "1em" }}
+                          onChange={(e) => {
+                            setFrom({ ...from, year: e.target.value });
+                          }}
+                        >
+                          {years.map((key) => (
+                            <option key={key} value={key}>
+                              {key}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                    {values.STILLINTHIS ? null : (
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          marginBottom: "0.5em",
+                        }}
+                      >
+                        <span style={{ fontSize: "0.7em", color: "gray" }}>
+                          Hasta:
+                        </span>
+                        <div>
+                          <select
+                            style={{ marginRight: "1em" }}
+                            onChange={(e) => {
+                              setTo({ ...to, month: e.target.value });
+                            }}
+                          >
+                            <option value="01">Enero</option>
+                            <option value="02">Febrero</option>
+                            <option value="03">Marzo</option>
+                            <option value="04">Abril</option>
+                            <option value="05">Mayo</option>
+                            <option value="06">Junio</option>
+                            <option value="07">Julio</option>
+                            <option value="08">Agosto</option>
+                            <option value="09">Septiembre</option>
+                            <option value="10">Octubre</option>
+                            <option value="11">Noviembre</option>
+                            <option value="12">Diciembre</option>
+                          </select>
+                          <select
+                            onChange={(e) => {
+                              setTo({ ...to, year: e.target.value });
+                            }}
+                          >
+                            {years.map((key) => (
+                              <option key={key} value={key}>
+                                {key}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                    )}
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <span style={{ marginRight: "0.5em" }}>
+                        ¿Aún sigues en este empleo?
+                      </span>
+                      <input
+                        type="checkbox"
+                        name="STILLINTHIS"
+                        onChange={handleChange}
+                        value={values.STILLINTHIS}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  {errors.DESCRIPCION ? (
+                    <span style={{ color: "red" }}>*</span>
+                  ) : null}
+                  <Field
+                    style={{ width: "100%" }}
+                    as="textarea"
+                    onChange={handleChange}
+                    value={values.DESCRIPCION}
+                    name="DESCRIPCION"
+                    maxLength={400}
+                    rows={4}
+                    maxrows={6}
+                    placeholder="Descríbenos en qué consistía tu trabajo"
+                  />
+                  <span
+                    style={{
+                      marginLeft: "auto",
+                      fontWeight: "bold",
+                      fontSize: "0.8em",
+                      color: "gray",
+                    }}
+                  >{`${values.DESCRIPCION.length}/400`}</span>
+                </div>
+              </Form>
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setModalsVisibility({
+                    ...modalsVisibility,
+                    modal5: false,
+                  });
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                style={{ backgroundColor: "#ECB83C" }}
+                form="modal5Form"
+              >
+                Agregar
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      )}
+    </Formik>
+  );
+});
+const Modal5Edit = React.memo(
+  ({
+    modalsVisibility,
+    setModalsVisibility,
+    editingObjectExperienciaLaboral,
+  }) => {
+    const toast = useToast();
+    // context
+    const { userInfoState, secondaryInfoState } = useContext(MainContext);
+    const [userInfo] = userInfoState;
+    const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
+    // states
+    const [years, setYears] = useState([]);
+    const [from, setFrom] = useState({
+      month: "01",
+      year: moment(new Date()).format("YYYY"),
+    });
+    const [to, setTo] = useState({
+      month: "01",
+      year: moment(new Date()).format("YYYY"),
+    });
+    // effects
+    useEffect(() => {
+      let years = [];
+      let limit = moment(new Date()).year() - 80;
+      for (let i = moment(new Date()).year(); i > limit; i--) {
+        years.push(i);
+      }
+      setYears(years);
+    }, []);
+    if (Object.values(editingObjectExperienciaLaboral).length !== 0) {
+      return (
+        <Formik
+          initialValues={{
+            EDITPUESTO: editingObjectExperienciaLaboral.PUESTO,
+            EDITEMPRESA: editingObjectExperienciaLaboral.EMPRESA,
+            EDITDESCRIPCION: editingObjectExperienciaLaboral.DESCRIPCION,
+            EDITSTILLINTHIS: editingObjectExperienciaLaboral.STILLINTHIS,
+          }}
+          onSubmit={(values) => {
+            values.PUESTO = values.EDITPUESTO;
+            delete values.EDITPUESTO;
+            values.EMPRESA = values.EDITEMPRESA;
+            delete values.EDITEMPRESA;
+            values.DESCRIPCION = values.EDITDESCRIPCION;
+            delete values.EDITDESCRIPCION;
+            values.STILLINTHIS = values.EDITSTILLINTHIS;
+            delete values.EDITSTILLINTHIS;
+            let oldExperienciaLaboral = [
+              ...JSON.parse(secondaryInfo.EXPERIENCIA_LABORAL),
+            ];
+            values.ID = editingObjectExperienciaLaboral.ID;
+            values.FROM = `${from.month}/${from.year}`;
+            !values.STILLINTHIS
+              ? (values.TO = `${to.month}/${to.year}`)
+              : delete values.TO;
+            const index = oldExperienciaLaboral.findIndex(
+              (item) => item.ID === editingObjectExperienciaLaboral.ID
+            );
+            oldExperienciaLaboral[index] = values;
+            axios
+              .post(`${apiRoute}/updateExperienciaLaboral.php`, {
+                ID: userInfo.ID,
+                EXPERIENCIA_LABORAL: oldExperienciaLaboral,
+              })
+              .then(({ data }) => {
+                if (data.code === 200) {
+                  setSecondaryInfo({
+                    ...secondaryInfo,
+                    EXPERIENCIA_LABORAL: JSON.stringify(oldExperienciaLaboral),
+                  });
+                  setModalsVisibility({ modalsVisibility, modal5: false });
+                  toast({
+                    title: "Información actualizada",
+                    description: "Cambios exitosos",
+                    status: "success",
+                    duration: 3000,
+                    isClosable: true,
+                  });
+                } else {
+                  setModalsVisibility({ modalsVisibility, modal5: false });
+                  toast({
+                    title: "Ocurrio un error en la actualizacion",
+                    description: "CIntentar mas tarde",
+                    status: "error",
+                    duration: 3000,
+                    isClosable: true,
+                  });
+                }
+              })
+              .catch((error) => console.log(error));
+            console.log(values);
+          }}
+        >
+          {({ values, handleChange }) => (
+            <Modal
+              isOpen={modalsVisibility.modal5Edit}
+              onClose={() => {
+                setModalsVisibility({ ...modalsVisibility, modal5Edit: false });
+              }}
+              size="xl"
+            >
+              <ModalOverlay />
+              <ModalCloseButton />
+              <ModalContent>
+                <ModalHeader>Editar eperiencia laboral</ModalHeader>
+                <ModalBody>
+                  <Form id="modal5EditForm">
+                    <div style={{ display: "flex", marginBottom: "1em" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          flexGrow: 1,
+                          marginRight: "1em",
+                        }}
+                      >
+                        <Field
+                          onChange={handleChange}
+                          value={values.EDITPUESTO}
+                          name="EDITPUESTO"
+                          placeholder="Puesto desempeñado"
+                          style={{ marginBottom: "1em" }}
+                        />
+                        <Field
+                          onChange={handleChange}
+                          value={values.EDITEMPRESA}
+                          name="EDITEMPRESA"
+                          placeholder="Nombre de la empresa"
+                        />
+                      </div>
+                      <div style={{ width: "50%" }}>
+                        <div
+                          style={{ display: "flex", flexDirection: "column" }}
+                        >
+                          <span style={{ fontSize: "0.7em", color: "gray" }}>
+                            Desde:
+                          </span>
+                          <div style={{ marginBottom: "0.5em" }}>
+                            <select
+                              style={{ marginRight: "1em" }}
+                              onChange={(e) => {
+                                setFrom({ ...from, month: e.target.value });
+                              }}
+                              defaultValue={moment(
+                                editingObjectExperienciaLaboral.FROM,
+                                "MM/YYYY"
+                              ).format("MM")}
+                            >
+                              <option value="01">Enero</option>
+                              <option value="02">Febrero</option>
+                              <option value="03">Marzo</option>
+                              <option value="04">Abril</option>
+                              <option value="05">Mayo</option>
+                              <option value="06">Junio</option>
+                              <option value="07">Julio</option>
+                              <option value="08">Agosto</option>
+                              <option value="09">Septiembre</option>
+                              <option value="10">Octubre</option>
+                              <option value="11">Noviembre</option>
+                              <option value="12">Diciembre</option>
+                            </select>
+                            <select
+                              style={{ marginRight: "1em" }}
+                              onChange={(e) => {
+                                setFrom({ ...from, year: e.target.value });
+                              }}
+                              defaultValue={moment(
+                                editingObjectExperienciaLaboral.FROM,
+                                "MM/YYYY"
+                              ).format("YYYY")}
+                            >
+                              {years.map((key) => (
+                                <option key={key} value={key}>
+                                  {key}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+                        {values.EDITSTILLINTHIS ? null : (
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              marginBottom: "0.5em",
+                            }}
+                          >
+                            <span style={{ fontSize: "0.7em", color: "gray" }}>
+                              Hasta:
+                            </span>
+                            <div>
+                              <select
+                                style={{ marginRight: "1em" }}
+                                onChange={(e) => {
+                                  setTo({ ...to, month: e.target.value });
+                                }}
+                                defaultValue={moment(
+                                  editingObjectExperienciaLaboral.TO,
+                                  "MM/YYYY"
+                                ).format("MM")}
+                              >
+                                <option value="01">Enero</option>
+                                <option value="02">Febrero</option>
+                                <option value="03">Marzo</option>
+                                <option value="04">Abril</option>
+                                <option value="05">Mayo</option>
+                                <option value="06">Junio</option>
+                                <option value="07">Julio</option>
+                                <option value="08">Agosto</option>
+                                <option value="09">Septiembre</option>
+                                <option value="10">Octubre</option>
+                                <option value="11">Noviembre</option>
+                                <option value="12">Diciembre</option>
+                              </select>
+                              <select
+                                onChange={(e) => {
+                                  setTo({ ...to, year: e.target.value });
+                                }}
+                                defaultValue={moment(
+                                  editingObjectExperienciaLaboral.TO,
+                                  "MM/YYYY"
+                                ).format("YYYY")}
+                              >
+                                {years.map((key) => (
+                                  <option key={key} value={key}>
+                                    {key}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                          </div>
+                        )}
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <span style={{ marginRight: "0.5em" }}>
+                            ¿Aún sigues en este empleo?
+                          </span>
+                          <input
+                            type="checkbox"
+                            name="EDITSTILLINTHIS"
+                            onChange={handleChange}
+                            defaultChecked={
+                              editingObjectExperienciaLaboral.STILLINTHIS
+                            }
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        width: "100%",
+                        display: "flex",
+                        flexDirection: "column",
+                      }}
+                    >
+                      <Field
+                        style={{ width: "100%" }}
+                        as="textarea"
+                        onChange={handleChange}
+                        value={values.EDITDESCRIPCION}
+                        name="EDITDESCRIPCION"
+                        maxLength={400}
+                        rows={4}
+                        maxrows={6}
+                        placeholder="Descríbenos en qué consistía tu trabajo"
+                      />
+                      <span
+                        style={{
+                          marginLeft: "auto",
+                          fontWeight: "bold",
+                          fontSize: "0.8em",
+                          color: "gray",
+                        }}
+                      >
+                        {values.DESCRIPCION
+                          ? `${values.DESCRIPCION.length}/400`
+                          : null}
+                      </span>
+                    </div>
+                  </Form>
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                    variant="ghost"
+                    onClick={() => {
+                      setModalsVisibility({
+                        ...modalsVisibility,
+                        modal5Edit: false,
+                      });
+                    }}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    type="submit"
+                    style={{ backgroundColor: "#ECB83C" }}
+                    form="modal5EditForm"
+                  >
+                    Actualizar
+                  </Button>
+                </ModalFooter>
+              </ModalContent>
+            </Modal>
+          )}
+        </Formik>
+      );
+    } else {
+      return null;
+    }
+  }
+);
 export default Datos;
