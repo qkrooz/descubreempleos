@@ -26,28 +26,34 @@ import axios from "axios";
 import apiRoute from "../resources/apiRoute";
 const Datos = React.memo(() => {
   // state
-
-  // context
-  const { userInfoState, secondaryInfoState } = useContext(MainContext);
-  const [userInfo] = userInfoState;
-  const [secondaryInfo] = secondaryInfoState;
   const [modalsVisibility, setModalsVisibility] = useState({
     modal2: false,
     modal3: false,
     modal4: false,
     modal5: false,
     modal5Edit: false,
+    modal6: false,
+    modal6Edit: false,
   });
   const [
     editingObjectExperienciaLaboral,
     setEditingObjectExperienciaLaboral,
   ] = useState({});
-  useEffect(() => {
-    console.log(secondaryInfo.EXPERIENCIA_LABORAL);
-  }, [secondaryInfo.EXPERIENCIA_LABORAL]);
+  const [
+    editingObjectGradoEducativo,
+    setEditingObjectGradoEducativo,
+  ] = useState({});
+  // context
+  const { userInfoState, secondaryInfoState } = useContext(MainContext);
+  const [userInfo] = userInfoState;
+  const [secondaryInfo] = secondaryInfoState;
+  // effects
   useEffect(() => {
     if (!modalsVisibility.modal5Edit) setEditingObjectExperienciaLaboral({});
   }, [modalsVisibility.modal5Edit]);
+  useEffect(() => {
+    if (!modalsVisibility.modal6Edit) setEditingObjectGradoEducativo({});
+  }, [modalsVisibility.modal6Edit]);
   return (
     <>
       <div className={style.container}>
@@ -422,62 +428,60 @@ const Datos = React.memo(() => {
               <Card.Description>
                 {secondaryInfo.EXPERIENCIA_LABORAL ? (
                   JSON.parse(secondaryInfo.EXPERIENCIA_LABORAL).length !== 0 ? (
-                    JSON.parse(secondaryInfo.EXPERIENCIA_LABORAL).map(
-                      (key, i) => (
+                    JSON.parse(secondaryInfo.EXPERIENCIA_LABORAL).map((key) => (
+                      <div
+                        key={key.ID}
+                        style={{
+                          marginBottom: "0.5em",
+                          borderBottom: "2px solid #e2e2e2",
+                          paddingBottom: "0.5em",
+                        }}
+                      >
                         <div
-                          key={i}
                           style={{
-                            marginBottom: "0.5em",
-                            borderBottom: "2px solid #e2e2e2",
-                            paddingBottom: "0.5em",
+                            display: "flex",
+                            justifyContent: "space-between",
                           }}
                         >
-                          <div
-                            style={{
-                              display: "flex",
-                              justifyContent: "space-between",
+                          <span
+                            style={{ fontSize: "1.2em", fontWeight: "bold" }}
+                          >
+                            {key.PUESTO}
+                          </span>
+                          <button
+                            onClick={() => {
+                              setModalsVisibility({
+                                ...modalsVisibility,
+                                modal5Edit: true,
+                              });
+                              setEditingObjectExperienciaLaboral(key);
                             }}
                           >
-                            <span
-                              style={{ fontSize: "1.2em", fontWeight: "bold" }}
-                            >
-                              {key.PUESTO}
-                            </span>
-                            <button
-                              onClick={() => {
-                                setModalsVisibility({
-                                  ...modalsVisibility,
-                                  modal5Edit: true,
-                                });
-                                setEditingObjectExperienciaLaboral(key);
-                              }}
-                            >
-                              <Icon name="edit" />
-                            </button>
-                          </div>
-                          <div
-                            style={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                            }}
-                          >
-                            <span style={{ fontWeight: "bold" }}>
-                              {key.EMPRESA}
-                            </span>
-                            <span>
-                              {key.STILLINTHIS
-                                ? `Desde ${key.FROM}`
-                                : `Desde ${key.FROM} hasta ${key.TO}`}
-                            </span>
-                          </div>
-                          <div>
-                            <p style={{ margin: 0, whiteSpace: "pre-wrap" }}>
-                              {key.DESCRIPCION}
-                            </p>
-                          </div>
+                            <Icon name="edit" />
+                          </button>
                         </div>
-                      )
-                    )
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <span style={{ fontWeight: "bold" }}>
+                            {key.EMPRESA}
+                          </span>
+                          <span>
+                            {key.STILLINTHIS
+                              ? `Desde ${key.FROM}`
+                              : `Desde ${key.FROM} hasta ${key.TO}`}
+                          </span>
+                        </div>
+                        <div>
+                          <p style={{ margin: 0, whiteSpace: "pre-wrap" }}>
+                            {key.DESCRIPCION}
+                          </p>
+                        </div>
+                      </div>
+                    ))
                   ) : (
                     <>
                       <h3>Aún no has agregado ninguna experiencia laboral</h3>
@@ -502,7 +506,12 @@ const Datos = React.memo(() => {
           <Card className={style.card1}>
             <div className={style.dataCardHeader}>
               <h1>Grado Educativo</h1>
-              <button className={style.enableEditButton}>
+              <button
+                className={style.enableEditButton}
+                onClick={() => {
+                  setModalsVisibility({ ...modalsVisibility, modal6: true });
+                }}
+              >
                 <Icon
                   name="add circle"
                   style={{ marginLeft: "0.5em" }}
@@ -515,7 +524,53 @@ const Datos = React.memo(() => {
                 {secondaryInfo.GRADO_EDUCATIVO ? (
                   JSON.parse(secondaryInfo.GRADO_EDUCATIVO).length !== 0 ? (
                     JSON.parse(secondaryInfo.GRADO_EDUCATIVO).map((key) => (
-                      <>hola</>
+                      <div
+                        key={key.ID}
+                        style={{
+                          marginBottom: "0.5em",
+                          borderBottom: "2px solid #e2e2e2",
+                          paddingBottom: "0.5em",
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <span
+                            style={{ fontSize: "1.2em", fontWeight: "bold" }}
+                          >
+                            {key.TITULO}
+                          </span>
+                          <button
+                            onClick={() => {
+                              setModalsVisibility({
+                                ...modalsVisibility,
+                                modal6Edit: true,
+                              });
+                              setEditingObjectGradoEducativo(key);
+                            }}
+                          >
+                            <Icon name="edit" />
+                          </button>
+                        </div>
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <span style={{ fontWeight: "bold" }}>
+                            {key.INSTITUCION}
+                          </span>
+                          <span>
+                            {key.STILLINTHIS
+                              ? `Desde ${key.FROM}`
+                              : `Desde ${key.FROM} hasta ${key.TO}`}
+                          </span>
+                        </div>
+                      </div>
                     ))
                   ) : (
                     <>
@@ -600,6 +655,15 @@ const Datos = React.memo(() => {
         modalsVisibility={modalsVisibility}
         setModalsVisibility={setModalsVisibility}
         editingObjectExperienciaLaboral={editingObjectExperienciaLaboral}
+      />
+      <Modal6
+        modalsVisibility={modalsVisibility}
+        setModalsVisibility={setModalsVisibility}
+      />
+      <Modal6Edit
+        modalsVisibility={modalsVisibility}
+        setModalsVisibility={setModalsVisibility}
+        editingObjectGradoEducativo={editingObjectGradoEducativo}
       />
       <Footer />
     </>
@@ -1466,7 +1530,11 @@ const Modal5 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
           : delete values.TO;
         if (secondaryInfo.EXPERIENCIA_LABORAL) {
           newExperienciaLaboral = JSON.parse(secondaryInfo.EXPERIENCIA_LABORAL);
-          values.ID = newExperienciaLaboral.length;
+          if (newExperienciaLaboral === 0) {
+            values.ID = 1;
+          } else {
+            values.ID = newExperienciaLaboral.slice(-1).pop().ID + 1;
+          }
           newExperienciaLaboral.push(values);
         } else {
           values.ID = 1;
@@ -1749,6 +1817,42 @@ const Modal5Edit = React.memo(
       month: "01",
       year: moment(new Date()).format("YYYY"),
     });
+    // functions
+    const deleteThisElement = (key) => {
+      let prevArray = [...JSON.parse(secondaryInfo.EXPERIENCIA_LABORAL)];
+      let newArray = prevArray.filter((item) => item.ID !== key.ID);
+      axios
+        .post(`${apiRoute}/updateExperienciaLaboral.php`, {
+          EXPERIENCIA_LABORAL: newArray,
+          ID: userInfo.ID,
+        })
+        .then(({ data }) => {
+          if (data.code === 200) {
+            setSecondaryInfo({
+              ...secondaryInfo,
+              EXPERIENCIA_LABORAL: JSON.stringify(newArray),
+            });
+            setModalsVisibility({ modalsVisibility, modal5: false });
+            toast({
+              title: "Información actualizada",
+              description: "Cambios exitosos",
+              status: "success",
+              duration: 3000,
+              isClosable: true,
+            });
+          } else {
+            setModalsVisibility({ modalsVisibility, modal5: false });
+            toast({
+              title: "Ocurrio un error en la actualizacion",
+              description: "CIntentar mas tarde",
+              status: "error",
+              duration: 3000,
+              isClosable: true,
+            });
+          }
+        })
+        .catch((error) => console.log(error));
+    };
     // effects
     useEffect(() => {
       let years = [];
@@ -1799,7 +1903,7 @@ const Modal5Edit = React.memo(
                     ...secondaryInfo,
                     EXPERIENCIA_LABORAL: JSON.stringify(oldExperienciaLaboral),
                   });
-                  setModalsVisibility({ modalsVisibility, modal5: false });
+                  setModalsVisibility({ modalsVisibility, modal5Edit: false });
                   toast({
                     title: "Información actualizada",
                     description: "Cambios exitosos",
@@ -1808,7 +1912,7 @@ const Modal5Edit = React.memo(
                     isClosable: true,
                   });
                 } else {
-                  setModalsVisibility({ modalsVisibility, modal5: false });
+                  setModalsVisibility({ modalsVisibility, modal5Edit: false });
                   toast({
                     title: "Ocurrio un error en la actualizacion",
                     description: "CIntentar mas tarde",
@@ -1819,7 +1923,6 @@ const Modal5Edit = React.memo(
                 }
               })
               .catch((error) => console.log(error));
-            console.log(values);
           }}
         >
           {({ values, handleChange }) => (
@@ -2011,6 +2114,18 @@ const Modal5Edit = React.memo(
                 </ModalBody>
                 <ModalFooter>
                   <Button
+                    style={{
+                      backgroundColor: "#ff2400",
+                      color: "white",
+                      marginRight: "auto",
+                    }}
+                    onClick={() => {
+                      deleteThisElement(editingObjectExperienciaLaboral);
+                    }}
+                  >
+                    Eliminar
+                  </Button>
+                  <Button
                     variant="ghost"
                     onClick={() => {
                       setModalsVisibility({
@@ -2025,6 +2140,775 @@ const Modal5Edit = React.memo(
                     type="submit"
                     style={{ backgroundColor: "#ECB83C" }}
                     form="modal5EditForm"
+                  >
+                    Actualizar
+                  </Button>
+                </ModalFooter>
+              </ModalContent>
+            </Modal>
+          )}
+        </Formik>
+      );
+    } else {
+      return null;
+    }
+  }
+);
+const Modal6 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
+  const educativeGrades = [
+    {
+      ID: 1,
+      TITLE: "Secundaria",
+      VALUE: "secundaria",
+    },
+    {
+      ID: 2,
+      TITLE: "Bachillerato",
+      VALUE: "bachillerato",
+    },
+    {
+      ID: 3,
+      TITLE: "Técnico",
+      VALUE: "tecnico",
+    },
+    {
+      ID: 4,
+      TITLE: "Licenciatura",
+      VALUE: "licenciatura",
+    },
+    {
+      ID: 5,
+      TITLE: "Ingeniería",
+      VALUE: "ingenieria",
+    },
+    {
+      ID: 6,
+      TITLE: "Diplomado",
+      VALUE: "diplomado",
+    },
+    {
+      ID: 7,
+      TITLE: "Maestría",
+      VALUE: "maestria",
+    },
+    {
+      ID: 8,
+      TITLE: "Doctorado",
+      VALUE: "doctorado",
+    },
+  ];
+  const toast = useToast();
+  const validationSchema = Yup.object().shape({
+    TITULO: Yup.string().required(),
+    INSTITUCION: Yup.string().required(),
+    GRADO: Yup.string().required(),
+  });
+  // context
+  const { userInfoState, secondaryInfoState } = useContext(MainContext);
+  const [userInfo] = userInfoState;
+  const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
+  // states
+  const [years, setYears] = useState([]);
+  const [from, setFrom] = useState({
+    month: "01",
+    year: moment(new Date()).format("YYYY"),
+  });
+  const [to, setTo] = useState({
+    month: "01",
+    year: moment(new Date()).format("YYYY"),
+  });
+  // effects
+  useEffect(() => {
+    let years = [];
+    let limit = moment(new Date()).year() - 80;
+    for (let i = moment(new Date()).year(); i > limit; i--) {
+      years.push(i);
+    }
+    setYears(years);
+  }, []);
+  return (
+    <Formik
+      validationSchema={validationSchema}
+      initialValues={{
+        TITULO: "",
+        INSTITUCION: "",
+        GRADO: "",
+        STILLINTHIS: false,
+      }}
+      onSubmit={(values, formikBag) => {
+        let newGradoEducativo;
+        let newgrado = JSON.parse(values.GRADO).VALUE;
+        values.GRADO = newgrado;
+        values.FROM = `${from.month}/${from.year}`;
+        !values.STILLINTHIS
+          ? (values.TO = `${to.month}/${to.year}`)
+          : delete values.TO;
+        if (secondaryInfo.GRADO_EDUCATIVO) {
+          newGradoEducativo = JSON.parse(secondaryInfo.GRADO_EDUCATIVO);
+          if (newGradoEducativo.length === 0) {
+            values.ID = 1;
+          } else {
+            values.ID = newGradoEducativo.slice(-1).pop().ID + 1;
+          }
+          newGradoEducativo.push(values);
+        } else {
+          values.ID = 1;
+          newGradoEducativo = [];
+          newGradoEducativo.push(values);
+        }
+        axios
+          .post(`${apiRoute}/updateGradoEducativo.php`, {
+            ID: userInfo.ID,
+            GRADO_EDUCATIVO: newGradoEducativo,
+          })
+          .then(({ data }) => {
+            if (data.code === 200) {
+              let arraysito;
+              if (secondaryInfo.GRADO_EDUCATIVO) {
+                arraysito = JSON.parse(secondaryInfo.GRADO_EDUCATIVO);
+                arraysito.push(values);
+                setSecondaryInfo({
+                  ...secondaryInfo,
+                  GRADO_EDUCATIVO: JSON.stringify(arraysito),
+                });
+              } else {
+                arraysito = [];
+                arraysito.push(values);
+                setSecondaryInfo({
+                  ...secondaryInfo,
+                  GRADO_EDUCATIVO: JSON.stringify(arraysito),
+                });
+              }
+              setModalsVisibility({ modalsVisibility, modal6: false });
+              toast({
+                title: "Información actualizada",
+                description: "Cambios exitosos",
+                status: "success",
+                duration: 3000,
+                isClosable: true,
+              });
+              formikBag.resetForm({
+                PUESTO: "",
+                EMPRESA: "",
+                DESCRIPCION: "",
+                STILLINTHIS: false,
+              });
+            } else {
+              setModalsVisibility({ modalsVisibility, modal6: false });
+              toast({
+                title: "Ocurrio un error en la actualizacion",
+                description: "CIntentar mas tarde",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+              });
+            }
+          })
+          .catch((error) => console.log(error));
+      }}
+    >
+      {({ values, handleChange, errors, resetForm }) => (
+        <Modal
+          isOpen={modalsVisibility.modal6}
+          onClose={() => {
+            setModalsVisibility({ ...modalsVisibility, modal6: false });
+            resetForm({
+              TITULO: "",
+              INSTITUCION: "",
+              GRADO: "",
+              STILLINTHIS: false,
+            });
+          }}
+          size="xl"
+        >
+          <ModalOverlay />
+          <ModalCloseButton />
+          <ModalContent>
+            <ModalHeader>Grado educativo</ModalHeader>
+            <ModalBody>
+              <Form id="modal6Form">
+                <div style={{ display: "flex", marginBottom: "1em" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      flexGrow: 1,
+                      marginRight: "1em",
+                    }}
+                  >
+                    {errors.TITULO ? (
+                      <span style={{ color: "red" }}>*</span>
+                    ) : null}
+                    <Field
+                      onChange={handleChange}
+                      value={values.TITULO}
+                      name="TITULO"
+                      placeholder="Título"
+                      style={{ marginBottom: "1em" }}
+                    />
+                    {errors.INSTITUCION ? (
+                      <span style={{ color: "red" }}>*</span>
+                    ) : null}
+                    <Field
+                      onChange={handleChange}
+                      value={values.INSTITUCION}
+                      name="INSTITUCION"
+                      placeholder="Institución"
+                    />
+                  </div>
+                  <div style={{ width: "50%" }}>
+                    <div style={{ display: "flex", flexDirection: "column" }}>
+                      <span style={{ fontSize: "0.7em", color: "gray" }}>
+                        Desde:
+                      </span>
+                      <div style={{ marginBottom: "0.5em" }}>
+                        <select
+                          style={{ marginRight: "1em" }}
+                          onChange={(e) => {
+                            setFrom({ ...from, month: e.target.value });
+                          }}
+                        >
+                          <option value="01">Enero</option>
+                          <option value="02">Febrero</option>
+                          <option value="03">Marzo</option>
+                          <option value="04">Abril</option>
+                          <option value="05">Mayo</option>
+                          <option value="06">Junio</option>
+                          <option value="07">Julio</option>
+                          <option value="08">Agosto</option>
+                          <option value="09">Septiembre</option>
+                          <option value="10">Octubre</option>
+                          <option value="11">Noviembre</option>
+                          <option value="12">Diciembre</option>
+                        </select>
+                        <select
+                          style={{ marginRight: "1em" }}
+                          onChange={(e) => {
+                            setFrom({ ...from, year: e.target.value });
+                          }}
+                        >
+                          {years.map((key) => (
+                            <option key={key} value={key}>
+                              {key}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                    {values.STILLINTHIS ? null : (
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          marginBottom: "0.5em",
+                        }}
+                      >
+                        <span style={{ fontSize: "0.7em", color: "gray" }}>
+                          Hasta:
+                        </span>
+                        <div>
+                          <select
+                            style={{ marginRight: "1em" }}
+                            onChange={(e) => {
+                              setTo({ ...to, month: e.target.value });
+                            }}
+                          >
+                            <option value="01">Enero</option>
+                            <option value="02">Febrero</option>
+                            <option value="03">Marzo</option>
+                            <option value="04">Abril</option>
+                            <option value="05">Mayo</option>
+                            <option value="06">Junio</option>
+                            <option value="07">Julio</option>
+                            <option value="08">Agosto</option>
+                            <option value="09">Septiembre</option>
+                            <option value="10">Octubre</option>
+                            <option value="11">Noviembre</option>
+                            <option value="12">Diciembre</option>
+                          </select>
+                          <select
+                            onChange={(e) => {
+                              setTo({ ...to, year: e.target.value });
+                            }}
+                          >
+                            {years.map((key) => (
+                              <option key={key} value={key}>
+                                {key}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                    )}
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <span style={{ marginRight: "0.5em" }}>
+                        ¿Aún sigues estudiando aquí?
+                      </span>
+                      <input
+                        type="checkbox"
+                        name="STILLINTHIS"
+                        onChange={handleChange}
+                        value={values.STILLINTHIS}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  {errors.GRADO ? (
+                    <span style={{ color: "red" }}>*</span>
+                  ) : null}
+                  <select
+                    style={{ width: "50%" }}
+                    onChange={handleChange}
+                    value={values.GRADO}
+                    name="GRADO"
+                    placeholder="Grado educativo"
+                  >
+                    <option value="" disabled>
+                      Grado educativo
+                    </option>
+                    {educativeGrades.map((key) => (
+                      <option key={key.ID} value={JSON.stringify(key)}>
+                        {key.TITLE}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </Form>
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setModalsVisibility({
+                    ...modalsVisibility,
+                    modal6: false,
+                  });
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                style={{ backgroundColor: "#ECB83C" }}
+                form="modal6Form"
+              >
+                Agregar
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      )}
+    </Formik>
+  );
+});
+const Modal6Edit = React.memo(
+  ({ modalsVisibility, setModalsVisibility, editingObjectGradoEducativo }) => {
+    const educativeGrades = [
+      {
+        ID: 1,
+        TITLE: "Secundaria",
+        VALUE: "secundaria",
+      },
+      {
+        ID: 2,
+        TITLE: "Bachillerato",
+        VALUE: "bachillerato",
+      },
+      {
+        ID: 3,
+        TITLE: "Técnico",
+        VALUE: "tecnico",
+      },
+      {
+        ID: 4,
+        TITLE: "Licenciatura",
+        VALUE: "licenciatura",
+      },
+      {
+        ID: 5,
+        TITLE: "Ingeniería",
+        VALUE: "ingenieria",
+      },
+      {
+        ID: 6,
+        TITLE: "Diplomado",
+        VALUE: "diplomado",
+      },
+      {
+        ID: 7,
+        TITLE: "Maestría",
+        VALUE: "maestria",
+      },
+      {
+        ID: 8,
+        TITLE: "Doctorado",
+        VALUE: "doctorado",
+      },
+    ];
+    const toast = useToast();
+    const validationSchema = Yup.object().shape({
+      EDITTITULO: Yup.string().required(),
+      EDITINSTITUCION: Yup.string().required(),
+      EDITGRADO: Yup.string().required(),
+    });
+    // context
+    const { userInfoState, secondaryInfoState } = useContext(MainContext);
+    const [userInfo] = userInfoState;
+    const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
+    // states
+    const [years, setYears] = useState([]);
+    const [from, setFrom] = useState({
+      month: "01",
+      year: moment(new Date()).format("YYYY"),
+    });
+    const [to, setTo] = useState({
+      month: "01",
+      year: moment(new Date()).format("YYYY"),
+    });
+    // functions
+    const deleteThisElement = (key) => {
+      let prevArray = [...JSON.parse(secondaryInfo.GRADO_EDUCATIVO)];
+      let newArray = prevArray.filter((item) => item.ID !== key.ID);
+      axios
+        .post(`${apiRoute}/updateGradoEducativo.php`, {
+          GRADO_EDUCATIVO: newArray,
+          ID: userInfo.ID,
+        })
+        .then(({ data }) => {
+          if (data.code === 200) {
+            setSecondaryInfo({
+              ...secondaryInfo,
+              GRADO_EDUCATIVO: JSON.stringify(newArray),
+            });
+            setModalsVisibility({ modalsVisibility, modal6Edit: false });
+            toast({
+              title: "Información actualizada",
+              description: "Cambios exitosos",
+              status: "success",
+              duration: 3000,
+              isClosable: true,
+            });
+          } else {
+            setModalsVisibility({ modalsVisibility, modal6Edit: false });
+            toast({
+              title: "Ocurrio un error en la actualizacion",
+              description: "CIntentar mas tarde",
+              status: "error",
+              duration: 3000,
+              isClosable: true,
+            });
+          }
+        })
+        .catch((error) => console.log(error));
+    };
+    // effects
+    useEffect(() => {
+      let years = [];
+      let limit = moment(new Date()).year() - 80;
+      for (let i = moment(new Date()).year(); i > limit; i--) {
+        years.push(i);
+      }
+      setYears(years);
+    }, []);
+    if (Object.values(editingObjectGradoEducativo).length !== 0) {
+      return (
+        <Formik
+          validationSchema={validationSchema}
+          initialValues={{
+            EDITTITULO: editingObjectGradoEducativo.TITULO,
+            EDITINSTITUCION: editingObjectGradoEducativo.INSTITUCION,
+            EDITGRADO: editingObjectGradoEducativo.GRADO,
+            EDITSTILLINTHIS: editingObjectGradoEducativo.STILLINTHIS,
+          }}
+          onSubmit={(values) => {
+            values.TITULO = values.EDITTITULO;
+            delete values.EDITTITULO;
+            values.INSTITUCION = values.EDITINSTITUCION;
+            delete values.EDITINSTITUCION;
+            values.GRADO = values.EDITGRADO;
+            delete values.EDITGRADO;
+            values.STILLINTHIS = values.EDITSTILLINTHIS;
+            delete values.EDITSTILLINTHIS;
+            // let newGradoEducativo;
+            if (editingObjectGradoEducativo.GRADO !== values.GRADO) {
+              let newgrado = JSON.parse(values.GRADO).VALUE;
+              values.GRADO = newgrado;
+            }
+            values.FROM = `${from.month}/${from.year}`;
+            !values.STILLINTHIS
+              ? (values.TO = `${to.month}/${to.year}`)
+              : delete values.TO;
+            let oldGradoEducativo = [
+              ...JSON.parse(secondaryInfo.GRADO_EDUCATIVO),
+            ];
+            values.ID = editingObjectGradoEducativo.ID;
+            const index = oldGradoEducativo.findIndex(
+              (item) => item.ID === editingObjectGradoEducativo.ID
+            );
+            oldGradoEducativo[index] = values;
+            axios
+              .post(`${apiRoute}/updateGradoEducativo.php`, {
+                ID: userInfo.ID,
+                GRADO_EDUCATIVO: oldGradoEducativo,
+              })
+              .then(({ data }) => {
+                if (data.code === 200) {
+                  setSecondaryInfo({
+                    ...secondaryInfo,
+                    GRADO_EDUCATIVO: JSON.stringify(oldGradoEducativo),
+                  });
+                  setModalsVisibility({ modalsVisibility, modal6Edit: false });
+                  toast({
+                    title: "Información actualizada",
+                    description: "Cambios exitosos",
+                    status: "success",
+                    duration: 3000,
+                    isClosable: true,
+                  });
+                } else {
+                  setModalsVisibility({ modalsVisibility, modal6Edit: false });
+                  toast({
+                    title: "Ocurrio un error en la actualizacion",
+                    description: "CIntentar mas tarde",
+                    status: "error",
+                    duration: 3000,
+                    isClosable: true,
+                  });
+                }
+              })
+              .catch((error) => console.log(error));
+          }}
+        >
+          {({ values, handleChange, errors, resetForm }) => (
+            <Modal
+              isOpen={modalsVisibility.modal6Edit}
+              onClose={() => {
+                setModalsVisibility({ ...modalsVisibility, modal6Edit: false });
+                resetForm({
+                  EDITTITULO: "",
+                  EDITINSTITUCION: "",
+                  EDITGRADO: "",
+                  EDITSTILLINTHIS: false,
+                });
+              }}
+              size="xl"
+            >
+              <ModalOverlay />
+              <ModalCloseButton />
+              <ModalContent>
+                <ModalHeader>Editar grado educativo</ModalHeader>
+                <ModalBody>
+                  <Form id="modal6EditForm">
+                    <div style={{ display: "flex", marginBottom: "1em" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          flexGrow: 1,
+                          marginRight: "1em",
+                        }}
+                      >
+                        {errors.EDITTITULO ? (
+                          <span style={{ color: "red" }}>*</span>
+                        ) : null}
+                        <Field
+                          onChange={handleChange}
+                          value={values.EDITTITULO}
+                          name="EDITTITULO"
+                          placeholder="Título"
+                          style={{ marginBottom: "1em" }}
+                        />
+                        {errors.EDITINSTITUCION ? (
+                          <span style={{ color: "red" }}>*</span>
+                        ) : null}
+                        <Field
+                          onChange={handleChange}
+                          value={values.EDITINSTITUCION}
+                          name="EDITINSTITUCION"
+                          placeholder="Institución"
+                        />
+                      </div>
+                      <div style={{ width: "50%" }}>
+                        <div
+                          style={{ display: "flex", flexDirection: "column" }}
+                        >
+                          <span style={{ fontSize: "0.7em", color: "gray" }}>
+                            Desde:
+                          </span>
+                          <div style={{ marginBottom: "0.5em" }}>
+                            <select
+                              style={{ marginRight: "1em" }}
+                              onChange={(e) => {
+                                setFrom({ ...from, month: e.target.value });
+                              }}
+                              defaultValue={moment(
+                                editingObjectGradoEducativo.FROM,
+                                "MM/YYYY"
+                              ).format("MM")}
+                            >
+                              <option value="01">Enero</option>
+                              <option value="02">Febrero</option>
+                              <option value="03">Marzo</option>
+                              <option value="04">Abril</option>
+                              <option value="05">Mayo</option>
+                              <option value="06">Junio</option>
+                              <option value="07">Julio</option>
+                              <option value="08">Agosto</option>
+                              <option value="09">Septiembre</option>
+                              <option value="10">Octubre</option>
+                              <option value="11">Noviembre</option>
+                              <option value="12">Diciembre</option>
+                            </select>
+                            <select
+                              style={{ marginRight: "1em" }}
+                              onChange={(e) => {
+                                setFrom({ ...from, year: e.target.value });
+                              }}
+                              defaultValue={moment(
+                                editingObjectGradoEducativo.FROM,
+                                "MM/YYYY"
+                              ).format("YYYY")}
+                            >
+                              {years.map((key) => (
+                                <option key={key} value={key}>
+                                  {key}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+                        {values.EDITSTILLINTHIS ? null : (
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              marginBottom: "0.5em",
+                            }}
+                          >
+                            <span style={{ fontSize: "0.7em", color: "gray" }}>
+                              Hasta:
+                            </span>
+                            <div>
+                              <select
+                                style={{ marginRight: "1em" }}
+                                onChange={(e) => {
+                                  setTo({ ...to, month: e.target.value });
+                                }}
+                                defaultValue={moment(
+                                  editingObjectGradoEducativo.TO,
+                                  "MM/YYYY"
+                                ).format("MM")}
+                              >
+                                <option value="01">Enero</option>
+                                <option value="02">Febrero</option>
+                                <option value="03">Marzo</option>
+                                <option value="04">Abril</option>
+                                <option value="05">Mayo</option>
+                                <option value="06">Junio</option>
+                                <option value="07">Julio</option>
+                                <option value="08">Agosto</option>
+                                <option value="09">Septiembre</option>
+                                <option value="10">Octubre</option>
+                                <option value="11">Noviembre</option>
+                                <option value="12">Diciembre</option>
+                              </select>
+                              <select
+                                onChange={(e) => {
+                                  setTo({ ...to, year: e.target.value });
+                                }}
+                                defaultValue={moment(
+                                  editingObjectGradoEducativo.TO,
+                                  "MM/YYYY"
+                                ).format("YYYY")}
+                              >
+                                {years.map((key) => (
+                                  <option key={key} value={key}>
+                                    {key}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                          </div>
+                        )}
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <span style={{ marginRight: "0.5em" }}>
+                            ¿Aún sigues estudiando aquí?
+                          </span>
+                          <input
+                            type="checkbox"
+                            name="EDITSTILLINTHIS"
+                            onChange={handleChange}
+                            defaultChecked={
+                              editingObjectGradoEducativo.STILLINTHIS
+                            }
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        width: "100%",
+                        display: "flex",
+                        flexDirection: "column",
+                      }}
+                    >
+                      {errors.EDITGRADO ? (
+                        <span style={{ color: "red" }}>*</span>
+                      ) : null}
+                      <select
+                        style={{ width: "50%" }}
+                        onChange={handleChange}
+                        value={values.EDITGRADO}
+                        name="EDITGRADO"
+                        placeholder="Grado educativo"
+                      >
+                        <option value="" disabled>
+                          Grado educativo
+                        </option>
+                        {educativeGrades.map((key) => (
+                          <option key={key.ID} value={JSON.stringify(key)}>
+                            {key.TITLE}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </Form>
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                    style={{
+                      backgroundColor: "#ff2400",
+                      color: "white",
+                      marginRight: "auto",
+                    }}
+                    onClick={() => {
+                      deleteThisElement(editingObjectGradoEducativo);
+                    }}
+                  >
+                    Eliminar
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    onClick={() => {
+                      setModalsVisibility({
+                        ...modalsVisibility,
+                        modal6Edit: false,
+                      });
+                    }}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    type="submit"
+                    style={{ backgroundColor: "#ECB83C" }}
+                    form="modal6EditForm"
                   >
                     Actualizar
                   </Button>

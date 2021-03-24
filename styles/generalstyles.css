@@ -79,6 +79,7 @@ button:focus {
 }
 .card {
   margin-top: 0 !important;
+  border-radius: 13px !important;
 }
 
 @media screen and (max-width: 600px) {
