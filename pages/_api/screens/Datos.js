@@ -34,6 +34,8 @@ const Datos = React.memo(() => {
     modal5Edit: false,
     modal6: false,
     modal6Edit: false,
+    modal7: false,
+    modal7Edit: false,
   });
   const [
     editingObjectExperienciaLaboral,
@@ -42,6 +44,10 @@ const Datos = React.memo(() => {
   const [
     editingObjectGradoEducativo,
     setEditingObjectGradoEducativo,
+  ] = useState({});
+  const [
+    editingObjectCursosCertificaciones,
+    setEditingObjectCursosCertificaciones,
   ] = useState({});
   // context
   const { userInfoState, secondaryInfoState } = useContext(MainContext);
@@ -54,6 +60,9 @@ const Datos = React.memo(() => {
   useEffect(() => {
     if (!modalsVisibility.modal6Edit) setEditingObjectGradoEducativo({});
   }, [modalsVisibility.modal6Edit]);
+  useEffect(() => {
+    if (!modalsVisibility.modal7Edit) setEditingObjectCursosCertificaciones({});
+  }, [modalsVisibility.modal7Edit]);
   return (
     <>
       <div className={style.container}>
@@ -596,7 +605,12 @@ const Datos = React.memo(() => {
           <Card className={style.card}>
             <div className={style.dataCardHeader}>
               <h1>Cursos y certificaciones</h1>
-              <button className={style.enableEditButton}>
+              <button
+                className={style.enableEditButton}
+                onClick={() => {
+                  setModalsVisibility({ ...modalsVisibility, modal7: true });
+                }}
+              >
                 <Icon
                   name="add circle"
                   style={{ marginLeft: "0.5em" }}
@@ -609,9 +623,60 @@ const Datos = React.memo(() => {
                 {secondaryInfo.CURSOS_CERTIFICACIONES ? (
                   JSON.parse(secondaryInfo.CURSOS_CERTIFICACIONES).length !==
                   0 ? (
-                    JSON.parse(
-                      secondaryInfo.CURSOS_CERTIFICACIONES
-                    ).map((key) => <>hola</>)
+                    JSON.parse(secondaryInfo.CURSOS_CERTIFICACIONES).map(
+                      (key) => (
+                        <div
+                          key={key.ID}
+                          style={{
+                            marginBottom: "0.5em",
+                            borderBottom: "2px solid #e2e2e2",
+                            paddingBottom: "0.5em",
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                            }}
+                          >
+                            <span
+                              style={{ fontSize: "1.2em", fontWeight: "bold" }}
+                            >
+                              {key.TITULO}
+                            </span>
+                            <button
+                              onClick={() => {
+                                setModalsVisibility({
+                                  ...modalsVisibility,
+                                  modal7Edit: true,
+                                });
+                                setEditingObjectCursosCertificaciones(key);
+                              }}
+                            >
+                              <Icon name="edit" />
+                            </button>
+                          </div>
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                            }}
+                          >
+                            <span style={{ fontWeight: "bold" }}>
+                              {key.TIPO}
+                            </span>
+                            <span>
+                              {key.NOTAQUIRED ? `En curso` : `${key.YEAR}`}
+                            </span>
+                          </div>
+                          <div>
+                            <p style={{ margin: 0, whiteSpace: "pre-wrap" }}>
+                              {key.DESCRIPTION}
+                            </p>
+                          </div>
+                        </div>
+                      )
+                    )
                   ) : (
                     <>
                       <h3>Aún no has agregado ningun curso o certificación</h3>
@@ -664,6 +729,15 @@ const Datos = React.memo(() => {
         modalsVisibility={modalsVisibility}
         setModalsVisibility={setModalsVisibility}
         editingObjectGradoEducativo={editingObjectGradoEducativo}
+      />
+      <Modal7
+        modalsVisibility={modalsVisibility}
+        setModalsVisibility={setModalsVisibility}
+      />
+      <Modal7Edit
+        modalsVisibility={modalsVisibility}
+        setModalsVisibility={setModalsVisibility}
+        editingObjectCursosCertificaciones={editingObjectCursosCertificaciones}
       />
       <Footer />
     </>
@@ -2636,7 +2710,6 @@ const Modal6Edit = React.memo(
             delete values.EDITGRADO;
             values.STILLINTHIS = values.EDITSTILLINTHIS;
             delete values.EDITSTILLINTHIS;
-            // let newGradoEducativo;
             if (editingObjectGradoEducativo.GRADO !== values.GRADO) {
               let newgrado = JSON.parse(values.GRADO).VALUE;
               values.GRADO = newgrado;
@@ -2909,6 +2982,505 @@ const Modal6Edit = React.memo(
                     type="submit"
                     style={{ backgroundColor: "#ECB83C" }}
                     form="modal6EditForm"
+                  >
+                    Actualizar
+                  </Button>
+                </ModalFooter>
+              </ModalContent>
+            </Modal>
+          )}
+        </Formik>
+      );
+    } else {
+      return null;
+    }
+  }
+);
+const Modal7 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
+  const toast = useToast();
+  // context
+  const { secondaryInfoState, userInfoState } = useContext(MainContext);
+  const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
+  const [userInfo] = userInfoState;
+  const validationSchema = Yup.object().shape({
+    TITULO: Yup.string().required(),
+    TIPO: Yup.string().required(),
+    DESCRIPTION: Yup.string().required(),
+  });
+  // states
+  const [years, setYears] = useState([]);
+  // effects
+  useEffect(() => {
+    let years = [];
+    let limit = moment(new Date()).year() - 80;
+    for (let i = moment(new Date()).year(); i > limit; i--) {
+      years.push(i);
+    }
+    setYears(years);
+  }, []);
+  return (
+    <Formik
+      initialValues={{
+        TITULO: "",
+        TIPO: "",
+        YEAR: "",
+        NOTAQUIRED: false,
+        DESCRIPTION: "",
+      }}
+      validationSchema={validationSchema}
+      onSubmit={(values, formikBag) => {
+        let newCursosCertificaciones;
+        // year resolution
+        values.NOTAQUIRED
+          ? delete values.YEAR
+          : (values.YEAR = values.YEAR
+              ? values.YEAR
+              : moment(new Date()).format("YYYY"));
+        // secondaryInfo.CURSOS_CERTIFICACIONS array logic
+        if (secondaryInfo.CURSOS_CERTIFICACIONES) {
+          newCursosCertificaciones = JSON.parse(
+            secondaryInfo.CURSOS_CERTIFICACIONES
+          );
+          if (newCursosCertificaciones.length === 0) {
+            values.ID = 1;
+          } else {
+            values.ID = newCursosCertificaciones.slice(-1).pop().ID + 1;
+          }
+          newCursosCertificaciones.push(values);
+        } else {
+          values.ID = 1;
+          newCursosCertificaciones = [];
+          newCursosCertificaciones.push(values);
+        }
+        axios
+          .post(`${apiRoute}/updateCursosCertificaciones.php`, {
+            ID: userInfo.ID,
+            CURSOS_CERTIFICACIONES: newCursosCertificaciones,
+          })
+          .then(({ data }) => {
+            if (data.code === 200) {
+              let arraysito;
+              if (secondaryInfo.CURSOS_CERTIFICACIONES) {
+                arraysito = JSON.parse(secondaryInfo.CURSOS_CERTIFICACIONES);
+                arraysito.push(values);
+                setSecondaryInfo({
+                  ...secondaryInfo,
+                  CURSOS_CERTIFICACIONES: JSON.stringify(arraysito),
+                });
+              } else {
+                arraysito = [];
+                arraysito.push(values);
+                setSecondaryInfo({
+                  ...secondaryInfo,
+                  CURSOS_CERTIFICACIONES: JSON.stringify(arraysito),
+                });
+              }
+              setModalsVisibility({ modalsVisibility, modal7: false });
+              toast({
+                title: "Información actualizada",
+                description: "Cambios exitosos",
+                status: "success",
+                duration: 3000,
+                isClosable: true,
+              });
+              formikBag.resetForm({
+                TITULO: "",
+                TIPO: "",
+                YEAR: "",
+                NOTAQUIRED: false,
+                DESCRIPTION: "",
+              });
+            } else {
+              setModalsVisibility({ modalsVisibility, modal7: false });
+              toast({
+                title: "Ocurrio un error en la actualizacion",
+                description: "CIntentar mas tarde",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+              });
+            }
+          })
+          .catch((error) => console.log(error));
+        console.log(newCursosCertificaciones);
+      }}
+    >
+      {({ values, handleChange, errors }) => (
+        <Modal isOpen={modalsVisibility.modal7} size="md">
+          <ModalOverlay />
+          <ModalCloseButton />
+          <ModalContent>
+            <ModalHeader>Cursos y certificaciones</ModalHeader>
+            <ModalBody>
+              <Form id="modal7Form">
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    marginBottom: "1em",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      marginBottom: "1em",
+                    }}
+                  >
+                    {errors.TITULO ? (
+                      <span style={{ color: "red" }}>*</span>
+                    ) : null}
+                    <Field
+                      placeholder="Título"
+                      name="TITULO"
+                      value={values.TITULO}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column" }}>
+                    {errors.TIPO ? (
+                      <span style={{ color: "red" }}>*</span>
+                    ) : null}
+                    <Field
+                      placeholder="Tipo de certificación"
+                      name="TIPO"
+                      value={values.TIPO}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  {values.NOTAQUIRED ? null : (
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        marginRight: "1em",
+                      }}
+                    >
+                      {errors.YEAR ? (
+                        <span style={{ color: "#ff2400" }}>*</span>
+                      ) : null}
+                      <select
+                        name="YEAR"
+                        onChange={handleChange}
+                        value={values.YEAR}
+                      >
+                        <option value="" disabled>
+                          Año
+                        </option>
+                        {years.map((key) => (
+                          <option key={key} value={key}>
+                            {key}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <input
+                      type="checkbox"
+                      name="NOTAQUIRED"
+                      onChange={handleChange}
+                    />
+                    <span style={{ marginLeft: "0.5em" }}>
+                      ¿Aún no adquieres este certificado?
+                    </span>
+                  </div>
+                </div>
+                {errors.DESCRIPTION ? (
+                  <span style={{ color: "#ff2400" }}>*</span>
+                ) : null}
+                <Field
+                  value={values.DESCRIPTION}
+                  name="DESCRIPTION"
+                  onChange={handleChange}
+                  as="textarea"
+                  rows={4}
+                  maxrows={6}
+                  style={{ width: "100%", marginTop: "1em" }}
+                />
+              </Form>
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setModalsVisibility({
+                    ...modalsVisibility,
+                    modal7: false,
+                  });
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                style={{ backgroundColor: "#ECB83C" }}
+                form="modal7Form"
+              >
+                Agregar
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      )}
+    </Formik>
+  );
+});
+const Modal7Edit = React.memo(
+  ({
+    modalsVisibility,
+    setModalsVisibility,
+    editingObjectCursosCertificaciones,
+  }) => {
+    const toast = useToast();
+    // context
+    const { secondaryInfoState, userInfoState } = useContext(MainContext);
+    const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
+    const [userInfo] = userInfoState;
+    const validationSchema = Yup.object().shape({
+      EDITTITULO: Yup.string().required(),
+      EDITTIPO: Yup.string().required(),
+      EDITDESCRIPTION: Yup.string().required(),
+    });
+    // states
+    const [years, setYears] = useState([]);
+    // functions
+    const deleteThisElement = (key) => {
+      let prevArray = [...JSON.parse(secondaryInfo.CURSOS_CERTIFICACIONES)];
+      let newArray = prevArray.filter((item) => item.ID !== key.ID);
+      axios
+        .post(`${apiRoute}/updateCursosCertificaciones.php`, {
+          CURSOS_CERTIFICACIONES: newArray,
+          ID: userInfo.ID,
+        })
+        .then(({ data }) => {
+          if (data.code === 200) {
+            setSecondaryInfo({
+              ...secondaryInfo,
+              CURSOS_CERTIFICACIONES: JSON.stringify(newArray),
+            });
+            setModalsVisibility({ modalsVisibility, modal7Edit: false });
+            toast({
+              title: "Información actualizada",
+              description: "Cambios exitosos",
+              status: "success",
+              duration: 3000,
+              isClosable: true,
+            });
+          } else {
+            setModalsVisibility({ modalsVisibility, modal7Edit: false });
+            toast({
+              title: "Ocurrio un error en la actualizacion",
+              description: "CIntentar mas tarde",
+              status: "error",
+              duration: 3000,
+              isClosable: true,
+            });
+          }
+        })
+        .catch((error) => console.log(error));
+    };
+    // effects
+    useEffect(() => {
+      let years = [];
+      let limit = moment(new Date()).year() - 80;
+      for (let i = moment(new Date()).year(); i > limit; i--) {
+        years.push(i);
+      }
+      setYears(years);
+    }, []);
+    if (Object.values(editingObjectCursosCertificaciones).length !== 0) {
+      return (
+        <Formik
+          validationSchema={validationSchema}
+          initialValues={{
+            EDITTITULO: editingObjectCursosCertificaciones.TITULO,
+            EDITTIPO: editingObjectCursosCertificaciones.TIPO,
+            EDITYEAR: editingObjectCursosCertificaciones.YEAR,
+            EDITNOTAQUIRED: editingObjectCursosCertificaciones.NOTAQUIRED,
+            EDITDESCRIPTION: editingObjectCursosCertificaciones.DESCRIPTION,
+          }}
+          onSubmit={(values) => {
+            let newObj = {
+              TITULO: values.EDITTITULO,
+              TIPO: values.EDITTIPO,
+              YEAR: values.EDITYEAR,
+              NOTAQUIRED: values.EDITNOTAQUIRED,
+              DESCRIPTION: values.EDITDESCRIPTION,
+            };
+            // year resolution
+            values.EDITNOTAQUIRED
+              ? delete newObj.YEAR
+              : (newObj.YEAR = values.EDITYEAR
+                  ? values.EDITYEAR
+                  : moment(new Date()).format("YYYY"));
+            newObj.ID = editingObjectCursosCertificaciones.ID;
+            let oldCursosCertificaciones = [
+              ...JSON.parse(secondaryInfo.CURSOS_CERTIFICACIONES),
+            ];
+            const index = oldCursosCertificaciones.findIndex(
+              (item) => item.ID === editingObjectCursosCertificaciones.ID
+            );
+            oldCursosCertificaciones[index] = newObj;
+            axios
+              .post(`${apiRoute}/updateCursosCertificaciones.php`, {
+                ID: userInfo.ID,
+                CURSOS_CERTIFICACIONES: oldCursosCertificaciones,
+              })
+              .then(({ data }) => {
+                if (data.code === 200) {
+                  setSecondaryInfo({
+                    ...secondaryInfo,
+                    CURSOS_CERTIFICACIONES: JSON.stringify(
+                      oldCursosCertificaciones
+                    ),
+                  });
+                  setModalsVisibility({ modalsVisibility, modal7Edit: false });
+                  toast({
+                    title: "Información actualizada",
+                    description: "Cambios exitosos",
+                    status: "success",
+                    duration: 3000,
+                    isClosable: true,
+                  });
+                } else {
+                  setModalsVisibility({ modalsVisibility, modal7Edit: false });
+                  toast({
+                    title: "Ocurrio un error en la actualizacion",
+                    description: "CIntentar mas tarde",
+                    status: "error",
+                    duration: 3000,
+                    isClosable: true,
+                  });
+                }
+              })
+              .catch((error) => console.log(error));
+          }}
+        >
+          {({ values, handleChange, errors }) => (
+            <Modal isOpen={modalsVisibility.modal7Edit}>
+              <ModalOverlay />
+              <ModalCloseButton />
+              <ModalContent>
+                <ModalHeader>Editar cursos y certificaciones</ModalHeader>
+                <ModalBody>
+                  <Form id="modal7EditForm">
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        marginBottom: "1em",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          marginBottom: "1em",
+                        }}
+                      >
+                        {errors.EDITTITULO ? (
+                          <span style={{ color: "red" }}>*</span>
+                        ) : null}
+                        <Field
+                          placeholder="Título"
+                          name="EDITTITULO"
+                          value={values.EDITTITULO}
+                          onChange={handleChange}
+                        />
+                      </div>
+                      <div style={{ display: "flex", flexDirection: "column" }}>
+                        {errors.EDITTIPO ? (
+                          <span style={{ color: "red" }}>*</span>
+                        ) : null}
+                        <Field
+                          placeholder="Tipo de certificación"
+                          name="EDITTIPO"
+                          value={values.EDITTIPO}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      {values.EDITNOTAQUIRED ? null : (
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            marginRight: "1em",
+                          }}
+                        >
+                          <select
+                            name="EDITYEAR"
+                            onChange={handleChange}
+                            value={values.EDITYEAR}
+                          >
+                            <option value="" disabled>
+                              Año
+                            </option>
+                            {years.map((key) => (
+                              <option key={key} value={key}>
+                                {key}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <input
+                          type="checkbox"
+                          name="EDITNOTAQUIRED"
+                          onChange={handleChange}
+                          defaultChecked={
+                            editingObjectCursosCertificaciones.NOTAQUIRED
+                          }
+                        />
+                        <span style={{ marginLeft: "0.5em" }}>
+                          ¿Aún no adquieres este certificado?
+                        </span>
+                      </div>
+                    </div>
+                    <Field
+                      value={values.EDITDESCRIPTION}
+                      name="EDITDESCRIPTION"
+                      onChange={handleChange}
+                      as="textarea"
+                      rows={4}
+                      maxrows={6}
+                      style={{ width: "100%", marginTop: "1em" }}
+                    />
+                  </Form>
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                    style={{
+                      backgroundColor: "#ff2400",
+                      color: "white",
+                      marginRight: "auto",
+                    }}
+                    onClick={() => {
+                      deleteThisElement(editingObjectCursosCertificaciones);
+                    }}
+                  >
+                    Eliminar
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    onClick={() => {
+                      setModalsVisibility({
+                        ...modalsVisibility,
+                        modal7Edit: false,
+                      });
+                    }}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    type="submit"
+                    style={{ backgroundColor: "#ECB83C" }}
+                    form="modal7EditForm"
                   >
                     Actualizar
                   </Button>

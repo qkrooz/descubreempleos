@@ -1,13 +1,10 @@
-import { Collapse } from "antd";
 import React from "react";
 import { Card, Grid } from "semantic-ui-react";
 import style from "../../../styles/inicio.module.css";
-import "antd/dist/antd.css";
 import { CaretRightOutlined } from "@ant-design/icons";
 // components
 import Footer from "../components/Footer";
 export default function InicioComponent() {
-  const { Panel } = Collapse;
   function callback(key) {
     console.log(key);
   }
@@ -52,7 +49,7 @@ it can be found as a welcome guest in many households across the world.
             </Card>
 
             <p className={style.redtext}>Empleos a los que has aplicado</p>
-            <Collapse
+            {/* <Collapse
               defaultActiveKey={["2"]}
               onChange={callback}
               expandIcon={({ isActive }) => (
@@ -92,7 +89,7 @@ it can be found as a welcome guest in many households across the world.
               <Panel header="Vacantes expiradas" key="1">
                 <p>{text}</p>
               </Panel>
-            </Collapse>
+            </Collapse> */}
           </Grid.Column>
           <Grid.Column>
             <Card className={style.card}>
