@@ -241,4 +241,7 @@
   .link {
     font-size: 16px;
   }
+  .linkContainer {
+    display: none;
+  }
 }

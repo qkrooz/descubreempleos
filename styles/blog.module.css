@@ -49,3 +49,12 @@
 .icon {
   margin-top: -5px !important;
 }
+
+@media screen and (max-width: 800px) {
+  .flexcontent {
+    display: block;
+  }
+  .containercard {
+    width: 100%;
+  }
+}
