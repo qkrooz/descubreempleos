@@ -7,9 +7,7 @@ import {
   Document,
   StyleSheet,
   Image,
-  Canvas,
   Font,
-  PDFViewer,
 } from "@react-pdf/renderer";
 Font.register({
   family: "MyriadPro-Regular",
@@ -41,33 +39,29 @@ const styles = StyleSheet.create({
 });
 const CVpdf = React.memo(({ userInfo, secondaryInfo }) => {
   return (
-    <Canvas>
-      <PDFViewer>
-        <Document>
-          <Page size="LETTER" style={styles.page}>
-            <View style={styles.header}>
-              <View style={styles.logoContainer}>
-                <Text style={{ fontSize: 10, margin: 0, padding: 0 }}>
-                  Descubre
-                </Text>
-                <Text style={{ fontSize: 10 }}>El curriculum de</Text>
-              </View>
-              <View style={styles.userImageContainer}>
-                {/* <Image
+    <Document>
+      <Page size="LETTER" style={styles.page}>
+        <View style={styles.header}>
+          <View style={styles.logoContainer}>
+            <Text style={{ fontSize: 10, margin: 0, padding: 0 }}>
+              Descubre
+            </Text>
+            <Text style={{ fontSize: 10 }}>El curriculum de</Text>
+          </View>
+          <View style={styles.userImageContainer}>
+            {/* <Image
                 src={`${apiRoute}/img/userprofile/${userInfo.IMAGE_URL}`}
               /> */}
-              </View>
-            </View>
-            <View style={styles.section}>
-              <Text>Section #1</Text>
-            </View>
-            <View style={styles.section}>
-              <Text>Section #2</Text>
-            </View>
-          </Page>
-        </Document>
-      </PDFViewer>
-    </Canvas>
+          </View>
+        </View>
+        <View style={styles.section}>
+          <Text>Section #1</Text>
+        </View>
+        <View style={styles.section}>
+          <Text>Section #2</Text>
+        </View>
+      </Page>
+    </Document>
   );
 });
 export default CVpdf;

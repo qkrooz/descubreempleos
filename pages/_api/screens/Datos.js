@@ -25,6 +25,7 @@ import CVpdf from "../components/CVpdf";
 import style from "../../../styles/datos.module.css";
 import axios from "axios";
 import apiRoute from "../resources/apiRoute";
+import { PDFViewer } from "@react-pdf/renderer";
 const Datos = React.memo(() => {
   // state
   const [modalsVisibility, setModalsVisibility] = useState({
@@ -3538,7 +3539,9 @@ const CVModal = React.memo(({ modalsVisibility, setModalsVisibility }) => {
       <ModalOverlay />
       <ModalCloseButton />
       <ModalContent>
-        <CVpdf secondaryInfo={secondaryInfo} userInfo={userInfo} />
+        <PDFViewer>
+          <CVpdf secondaryInfo={secondaryInfo} userInfo={userInfo} />
+        </PDFViewer>
       </ModalContent>
     </Modal>
   );
