@@ -79,6 +79,10 @@ button:focus {
 }
 .card {
   margin-top: 0 !important;
+  width: 100% !important;
+}
+.icon {
+  margin-top: -5px !important;
 }
 
 @media screen and (max-width: 600px) {

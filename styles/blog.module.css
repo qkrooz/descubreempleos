@@ -1,0 +1,48 @@
+.flexcontent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+.content {
+  width: 89%;
+  margin: 0 auto;
+}
+.backgroundwhite {
+  background-color: #c40033;
+  position: absolute;
+  width: 19%;
+  height: 163vh;
+  z-index: -1;
+  right: 0;
+}
+.widthimage {
+  width: 100%;
+  margin-bottom: 50px;
+}
+.titlecard {
+  font-size: 28px;
+}
+
+.contentcard1 {
+  height: 260px;
+}
+.containercard {
+  width: 31%;
+}
+
+.flexdate {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 25px;
+}
+.flexdate1 {
+  display: flex;
+  align-items: center;
+}
+.textmargin {
+  margin-bottom: 0 !important;
+  margin-right: 6px !important;
+}
