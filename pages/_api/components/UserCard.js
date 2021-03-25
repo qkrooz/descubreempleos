@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import { MainContext } from "../resources/MainContext";
 import apiRoute from "../resources/apiRoute";
 import { Card, Checkbox, Icon } from "semantic-ui-react";
@@ -17,7 +17,7 @@ import {
 import { Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import { useToast } from "@chakra-ui/react";
-const UserCard = React.memo(() => {
+const UserCard = React.memo(({ modalsVisibility, setModalsVisibility }) => {
   const toast = useToast();
   // states
   const [userImgError, setUserImgError] = useState(false);
@@ -27,6 +27,8 @@ const UserCard = React.memo(() => {
   const { userInfoState, secondaryInfoState } = useContext(MainContext);
   const [userInfo] = userInfoState;
   const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
+  const [imageHash, setImageHash] = useState(0);
+
   const ChangeAvailability = () => {
     axios
       .post(`${apiRoute}/changeAvailability.php`, {
@@ -52,6 +54,7 @@ const UserCard = React.memo(() => {
       })
       .catch((error) => console.log(error));
   };
+
   //   effects
   useEffect(() => {
     Boolean(parseInt(secondaryInfo.DISPONIBLE))
@@ -72,15 +75,17 @@ const UserCard = React.memo(() => {
         {!userImgError ? (
           <img
             className={style.profile}
-            src={`${apiRoute}/img/user-profile/${userInfo.ID}.jpg`}
+            src={`${apiRoute}/img/userprofile/${userInfo.IMAGE_URL}?v=${imageHash}`}
             onError={() => {
               setUserImgError(true);
             }}
           />
         ) : (
-          <div className={style.iconContainer}>
-            <Icon name="user" size="huge" color="grey" />
-          </div>
+          <button type="file">
+            <div className={style.iconContainer}>
+              <Icon name="user" size="huge" color="grey" />
+            </div>
+          </button>
         )}
         <h3
           className={style.h3}
@@ -97,7 +102,14 @@ const UserCard = React.memo(() => {
           </h3>
         )}
 
-        <a className={style.linkcv}> CV.PDF</a>
+        <a
+          className={style.linkcv}
+          onClick={() => {
+            setModalsVisibility({ ...modalsVisibility, CVmodal: true });
+          }}
+        >
+          CV.PDF
+        </a>
         <div className={style.flextoggle}>
           <h3 className={style.yellowtext}>Disponible para trabajar</h3>
           <Checkbox
@@ -111,12 +123,25 @@ const UserCard = React.memo(() => {
         editModalVisibility={editModalVisibility}
         userImgError={userImgError}
         setEditModalVisibility={setEditModalVisibility}
+        setUserImgError={setUserImgError}
+        imageHash={imageHash}
+        setImageHash={setImageHash}
+        modalsVisibility={modalsVisibility}
+        setModalsVisibility={setModalsVisibility}
       />
     </>
   );
 });
 const Modal1 = React.memo(
-  ({ editModalVisibility, userImgError, setEditModalVisibility }) => {
+  ({
+    editModalVisibility,
+    userImgError,
+    setUserImgError,
+    setEditModalVisibility,
+    imageHash,
+    setImageHash,
+  }) => {
+    const fileUploaderButton = useRef();
     const toast = useToast();
     const RetroError = () => {
       return (
@@ -130,6 +155,50 @@ const Modal1 = React.memo(
     const { userInfoState, secondaryInfoState } = useContext(MainContext);
     const [userInfo, setUserInfo] = userInfoState;
     const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
+    const updateUserPhoto = (userID, image) => {
+      const formData = new FormData();
+      // setModals({ ...modals, submit: true });
+      formData.append("userID", parseInt(userID));
+      formData.append("image", image);
+      axios
+        .post(`${apiRoute}/uploadProfilePhoto.php`, formData, {
+          headers: { "Content-type": "multipart/form-data" },
+        })
+        .then((response) => {
+          console.log(response.data);
+          setUserImgError(true);
+
+          if (response.data.code === 200) {
+            let userInfoCopy = { ...userInfo };
+            console.log(userInfoCopy);
+            userInfoCopy.IMAGE_URL = response.data.IMAGE_URL;
+            setUserInfo(userInfoCopy);
+            setImageHash((imageHash) => imageHash + 1);
+            setUserImgError(false);
+            toast({
+              title: "Imagen actualizada",
+              status: "success",
+              duration: 3000,
+              isClosable: true,
+            });
+          } else {
+            toast({
+              title: "Ocurrio un error, intenta mas tarde.",
+              status: "error",
+              duration: 3000,
+              isClosable: true,
+            });
+          }
+        })
+        .catch(() => {
+          toast({
+            title: "Ocurrio un error, intenta mas tarde.",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+        });
+    };
     return (
       <Formik
         validationSchema={validationSchema}
@@ -207,10 +276,26 @@ const Modal1 = React.memo(
                 >
                   <div className={style.modal1Upper}>
                     {!userImgError ? (
-                      <button>
+                      <button
+                        onClick={() => {
+                          fileUploaderButton.current.click();
+                        }}
+                      >
+                        <input
+                          ref={fileUploaderButton}
+                          type="file"
+                          id="fileUploader"
+                          style={{ display: "none" }}
+                          onChange={(e) =>
+                            updateUserPhoto(userInfo.ID, e.target.files[0])
+                          }
+                          onClick={(event) => {
+                            event.target.value = null;
+                          }}
+                        />
                         <img
                           className={style.profile}
-                          src={`${apiRoute}/img/user-profile/${userInfo.ID}.jpg`}
+                          src={`${apiRoute}/img/userprofile/${userInfo.IMAGE_URL}?${imageHash}`}
                           onError={() => {
                             setUserImgError(true);
                           }}
@@ -218,7 +303,25 @@ const Modal1 = React.memo(
                       </button>
                     ) : (
                       <div className={style.iconContainer}>
-                        <Icon name="user" size="huge" color="grey" />
+                        <button
+                          onClick={() => {
+                            fileUploaderButton.current.click();
+                          }}
+                        >
+                          <input
+                            ref={fileUploaderButton}
+                            type="file"
+                            id="fileUploader"
+                            style={{ display: "none" }}
+                            onChange={(e) =>
+                              updateUserPhoto(userInfo.ID, e.target.files[0])
+                            }
+                            onClick={(event) => {
+                              event.target.value = null;
+                            }}
+                          />
+                          <Icon name="user" size="huge" color="grey" />
+                        </button>
                       </div>
                     )}
                     <Form

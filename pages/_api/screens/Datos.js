@@ -20,6 +20,7 @@ import Cities from "../resources/cities_mexico.json";
 // components
 import Footer from "../components/Footer";
 import UserCard from "../components/UserCard";
+import CVpdf from "../components/CVpdf";
 // styles
 import style from "../../../styles/datos.module.css";
 import axios from "axios";
@@ -36,6 +37,7 @@ const Datos = React.memo(() => {
     modal6Edit: false,
     modal7: false,
     modal7Edit: false,
+    CVmodal: false,
   });
   const [
     editingObjectExperienciaLaboral,
@@ -67,7 +69,10 @@ const Datos = React.memo(() => {
     <>
       <div className={style.container}>
         <div className={style.left}>
-          <UserCard />
+          <UserCard
+            modalsVisibility={modalsVisibility}
+            setModalsVisibility={setModalsVisibility}
+          />
           <Card style={{ padding: "1em" }}>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <span style={{ fontWeight: "bold", fontSize: "1.3em" }}>
@@ -739,6 +744,10 @@ const Datos = React.memo(() => {
         setModalsVisibility={setModalsVisibility}
         editingObjectCursosCertificaciones={editingObjectCursosCertificaciones}
       />
+      <CVModal
+        modalsVisibility={modalsVisibility}
+        setModalsVisibility={setModalsVisibility}
+      />
       <Footer />
     </>
   );
@@ -919,7 +928,7 @@ const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
                   <div
                     style={{
                       display: "flex",
-                      justifyContent: "flex-start",
+                      justifyContent: "space-between",
                       padding: "0.5em",
                     }}
                   >
@@ -990,7 +999,7 @@ const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
                   >
                     <select
                       name="GENRE"
-                      style={{ padding: "0.5em" }}
+                      style={{ padding: "0.5em", width: "100%" }}
                       value={values.GENRE}
                       onChange={handleChange}
                     >
@@ -1012,6 +1021,7 @@ const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
                       name="CURP"
                       onChange={handleChange}
                       value={values.CURP}
+                      style={{ width: "100%" }}
                     />
                   </div>
                   <span>RFC</span>
@@ -1027,21 +1037,30 @@ const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
                       name="RFC"
                       onChange={handleChange}
                       value={values.RFC}
+                      style={{ width: "100%" }}
                     />
                   </div>
                   <span>Número telefónico</span>
-                  <div style={{ padding: "0.5em" }}>
+                  <div
+                    style={{
+                      padding: "0.5em",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
                     <span style={{ marginRight: "0.5em" }}>(+52)</span>
                     <Field
                       name="TEL_NUMBER"
                       type="number"
                       onChange={handleChange}
                       value={values.TEL_NUMBER}
+                      style={{ flexGrow: 1 }}
                     />
                   </div>
                   <span>Estado</span>
                   <div style={{ padding: "0.5em" }}>
                     <select
+                      style={{ width: "100%" }}
                       defaultValue={
                         userInfo.STATE
                           ? Estados.states.filter(
@@ -1066,6 +1085,7 @@ const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
                   <span>Ciudad</span>
                   <div style={{ padding: "0.5em" }}>
                     <select
+                      style={{ width: "100%" }}
                       defaultValue={
                         userInfo.CITY
                           ? Cities.cities.filter(
@@ -1090,7 +1110,14 @@ const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
                   </div>
                 </div>
                 <span>Idiomas</span>
-                <div style={{ display: "flex", flexWrap: "wrap" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    width: "100%",
+                    justifyContent: "center",
+                  }}
+                >
                   {languages.length !== 0
                     ? languages.map((key) => (
                         <div className={style.chip} key={key.ID}>
@@ -1116,6 +1143,7 @@ const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
                 <div style={{ padding: "0.5em" }}>
                   {languages.length >= 4 ? null : (
                     <select
+                      style={{ width: "100%" }}
                       defaultValue="none"
                       onChange={(e) => {
                         setLanguagesList((languagesList) =>
@@ -3495,4 +3523,24 @@ const Modal7Edit = React.memo(
     }
   }
 );
+const CVModal = React.memo(({ modalsVisibility, setModalsVisibility }) => {
+  const { secondaryInfoState, userInfoState } = useContext(MainContext);
+  const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
+  const [userInfo] = userInfoState;
+  return (
+    <Modal
+      size="6xl"
+      isOpen={modalsVisibility.CVmodal}
+      onClose={() => {
+        setModalsVisibility({ ...modalsVisibility, CVmodal: false });
+      }}
+    >
+      <ModalOverlay />
+      <ModalCloseButton />
+      <ModalContent>
+        <CVpdf secondaryInfo={secondaryInfo} userInfo={userInfo} />
+      </ModalContent>
+    </Modal>
+  );
+});
 export default Datos;
