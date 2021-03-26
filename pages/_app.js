@@ -26,6 +26,7 @@ const App = React.memo(({ Component, pageProps }) => {
           })
           .then(({ data }) => {
             if (data.code === 200) {
+              data.userInfo.IMAGE_URL = data.userInfo.IMAGE_URL.split("/")[9];
               setUserInfo(data.userInfo);
               setSecondaryInfo(data.secondaryInfo);
             } else {
