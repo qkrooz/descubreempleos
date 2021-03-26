@@ -55,22 +55,93 @@
   top: 251px;
   left: 12%;
 }
-.modal {
-  position: fixed;
-  background-color: white;
-  margin: 5% auto;
-  width: 89%;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  text-align: center;
-  border-radius: 20px;
-}
-.title {
+
+.port {
   background-color: #c40033;
   color: white;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
+  text-align: center;
+  font-size: 29px !important;
+  padding: 28px;
+  border-radius: 5px;
+}
+
+.button {
+  color: black !important;
+  font-weight: bold !important;
+}
+.modalcontent {
+  text-align: center;
+  display: block;
+}
+.imgtool {
+  opacity: 0.8;
+  width: 468px;
+}
+.text {
+  margin-bottom: 250px !important;
+  margin-top: 10px;
+  font-size: 22px;
+}
+.flexfooter {
+  justify-content: space-between !important;
+}
+.flexbuttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 239px;
+}
+.titleadd {
+  font-size: 28px;
+  margin-top: 11px !important;
+}
+.backgroundHeader {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url(../public/backgroundHeader.PNG);
+  background-size: cover;
+  height: 338px !important;
+  display: block;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  color: white;
+}
+.titleheadertext {
+  position: absolute;
+  bottom: 722px;
+  width: 100%;
+  padding: 0px 24px;
+}
+.titleprincipal {
+  font-size: 36px;
+}
+.flexhead {
+  display: flex;
+  justify-content: space-between;
+  font-size: 21px;
+  align-items: center;
+}
+.likes {
+  margin-right: 10px;
+}
+.containermodal {
+  width: 85%;
+  margin: 0 auto;
+  margin-top: 38px;
+  font-size: 17px;
+}
+.titlefirst {
+  font-size: 38px;
+  margin-top: 15px;
+}
+.titlesecond {
+  font-size: 28px;
+  margin-top: 13px;
+}
+.heartcontainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+  margin-bottom: 20px;
 }
 @media screen and (max-width: 800px) {
   .flexcontent {
@@ -78,5 +149,25 @@
   }
   .containercard {
     width: 100%;
+  }
+  .port {
+    font-size: 27px !important;
+    padding: 21px;
+  }
+  .flexfooter {
+    display: block !important;
+  }
+  .flexbuttons {
+    width: auto;
+    margin-bottom: 22px;
+  }
+  .titleheadertext {
+    top: 78px;
+  }
+  .flexhead {
+    display: block;
+  }
+  .blog {
+    margin-bottom: 17px !important;
   }
 }
