@@ -21,6 +21,7 @@ import Cities from "../resources/cities_mexico.json";
 import Footer from "../components/Footer";
 import UserCard from "../components/UserCard";
 import CVpdf from "../components/CVpdf";
+import CVModalComponent from "../components/CVmodal";
 // styles
 import style from "../../../styles/datos.module.css";
 import axios from "axios";
@@ -3537,11 +3538,64 @@ const CVModal = React.memo(({ modalsVisibility, setModalsVisibility }) => {
       }}
     >
       <ModalOverlay />
-      <ModalCloseButton />
       <ModalContent>
-        <PDFViewer>
+        <div
+          style={{
+            position: "absolute",
+            left: "2em",
+            top: "2em",
+            display: "flex",
+          }}
+        >
+          <button
+            style={{
+              backgroundColor: "white",
+              padding: "1em",
+              display: "flex",
+              justifyContent: "center",
+              justifyItems: "center",
+              borderRadius: "5em",
+              marginRight: "1em",
+            }}
+          >
+            <Icon
+              name="close"
+              style={{
+                margin: 0,
+                display: "flex",
+                justifyContent: "center",
+                justifyItems: "center",
+              }}
+              size="large"
+            />
+          </button>
+          <button
+            style={{
+              backgroundColor: "white",
+              padding: "1em",
+              display: "flex",
+              justifyContent: "center",
+              justifyItems: "center",
+              borderRadius: "5em",
+            }}
+          >
+            <Icon
+              name="download"
+              style={{
+                margin: 0,
+                display: "flex",
+                justifyContent: "center",
+                justifyItems: "center",
+              }}
+              size="large"
+            />
+          </button>
+        </div>
+
+        <CVModalComponent userInfo={userInfo} secondaryInfo={secondaryInfo} />
+        {/* <PDFViewer>
           <CVpdf secondaryInfo={secondaryInfo} userInfo={userInfo} />
-        </PDFViewer>
+        </PDFViewer> */}
       </ModalContent>
     </Modal>
   );

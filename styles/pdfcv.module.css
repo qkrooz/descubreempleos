@@ -1,0 +1,100 @@
+/* header */
+.header {
+  background-color: #c40033;
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+  padding: 1em;
+  display: flex;
+  justify-content: flex-end;
+  font-size: 1.1em;
+}
+.logo {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-end;
+  margin-right: 2em;
+}
+.logo > h1 {
+  color: white;
+  font-size: 3em;
+  font-weight: normal;
+  margin: 0 !important;
+}
+.logo > span {
+  color: "white";
+  font-weight: bold;
+  color: white;
+}
+.photo > img {
+  width: 9em;
+  height: 9em;
+  border-radius: 50%;
+  margin-right: 3em;
+}
+.userPrimaryInfo {
+  margin-right: 0;
+}
+.userPrimaryInfo > span:first-child {
+  text-transform: capitalize;
+  color: white;
+  font-weight: bold;
+  font-size: 1.5em;
+  margin: 0;
+  padding: 0;
+}
+.userPrimaryInfo {
+  color: white;
+}
+.body {
+  padding-top: 2em;
+  padding-bottom: 2em;
+  background-color: #f1f2f4;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  display: flex;
+  justify-content: center;
+}
+.bodyFix {
+  width: 85%;
+}
+.section {
+  width: 100%;
+}
+.sectionHeader {
+  font-weight: bold;
+  font-size: 1.5em;
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5em;
+}
+.sectionHeader > div {
+  position: relative;
+  width: 0.8em;
+  height: 0.8em;
+  background-color: black;
+  border-radius: 50%;
+  margin-right: 1.5em;
+}
+.sectionItem {
+  display: flex;
+  align-items: flex-start;
+  margin-left: 0.15em;
+}
+.itemDecorator {
+  width: 0.8em;
+  height: 0.8em;
+  background-color: black;
+  border-radius: 50%;
+  margin-right: 1.5em;
+}
+.line {
+  position: absolute;
+  width: 3px !important;
+  top: 0.8em;
+  left: 0.3em;
+  height: 100% !important;
+  border-radius: 0 !important;
+  height: 100%;
+  background-color: black;
+}
