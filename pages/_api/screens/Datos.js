@@ -3557,6 +3557,9 @@ const CVModal = React.memo(({ modalsVisibility, setModalsVisibility }) => {
               borderRadius: "5em",
               marginRight: "1em",
             }}
+            onClick={() => {
+              setModalsVisibility({ ...modalsVisibility, CVmodal: false });
+            }}
           >
             <Icon
               name="close"
