@@ -23,7 +23,7 @@
 .profile {
   width: 10em !important;
   height: 10em !important;
-  border-radius: 50%;
+  border-radius: 50% !important;
   margin-bottom: 1em !important;
   object-fit: cover;
 }

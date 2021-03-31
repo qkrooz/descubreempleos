@@ -1,6 +1,20 @@
 import React, { useContext } from "react";
 import { MainContext } from "../resources/MainContext";
 import { Link } from "react-router-dom";
+import { Icon } from "semantic-ui-react";
+import {
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuItemOption,
+  MenuGroup,
+  MenuOptionGroup,
+  MenuIcon,
+  MenuCommand,
+  MenuDivider,
+  Button,
+} from "@chakra-ui/react";
 // styles
 import header from "../../../styles/header.module.css";
 import { useRouter } from "next/router";
@@ -63,11 +77,25 @@ const Header = React.memo(() => {
             {/* <MessageFilled style={{ fontSize: "1.8em", color: "white" }} /> */}
           </button>
           <img src="/icon-lamp-white.png" className={header.icon} />
-          {/* <Dropdown overlay={hamburguerNavMenu} placement="bottomRight">
-            <button className={header.navButton}>
-              <MenuOutlined style={{ fontSize: "1.8em", color: "white" }} />
-            </button>
-          </Dropdown> */}
+          <Menu>
+            <Button
+              as={Button}
+              variant="unstyled"
+              colorScheme="white"
+              _hover={{ backgroundColor: "transparent", outline: "none" }}
+              _focus={{ outline: "none" }}
+              _after={{ outline: "none" }}
+            >
+              <Icon name="bars" size="large" />
+            </Button>
+            <MenuList>
+              <MenuItem>Download</MenuItem>
+              <MenuItem>Create a Copy</MenuItem>
+              <MenuItem>Mark as Draft</MenuItem>
+              <MenuItem>Delete</MenuItem>
+              <MenuItem>Attend a Workshop</MenuItem>
+            </MenuList>
+          </Menu>
         </div>
       </div>
     </header>

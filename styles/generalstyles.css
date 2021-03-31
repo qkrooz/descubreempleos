@@ -7,6 +7,12 @@ html {
   max-height: 100vh !important;
   position: relative;
 }
+body {
+  overflow: hidden;
+}
+#_next {
+  max-height: 100vh !important;
+}
 @font-face {
   font-family: "HelveticaNeue";
   src: local("HelveticaNeue"), url(/fonts/HelveticaNeue.ttf) format("truetype");

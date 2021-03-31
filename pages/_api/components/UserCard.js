@@ -28,7 +28,6 @@ const UserCard = React.memo(({ modalsVisibility, setModalsVisibility }) => {
   const [userInfo] = userInfoState;
   const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
   const [imageHash, setImageHash] = useState(0);
-
   const ChangeAvailability = () => {
     axios
       .post(`${apiRoute}/changeAvailability.php`, {
@@ -54,7 +53,6 @@ const UserCard = React.memo(({ modalsVisibility, setModalsVisibility }) => {
       })
       .catch((error) => console.log(error));
   };
-
   //   effects
   useEffect(() => {
     Boolean(parseInt(secondaryInfo.DISPONIBLE))
@@ -130,6 +128,46 @@ const UserCard = React.memo(({ modalsVisibility, setModalsVisibility }) => {
         setModalsVisibility={setModalsVisibility}
       />
     </>
+  );
+});
+export const HomeUserCard = React.memo(() => {
+  const { userInfoState, secondaryInfoState } = useContext(MainContext);
+  const [userInfo] = userInfoState;
+  const [secondaryInfo] = secondaryInfoState;
+  const [userImgError, setUserImgError] = useState(false);
+  const [imageHash, setImageHash] = useState(0);
+  return (
+    <Card className={style.profileContainer}>
+      <span />
+      {!userImgError ? (
+        <img
+          className={style.profile}
+          style={{ borderRadius: "50%" }}
+          src={`${apiRoute}/img/userprofile/${userInfo.IMAGE_URL}?v=${imageHash}`}
+          onError={() => {
+            setUserImgError(true);
+          }}
+        />
+      ) : (
+        <div className={style.iconContainer}>
+          <Icon name="user" size="huge" color="grey" />
+        </div>
+      )}
+      <h3
+        className={style.h3}
+        style={{ textTransform: "capitalize" }}
+      >{`${userInfo.NAMES} ${userInfo.LAST_NAME} ${userInfo.MOTHERS_LAST_NAME}`}</h3>
+      {secondaryInfo.TITULO ? (
+        <h3 className={style.h3}>{secondaryInfo.TITULO}</h3>
+      ) : (
+        <h3
+          className={style.h3}
+          style={{ color: "gray", fontWeight: "normal" }}
+        >
+          Titulo no disponible
+        </h3>
+      )}
+    </Card>
   );
 });
 const Modal1 = React.memo(
