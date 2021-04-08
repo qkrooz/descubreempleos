@@ -1,57 +1,43 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useRef, useEffect } from "react";
 import { MainContext } from "../resources/MainContext";
 import { Link } from "react-router-dom";
 import { Icon } from "semantic-ui-react";
 import {
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  MenuItemOption,
-  MenuGroup,
-  MenuOptionGroup,
-  MenuIcon,
-  MenuCommand,
-  MenuDivider,
-  Button,
-} from "@chakra-ui/react";
+  SearchOutlined,
+  HomeFilled,
+  UserOutlined,
+  MessageFilled,
+  BarChartOutlined,
+  FormOutlined,
+  DatabaseOutlined,
+} from "@ant-design/icons";
 // styles
 import header from "../../../styles/header.module.css";
 import { useRouter } from "next/router";
 const Header = React.memo(() => {
+  const wrapperRef = useRef(null);
+
+  const [menuVisible, setMenuVisible] = useState(false);
   const router = useRouter();
   const { userInfoState } = useContext(MainContext);
   const [, setUserInfo] = userInfoState;
-  // const hamburguerNavMenu = (
-  //   <Menu>
-  //     <Menu.Item>
-  //       <a rel="noopener noreferrer" href="/salud">
-  //         <BulbOutlined style={{ fontSize: "1.1em" }} />
-  //         Por salud Mental
-  //       </a>
-  //     </Menu.Item>
-  //     <Menu.Item>
-  //       <a rel="noopener noreferrer" href="/blog">
-  //         <BoldOutlined style={{ fontSize: "1.1em" }} />
-  //         <span>Blog Descubre</span>
-  //       </a>
-  //     </Menu.Item>
-  //     <Menu.Divider />
-  //     <Menu.Item>
-  //       <a
-  //         rel="noopener noreferrer"
-  //         style={{ color: "red" }}
-  //         onClick={() => {
-  //           setUserInfo({});
-  //           router.push("/login");
-  //         }}
-  //       >
-  //         <PoweroffOutlined style={{ fontSize: "1.1em" }} />
-  //         Cerrar Sesión
-  //       </a>
-  //     </Menu.Item>
-  //   </Menu>
-  // );
+  useEffect(() => {
+    /**
+     * Alert if clicked on outside of element
+     */
+    function handleClickOutside(event) {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        setMenuVisible(false);
+      }
+    }
+
+    // Bind the event listener
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      // Unbind the event listener on clean up
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [wrapperRef]);
   return (
     <header className={header.container}>
       <div className={header.containerInner}>
@@ -60,79 +46,100 @@ const Header = React.memo(() => {
         </div>
         <nav className={header.linkContainer}>
           <Link className={header.link} to="/search">
-            {/* <SearchOutlined size={30} style={{ marginRight: "0.5em" }} /> */}
+            <SearchOutlined size={30} style={{ marginRight: "0.5em" }} />
             Explorar
           </Link>
           <Link className={header.link} to="/">
-            {/* <HomeFilled size={30} style={{ marginRight: "0.5em" }} /> */}
+            <HomeFilled size={30} style={{ marginRight: "0.5em" }} />
             Inicio
           </Link>
           <Link className={header.link} to="/data">
-            {/* <UserOutlined size={30} style={{ marginRight: "0.5em" }} /> */}
+            <UserOutlined size={30} style={{ marginRight: "0.5em" }} />
             Mis datos
           </Link>
         </nav>
         <div className={header.navButtonsContainer}>
           <button className={header.navButton}>
-            {/* <MessageFilled style={{ fontSize: "1.8em", color: "white" }} /> */}
+            <MessageFilled style={{ fontSize: "1.8em", color: "white" }} />
           </button>
           <img src="/icon-lamp-white.png" className={header.icon} />
-          <Menu>
-            <Button
-              as={Button}
-              variant="unstyled"
-              colorScheme="white"
-              _hover={{ backgroundColor: "transparent", outline: "none" }}
-              _focus={{ outline: "none" }}
-              _after={{ outline: "none" }}
+          <div className={header.menuWrapper} ref={wrapperRef}>
+            <button
+              onClick={() => {
+                setMenuVisible(!menuVisible);
+              }}
             >
               <Icon name="bars" size="large" />
-            </Button>
-            <MenuList>
-              <MenuItem>Download</MenuItem>
-              <MenuItem>Create a Copy</MenuItem>
-              <MenuItem>Mark as Draft</MenuItem>
-              <MenuItem>Delete</MenuItem>
-              <MenuItem>Attend a Workshop</MenuItem>
-            </MenuList>
-          </Menu>
+            </button>
+            {menuVisible ? (
+              <div className={header.menuContainer}>
+                <ul>
+                  <li>
+                    <button
+                      onClick={() => {
+                        router.push("/salud");
+                      }}
+                    >
+                      Salud
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => {
+                        router.push("/blog");
+                      }}
+                    >
+                      Blog
+                    </button>
+                  </li>
+                  <div className={header.menuDivider} />
+                  <li>
+                    <button>Reportar un problema</button>
+                  </li>
+                  <div className={header.menuDivider} />
+                  <li>
+                    <button
+                      style={{ textAlign: "center" }}
+                      onClick={() => {
+                        setUserInfo({});
+                        router.push("/login");
+                      }}
+                    >
+                      Cerrar Sesión
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            ) : null}
+          </div>
         </div>
       </div>
     </header>
   );
 });
 export const EnterpriseHeader = React.memo(() => {
+  const router = useRouter();
+  const wrapperRef = useRef(null);
+  const [menuVisible, setMenuVisible] = useState(false);
   const { userInfoState } = useContext(MainContext);
   const [, setUserInfo] = userInfoState;
-  // const hamburguerNavMenu = (
-  //   <Menu>
-  //     <Menu.Item>
-  //       <a rel="noopener noreferrer" href="#">
-  //         <BulbOutlined style={{ fontSize: "1.1em" }} />
-  //         Por salud Mental
-  //       </a>
-  //     </Menu.Item>
-  //     <Menu.Item>
-  //       <a rel="noopener noreferrer" href="#">
-  //         <BoldOutlined style={{ fontSize: "1.1em" }} />
-  //         <span>Blog Descubre</span>
-  //       </a>
-  //     </Menu.Item>
-  //     <Menu.Divider />
-  //     <Menu.Item>
-  //       <a
-  //         rel="noopener noreferrer"
-  //         style={{ color: "red" }}
-  //         onClick={() => {
-  //           setUserInfo({});
-  //         }}
-  //       >
-  //         <PoweroffOutlined style={{ fontSize: "1.1em" }} />
-  //         Cerrar Sesión
-  //       </a>
-  //     </Menu.Item>
-  //   </Menu>
-  // );
+  useEffect(() => {
+    /**
+     * Alert if clicked on outside of element
+     */
+    function handleClickOutside(event) {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        setMenuVisible(false);
+      }
+    }
+
+    // Bind the event listener
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      // Unbind the event listener on clean up
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [wrapperRef]);
   return (
     <header className={header.container}>
       <div className={header.containerInner}>
@@ -140,29 +147,73 @@ export const EnterpriseHeader = React.memo(() => {
           <Link to="/">Descubre</Link>
         </div>
         <nav className={header.linkContainer}>
-          <Link className={header.link} to="/search">
-            {/* <SearchOutlined size={30} style={{ marginRight: "0.5em" }} /> */}
-            Explorar
-          </Link>
           <Link className={header.link} to="/">
-            {/* <HomeFilled size={30} style={{ marginRight: "0.5em" }} /> */}
-            Inicio
+            <BarChartOutlined size={30} style={{ marginRight: "0.5em" }} />
+            Estadisticas
+          </Link>
+          <Link className={header.link} to="/publish">
+            <FormOutlined size={30} style={{ marginRight: "0.5em" }} />
+            Publicar
           </Link>
           <Link className={header.link} to="/data">
-            {/* <UserOutlined size={30} style={{ marginRight: "0.5em" }} /> */}
-            Mis datos
+            <DatabaseOutlined size={30} style={{ marginRight: "0.5em" }} />
+            Nuestros datos
           </Link>
         </nav>
         <div className={header.navButtonsContainer}>
           <button className={header.navButton}>
-            {/* <MessageFilled style={{ fontSize: "1.8em", color: "white" }} /> */}
+            <MessageFilled style={{ fontSize: "1.8em", color: "white" }} />
           </button>
           <img src="/icon-lamp-white.png" className={header.icon} />
-          {/* <Dropdown overlay={hamburguerNavMenu} placement="bottomRight">
-            <button className={header.navButton}>
-              <MenuOutlined style={{ fontSize: "1.8em", color: "white" }} />
+          <div className={header.menuWrapper} ref={wrapperRef}>
+            <button
+              onClick={() => {
+                setMenuVisible(true);
+              }}
+            >
+              <Icon name="bars" size="large" />
             </button>
-          </Dropdown> */}
+            {menuVisible ? (
+              <div className={header.menuContainer}>
+                <ul>
+                  <li>
+                    <button
+                      onClick={() => {
+                        router.push("/salud");
+                      }}
+                    >
+                      Salud
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => {
+                        router.push("/blog");
+                      }}
+                    >
+                      Blog
+                    </button>
+                  </li>
+                  <div className={header.menuDivider} />
+                  <li>
+                    <button>Reportar un problema</button>
+                  </li>
+                  <div className={header.menuDivider} />
+                  <li>
+                    <button
+                      style={{ textAlign: "center" }}
+                      onClick={() => {
+                        setUserInfo({});
+                        router.push("/login");
+                      }}
+                    >
+                      Cerrar Sesión
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            ) : null}
+          </div>
         </div>
       </div>
     </header>

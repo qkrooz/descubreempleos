@@ -50,7 +50,13 @@ const App = React.memo(({ Component, pageProps }) => {
           // functions
         }}
       >
-        <div suppressHydrationWarning style={{ overflowY: "scroll" }}>
+        <div
+          suppressHydrationWarning
+          style={{
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
           {typeof window === "undefined" ? null : <Component {...pageProps} />}
         </div>
       </MainContext.Provider>

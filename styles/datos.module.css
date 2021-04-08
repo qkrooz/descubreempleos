@@ -29,9 +29,20 @@
   position: absolute;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 425px) {
   .container {
-    height: 162vh;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+  }
+  .left {
+    padding: 0;
+  }
+}
+@media screen and (min-width: 2560px) {
+  .container {
+    width: 50%;
+    align-self: center;
   }
 }
 

@@ -245,3 +245,44 @@
     display: none;
   }
 }
+
+/* menu */
+.menuWrapper {
+  position: relative;
+  height: 100%;
+}
+.menuContainer {
+  border-radius: 5px;
+  z-index: 999;
+  margin-top: 1em;
+  right: 0;
+  position: absolute;
+  background-color: white;
+  border: 1px solid gray;
+}
+.menuContainer > ul {
+  display: flex;
+  flex-direction: column;
+}
+.menuContainer > ul > li {
+  white-space: nowrap;
+  color: black;
+  text-decoration: none;
+  list-style-type: none;
+  padding: 0.5em;
+  font-size: 1.1em;
+  width: 100%;
+}
+.menuContainer > ul > li > button {
+  width: 100%;
+  text-align: start;
+}
+.menuDivider {
+  border-bottom: 2px solid gray;
+  width: 85%;
+  align-self: center;
+}
+.menuContainer > ul > li:last-child {
+  color: red;
+  align-self: center;
+}

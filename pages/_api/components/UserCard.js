@@ -73,7 +73,9 @@ const UserCard = React.memo(({ modalsVisibility, setModalsVisibility }) => {
         {!userImgError ? (
           <img
             className={style.profile}
-            src={`${apiRoute}/img/userprofile/${userInfo.IMAGE_URL}?v=${imageHash}`}
+            src={`${apiRoute}/img/userprofile/${
+              userInfo.IMAGE_URL
+            }?v=${Date.now()}`}
             onError={() => {
               setUserImgError(true);
             }}
@@ -143,7 +145,9 @@ export const HomeUserCard = React.memo(() => {
         <img
           className={style.profile}
           style={{ borderRadius: "50%" }}
-          src={`${apiRoute}/img/userprofile/${userInfo.IMAGE_URL}?v=${imageHash}`}
+          src={`${apiRoute}/img/userprofile/${
+            userInfo.IMAGE_URL
+          }?v=${Date.now()}`}
           onError={() => {
             setUserImgError(true);
           }}
@@ -333,7 +337,9 @@ const Modal1 = React.memo(
                         />
                         <img
                           className={style.profile}
-                          src={`${apiRoute}/img/userprofile/${userInfo.IMAGE_URL}?${imageHash}`}
+                          src={`${apiRoute}/img/userprofile/${
+                            userInfo.IMAGE_URL
+                          }?${Date.now()}`}
                           onError={() => {
                             setUserImgError(true);
                           }}

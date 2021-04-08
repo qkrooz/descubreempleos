@@ -29,14 +29,15 @@ const Login = React.memo(() => {
     axios
       .post(`${apiRoute}/login.php`, data)
       .then(({ data }) => {
-        if (data.code === 200) {
-          setUserInfo(data.userInfo);
-          setSecondaryInfo(data.secondaryInfo);
-        } else {
-          setDontUserExistsModal(true);
-          setUserInfo({});
-          setSecondaryInfo({});
-        }
+        console.log(data);
+        // if (data.code === 200) {
+        //   setUserInfo(data.userInfo);
+        //   setSecondaryInfo(data.secondaryInfo);
+        // } else {
+        //   setDontUserExistsModal(true);
+        //   setUserInfo({});
+        //   setSecondaryInfo({});
+        // }
       })
       .catch((error) => console.log(error));
   };
