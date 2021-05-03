@@ -32,6 +32,11 @@ const Home = React.memo(() => {
   return (
     <Router>
       <Head>
+        <link
+          rel="shortcut icon"
+          href="https://descubrempleos.com/webServices/img/favicon.png"
+          type="image/x-icon"
+        />
         <title>Descubre | Inicio</title>
       </Head>
       {userInfo.USER_TYPE === "trabajador" ? <Header /> : <EnterpriseHeader />}

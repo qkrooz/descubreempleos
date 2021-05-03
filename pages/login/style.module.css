@@ -5,10 +5,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-top: 5em;
 }
 .logoContainer {
   margin-top: bottom;
   width: 45%;
+  max-width: 30em;
+  margin-bottom: 5%;
 }
 .logoContainer > img {
   width: 100%;
@@ -16,8 +19,7 @@
 .formContainer {
   background-color: white;
   border-radius: 15px;
-  padding: 1em;
-  min-width: 50%;
+  padding: 2em;
   width: auto;
   display: flex;
   flex-direction: column;
@@ -26,6 +28,20 @@
 .fields {
   display: flex;
   flex-direction: column;
+}
+.fields > div {
+  margin-bottom: 1em;
+  width: 18em;
+  display: flex;
+  flex-direction: column;
+}
+.error {
+  color: red;
+  font-weight: bold;
+  font-size: 0.8em;
+}
+.fields > div > input {
+  width: 100%;
 }
 .pswField {
   border-radius: 10px !important;
@@ -50,9 +66,53 @@
 .pswReset {
   text-decoration: underline;
 }
+.divider {
+  width: 100%;
+  border-bottom: 1px solid black;
+  margin-bottom: 0.5em;
+}
+.recommendation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1em;
+  font-size: 0.9em;
+}
 .captionContainer {
+  margin-top: 1em;
 }
 .captionContainer > span {
   color: white;
+  font-weight: normal;
+  font-size: 0.9em;
+}
+
+/* buttons */
+.formContainer > a {
+  color: blue;
+  text-decoration: underline;
+  color: #1795ff;
+  margin-bottom: 0.5em;
+}
+.blackButton {
+  background-color: #01051d;
+  color: white;
   font-weight: bold;
+  padding: 0.5em 1.5em;
+  border-radius: 8px !important;
+  margin-bottom: 1.5em;
+}
+.links > a {
+  background-color: #f2ab0a;
+  font-weight: bold;
+  padding: 0.5em 1.5em;
+  border-radius: 8px;
+}
+.links > a:first-child {
+  margin-right: 1em;
+}
+@media screen and (min-width: 320px) {
+  .logoContainer {
+    width: 90%;
+  }
 }

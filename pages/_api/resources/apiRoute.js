@@ -1,2 +1,2 @@
-const apiRoute = `http://165.227.57.231/webServices/apis/descubrempleos`;
+const apiRoute = `https://descubrempleos.com/webServices/apis`;
 export default apiRoute;
