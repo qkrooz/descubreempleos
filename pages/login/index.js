@@ -142,9 +142,16 @@
 import React from "react";
 import Link from "next/link";
 import { Formik, Form, Field } from "formik";
-import style from "./style.module.css";
+import * as Yup from "yup";
 import { EyeFilled, EyeInvisibleFilled } from "@ant-design/icons";
+
+import style from "./style.module.css";
 const Login = React.memo(() => {
+  const loginValidation = Yup.object().shape({
+    EMAIL: Yup.string().required().email(),
+    PASSWORD: Yup.string().required(),
+  });
+  // states
   const [pswtext, setPswtext] = React.useState("password");
   return (
     <div className={style.container}>
@@ -154,21 +161,50 @@ const Login = React.memo(() => {
           alt="logo1"
         />
       </div>
-      <Formik>
-        {() => (
+      <Formik
+        validationSchema={loginValidation}
+        initialValues={{
+          EMAIL: "",
+          PASSWORD: "",
+        }}
+        onSubmit={(values) => {
+          console.log(values);
+        }}
+      >
+        {({ values, handleChange, errors }) => (
           <Form className={style.formContainer}>
             <div className={style.fields}>
-              <Field />
-              <div className={style.pswField}>
-                <Field type={pswtext} />
-                <button
-                  type="button"
-                  onClick={() => {
-                    setPswtext(pswtext === "password" ? "text" : "password");
-                  }}
-                >
-                  {pswtext ? <EyeFilled /> : <EyeInvisibleFilled />}
-                </button>
+              <div>
+                <Field
+                  type="email"
+                  name="EMAIL"
+                  onChange={handleChange}
+                  value={values.EMAIL}
+                />
+                {errors.EMAIL ? (
+                  <span className={style.error}>Email requerido *</span>
+                ) : null}
+              </div>
+              <div>
+                <div className={style.pswField}>
+                  <Field
+                    type={pswtext}
+                    name="PASSWORD"
+                    onChange={handleChange}
+                    value={values.PASSWORD}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPswtext(pswtext === "password" ? "text" : "password");
+                    }}
+                  >
+                    {pswtext ? <EyeFilled /> : <EyeInvisibleFilled />}
+                  </button>
+                </div>
+                {errors.PASSWORD ? (
+                  <span className={style.error}>Contraseña requerida *</span>
+                ) : null}
               </div>
             </div>
             <button type="submit">INICIAR</button>
@@ -185,7 +221,6 @@ const Login = React.memo(() => {
           </Form>
         )}
       </Formik>
-
       <div className={style.captionContainer}>
         <span>
           {"\u00a9"}Todos los derechos reservados - Descubre Sa. de CV
