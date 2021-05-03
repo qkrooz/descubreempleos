@@ -8,7 +8,7 @@ html {
   position: relative;
 }
 body {
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 #_next {
   max-height: 100vh !important;
