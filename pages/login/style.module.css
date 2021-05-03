@@ -1,0 +1,58 @@
+.container {
+  height: 100vh;
+  width: 100vw;
+  background-color: #cf0022;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.logoContainer {
+  margin-top: bottom;
+  width: 45%;
+}
+.logoContainer > img {
+  width: 100%;
+}
+.formContainer {
+  background-color: white;
+  border-radius: 15px;
+  padding: 1em;
+  min-width: 50%;
+  width: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.fields {
+  display: flex;
+  flex-direction: column;
+}
+.pswField {
+  border-radius: 10px !important;
+  border: 1px solid gray !important;
+  outline: none;
+  display: flex;
+  align-items: center;
+}
+.pswField > input {
+  border: none !important;
+  flex-grow: 1;
+  border-top-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.pswField > button {
+  background: none;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 0.5em;
+}
+.pswReset {
+  text-decoration: underline;
+}
+.captionContainer {
+}
+.captionContainer > span {
+  color: white;
+  font-weight: bold;
+}
