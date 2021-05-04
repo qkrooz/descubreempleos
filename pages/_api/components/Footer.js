@@ -4,7 +4,7 @@ import footer from "../../../styles/footer.module.css";
 const Footer = React.memo(() => {
   return (
     <footer className={footer.container}>
-      <di className={footer.infoContainer}>
+      <div className={footer.infoContainer}>
         <div className={footer.h3}>
           <a href="#">Acerca de nosotros</a>|
           <a href="#">Términos y condiciones</a>|
@@ -14,7 +14,7 @@ const Footer = React.memo(() => {
           {"\u00a9"}
           Todos los derechos reservados - Descubre Sa. de CV.
         </span>
-      </di>
+      </div>
       <div className={footer.iconsContainer}>
         <Facebook className={footer.icon} />
         <YouTube className={footer.icon} />

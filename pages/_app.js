@@ -35,7 +35,7 @@ const App = React.memo(({ Component, pageProps }) => {
           })
           .catch((error) => console.log(error));
       } else {
-        router.push("/login");
+        router.push("/entra");
       }
     }
   }, []);

@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import { useToast } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import apiRoute from "../_api/resources/apiRoute";
 import { MainContext } from "../_api/resources/MainContext";
@@ -9,6 +10,7 @@ import axios from "axios";
 import { EyeFilled, EyeInvisibleFilled } from "@ant-design/icons";
 import style from "./style.module.css";
 const Login = React.memo(() => {
+  const toast = useToast();
   const router = useRouter();
   // context
   const { userInfoState, secondaryInfoState } = React.useContext(MainContext);
@@ -20,6 +22,7 @@ const Login = React.memo(() => {
   });
   // states
   const [pswtext, setPswtext] = React.useState("password");
+  // effects
   React.useEffect(() => {
     if (
       Object.values(userInfo).length !== 0 &&
@@ -45,14 +48,31 @@ const Login = React.memo(() => {
           axios
             .post(`${apiRoute}/login.php`, values)
             .then(({ data }) => {
-              console.log(data);
               if (data.code === 200) {
                 setUserInfo(data.userInfo);
                 setSecondaryInfo(data.secondaryInfo);
-              } else {
-                setDontUserExistsModal(true);
+              } else if (data.code === 404) {
                 setUserInfo({});
                 setSecondaryInfo({});
+                toast({
+                  title: "Error",
+                  description: "Contraseña o correo eletrónico incorrecto",
+                  status: "warning",
+                  duration: 3000,
+                  isClosable: true,
+                  position: "bottom-right",
+                });
+              } else if (data.code === 500) {
+                setUserInfo({});
+                setSecondaryInfo({});
+                toast({
+                  title: "Error",
+                  description: "Ha ocurrido un error en el servidor",
+                  status: "warning",
+                  duration: 3000,
+                  isClosable: true,
+                  position: "bottom-right",
+                });
               }
             })
             .catch((error) => console.log(error));
@@ -99,7 +119,7 @@ const Login = React.memo(() => {
               children="INICIAR"
               className={style.blackButton}
             />
-            <Link href="/recoverPassword" children="Recordar contraseña" />
+            <Link href="#" children="Recordar contraseña" />
             <div className={style.divider} />
             <div className={style.recommendation}>
               <span>¿No tienes cuenta aún?</span>
