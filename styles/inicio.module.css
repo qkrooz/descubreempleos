@@ -5,10 +5,7 @@
   color: #c40033;
 }
 .container {
-  width: 94%;
-  padding: 2em;
   display: flex;
-  min-height: calc(100vh - 4em);
 }
 .left {
   flex-grow: 1;

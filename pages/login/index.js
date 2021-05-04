@@ -22,7 +22,7 @@ const Login = React.memo(() => {
   const [pswtext, setPswtext] = React.useState("password");
   React.useEffect(() => {
     if (
-      Object.values(userInfo).length !== 0 ||
+      Object.values(userInfo).length !== 0 &&
       Object.values(secondaryInfo).length !== 0
     )
       router.push("/");
@@ -99,11 +99,7 @@ const Login = React.memo(() => {
               children="INICIAR"
               className={style.blackButton}
             />
-            <Link
-              href="/recoverPassword"
-              className={style.pswReset}
-              children="Recordar contraseña"
-            />
+            <Link href="/recoverPassword" children="Recordar contraseña" />
             <div className={style.divider} />
             <div className={style.recommendation}>
               <span>¿No tienes cuenta aún?</span>

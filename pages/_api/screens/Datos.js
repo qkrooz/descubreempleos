@@ -1,10 +1,13 @@
-import React, { useContext, useState, useEffect } from "react";
-import { MainContext } from "../resources/MainContext";
-import { Card, Icon } from "semantic-ui-react";
-import { Formik, Form, Field } from "formik";
-import moment from "moment";
-import { useToast } from "@chakra-ui/react";
+import React from "react";
 import {
+  Box,
+  Switch,
+  Table,
+  Tbody,
+  Tr,
+  Td,
+  Badge,
+  useToast,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -14,22 +17,28 @@ import {
   ModalCloseButton,
   Button,
 } from "@chakra-ui/react";
+import { Add, Close, CloudDownload, Edit } from "@material-ui/icons";
+import { MainContext } from "../resources/MainContext";
+import { Formik, Form, Field } from "formik";
+import moment from "moment";
 import * as Yup from "yup";
 import Estados from "../resources/states_mexico.json";
 import Cities from "../resources/cities_mexico.json";
+import axios from "axios";
+import apiRoute from "../resources/apiRoute";
+import { PDFViewer } from "@react-pdf/renderer";
 // components
 import Footer from "../components/Footer";
-import UserCard from "../components/UserCard";
 import CVpdf from "../components/CVpdf";
 import CVModalComponent from "../components/CVmodal";
 // styles
 import style from "../../../styles/datos.module.css";
-import axios from "axios";
-import apiRoute from "../resources/apiRoute";
-import { PDFViewer } from "@react-pdf/renderer";
 const Datos = React.memo(() => {
-  // state
-  const [modalsVisibility, setModalsVisibility] = useState({
+  const toast = useToast();
+
+  // states
+  const [modalsVisibility, setModalsVisibility] = React.useState({
+    modal1: false,
     modal2: false,
     modal3: false,
     modal4: false,
@@ -41,672 +50,211 @@ const Datos = React.memo(() => {
     modal7Edit: false,
     CVmodal: false,
   });
+  const [disponibleState, setDisponibleState] = React.useState();
   const [
     editingObjectExperienciaLaboral,
     setEditingObjectExperienciaLaboral,
-  ] = useState({});
+  ] = React.useState({});
   const [
     editingObjectGradoEducativo,
     setEditingObjectGradoEducativo,
-  ] = useState({});
+  ] = React.useState({});
   const [
     editingObjectCursosCertificaciones,
     setEditingObjectCursosCertificaciones,
-  ] = useState({});
+  ] = React.useState({});
   // context
-  const { userInfoState, secondaryInfoState } = useContext(MainContext);
+  const { userInfoState, secondaryInfoState } = React.useContext(MainContext);
   const [userInfo] = userInfoState;
-  const [secondaryInfo] = secondaryInfoState;
-  // effects
-  useEffect(() => {
-    if (!modalsVisibility.modal5Edit) setEditingObjectExperienciaLaboral({});
-  }, [modalsVisibility.modal5Edit]);
-  useEffect(() => {
-    if (!modalsVisibility.modal6Edit) setEditingObjectGradoEducativo({});
-  }, [modalsVisibility.modal6Edit]);
-  useEffect(() => {
-    if (!modalsVisibility.modal7Edit) setEditingObjectCursosCertificaciones({});
-  }, [modalsVisibility.modal7Edit]);
+  const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
+  // functions
+  const ChangeAvailability = (e) => {
+    axios
+      .post(`${apiRoute}/changeAvailability.php`, {
+        state: e.target.checked,
+        userId: userInfo.ID,
+      })
+      .then(({ data }) => {
+        if (data.code === 200) {
+          toast({
+            title: data.current ? "Disponible para trabajar" : "No disponible",
+            description: "Has cambiado tu disponibilidad de trabajo",
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+            position: "bottom-right",
+          });
+          let secondaryInfoCopy = { ...secondaryInfo };
+          secondaryInfoCopy.DISPONIBLE = data.current.toString();
+          setSecondaryInfo(secondaryInfoCopy);
+          setDisponibleState(!Boolean(disponibleState));
+        } else {
+          console.log("ocurrio un error");
+        }
+      })
+      .catch((error) => console.log(error));
+  };
   return (
     <>
       <div className={style.container}>
         <div className={style.left}>
-          <UserCard
-            modalsVisibility={modalsVisibility}
-            setModalsVisibility={setModalsVisibility}
-          />
-          <Card style={{ padding: "1em" }}>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span style={{ fontWeight: "bold", fontSize: "1.3em" }}>
-                Datos personales
-              </span>
-              <button
-                className={style.modalButton}
-                onClick={() => {
-                  setModalsVisibility({ ...modalsVisibility, modal2: true });
-                }}
-              >
-                <Icon name="edit" size="large" />
-              </button>
+          <Card
+            onClick={() => {
+              setModalsVisibility({ ...modalsVisibility, modal1: true });
+            }}
+          >
+            <div className={style.userImage}>
+              <img src={`${userInfo.IMAGE_URL}?v=${Date.now()}`} />
             </div>
-            <div>
-              <table style={{ width: "100%" }}>
-                <tbody className={style.personalTbody}>
-                  <tr>
-                    <td className={style.personalLabel}>Fecha de nacimiento</td>
-                    <td>
-                      <div
-                        style={{
-                          width: "3em",
-                          borderBottom: "2px solid gray",
-                          margin: "0 1em",
-                        }}
-                      />
-                    </td>
-                    <td>
-                      {userInfo.BIRTH_DATE ? (
-                        `${moment(userInfo.BIRTH_DATE).format("DD/MM/YYYY")}`
-                      ) : (
-                        <div>
-                          <Icon name="warning circle" />
-                          <span>No disponible</span>
-                        </div>
-                      )}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className={style.personalLabel}>Edad</td>
-                    <td>
-                      <div
-                        style={{
-                          width: "3em",
-                          borderBottom: "2px solid gray",
-                          margin: "0 1em",
-                        }}
-                      />
-                    </td>
-                    <td>
-                      {userInfo.AGE ? (
-                        `${userInfo.AGE} años`
-                      ) : (
-                        <div>
-                          <Icon name="warning circle" />
-                          <span>No disponible</span>
-                        </div>
-                      )}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className={style.personalLabel}>Género</td>
-                    <td>
-                      <div
-                        style={{
-                          width: "3em",
-                          borderBottom: "2px solid gray",
-                          margin: "0 1em",
-                        }}
-                      />
-                    </td>
-                    <td style={{ textTransform: "capitalize" }}>
-                      {userInfo.GENRE ? (
-                        userInfo.GENRE
-                      ) : (
-                        <div>
-                          <Icon name="warning circle" />
-                          <span>No disponible</span>
-                        </div>
-                      )}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className={style.personalLabel}>CURP</td>
-                    <td>
-                      <div
-                        style={{
-                          width: "3em",
-                          borderBottom: "2px solid gray",
-                          margin: "0 1em",
-                        }}
-                      />
-                    </td>
-                    <td
-                      style={{ textTransform: "capitalize", fontSize: "0.8em" }}
-                    >
-                      {userInfo.CURP ? (
-                        userInfo.CURP
-                      ) : (
-                        <div>
-                          <Icon name="warning circle" />
-                          <span>No disponible</span>
-                        </div>
-                      )}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className={style.personalLabel}>RFC</td>
-                    <td>
-                      <div
-                        style={{
-                          width: "3em",
-                          borderBottom: "2px solid gray",
-                          margin: "0 1em",
-                        }}
-                      />
-                    </td>
-                    <td style={{ textTransform: "capitalize" }}>
-                      {userInfo.RFC ? (
-                        userInfo.RFC
-                      ) : (
-                        <div>
-                          <Icon name="warning circle" />
-                          <span>No disponible</span>
-                        </div>
-                      )}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className={style.personalLabel}>Teléfono</td>
-                    <td>
-                      <div
-                        style={{
-                          width: "3em",
-                          borderBottom: "2px solid gray",
-                          margin: "0 1em",
-                        }}
-                      />
-                    </td>
-                    <td>
-                      {userInfo.TEL_NUMBER ? (
-                        userInfo.TEL_NUMBER
-                      ) : (
-                        <div>
-                          <Icon name="warning circle" />
-                          <span>No disponible</span>
-                        </div>
-                      )}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className={style.personalLabel}>Estado</td>
-                    <td>
-                      <div
-                        style={{
-                          width: "3em",
-                          borderBottom: "2px solid gray",
-                          margin: "0 1em",
-                        }}
-                      />
-                    </td>
-                    <td style={{ textTransform: "capitalize" }}>
-                      {userInfo.STATE ? (
-                        userInfo.STATE
-                      ) : (
-                        <div>
-                          <Icon name="warning circle" />
-                          <span>No disponible</span>
-                        </div>
-                      )}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className={style.personalLabel}>Ciudad</td>
-                    <td>
-                      <div
-                        style={{
-                          width: "3em",
-                          borderBottom: "2px solid gray",
-                          margin: "0 1em",
-                        }}
-                      />
-                    </td>
-                    <td style={{ textTransform: "capitalize" }}>
-                      {userInfo.CITY ? (
-                        userInfo.CITY
-                      ) : (
-                        <div>
-                          <Icon name="warning circle" />
-                          <span>No disponible</span>
-                        </div>
-                      )}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className={style.personalLabel}>Idiomas</td>
-                    <td>
-                      <div
-                        style={{
-                          width: "3em",
-                          borderBottom: "2px solid gray",
-                          margin: "0 1em",
-                        }}
-                      />
-                    </td>
-                    <td>
-                      {secondaryInfo.IDIOMAS ? (
-                        JSON.parse(secondaryInfo.IDIOMAS).length === 0 ? (
-                          <div>
-                            <Icon name="warning circle" />
-                            <span>No disponible</span>
-                          </div>
-                        ) : (
-                          JSON.parse(secondaryInfo.IDIOMAS).map((key) => (
-                            <div
-                              key={key.ID}
-                              style={{
-                                display: "flex",
-                                flexDirection: "column",
-                              }}
-                            >
-                              <span>{key.TITLE}</span>
-                            </div>
-                          ))
-                        )
-                      ) : (
-                        <div>
-                          <Icon name="warning circle" />
-                          <span>No disponible</span>
-                        </div>
-                      )}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+            <span
+              className={style.personalLabel}
+            >{`${userInfo.NAMES} ${userInfo.LAST_NAME} ${userInfo.MOTHERS_LAST_NAME}`}</span>
+            <span className={style.userTitle}>{`${secondaryInfo.TITULO}`}</span>
+            <button className={style.CVButton}>Generar CV</button>
+            <div className={style.disponibleContainer}>
+              <span>Disponible para trabajar</span>
+              <Switch
+                size="md"
+                mt={2}
+                defaultChecked={Boolean(parseInt(secondaryInfo.DISPONIBLE))}
+                onChange={ChangeAvailability}
+              />
             </div>
           </Card>
-          <Card style={{ padding: "1em" }}>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                marginBottom: "0.5em",
-              }}
-            >
-              <span style={{ fontWeight: "bold", fontSize: "1.3em" }}>
-                Habilidades
-              </span>
-              <button
-                className={style.modalButton}
-                onClick={() => {
-                  setModalsVisibility({ ...modalsVisibility, modal3: true });
-                }}
-              >
-                <Icon name="edit" size="large" />
-              </button>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                justifyContent: "space-around",
-              }}
-            >
+          <Card
+            title="Datos personales"
+            onClick={() => {
+              setModalsVisibility({ ...modalsVisibility, modal2: true });
+            }}
+          >
+            <Table variant="simple" borderBottom="0px">
+              <Tbody>
+                <Tr>
+                  <Td style={{ fontWeight: "bold" }}>Edad</Td>
+                  <Td>{userInfo.AGE + " años"}</Td>
+                </Tr>
+                <Tr>
+                  <Td style={{ fontWeight: "bold" }}>Género</Td>
+                  <Td style={{ textTransform: "capitalize" }}>
+                    {userInfo.GENRE}
+                  </Td>
+                </Tr>
+                <Tr>
+                  <Td style={{ fontWeight: "bold" }}>Teléfono</Td>
+                  <Td style={{ textTransform: "capitalize" }}>
+                    {userInfo.TEL_NUMBER}
+                  </Td>
+                </Tr>
+                <Tr>
+                  <Td style={{ fontWeight: "bold" }}>Estado</Td>
+                  <Td style={{ textTransform: "capitalize" }}>
+                    {userInfo.STATE}
+                  </Td>
+                </Tr>
+                <Tr>
+                  <Td style={{ fontWeight: "bold" }}>Ciudad</Td>
+                  <Td style={{ textTransform: "capitalize" }}>
+                    {userInfo.CITY}
+                  </Td>
+                </Tr>
+                <Tr>
+                  <Td style={{ fontWeight: "bold" }}>Idiomas</Td>
+                  <Td
+                    style={{
+                      textTransform: "capitalize",
+                      display: "flex",
+                      justifyContent: "space-evenly",
+                    }}
+                  >
+                    {secondaryInfo.IDIOMAS ? (
+                      JSON.parse(secondaryInfo.IDIOMAS).map((key) => (
+                        <Badge
+                          key={key.ID}
+                          mb={
+                            JSON.parse(secondaryInfo.IDIOMAS).length > 2 ? 2 : 0
+                          }
+                        >
+                          {key.TITLE}
+                        </Badge>
+                      ))
+                    ) : (
+                      <Badge>No disponible</Badge>
+                    )}
+                  </Td>
+                </Tr>
+              </Tbody>
+            </Table>
+          </Card>
+          <Card
+            title="Habilidades"
+            onClick={() => {
+              setModalsVisibility({ ...modalsVisibility, modal3: true });
+            }}
+          >
+            <div className={style.habilitiesContainer}>
               {secondaryInfo.HABILIDADES ? (
-                JSON.parse(secondaryInfo.HABILIDADES).length === 0 ? (
-                  <div>
-                    <Icon name="warning circle" />
-                    <span>No disponible</span>
-                  </div>
-                ) : (
-                  JSON.parse(secondaryInfo.HABILIDADES).map((item) => (
-                    <div
-                      key={item.ID}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        padding: "0.5em",
-                        backgroundColor: "#e2e2e2",
-                        borderRadius: "2em",
-                        marginBottom: "1em",
-                      }}
-                    >
-                      <span
-                        style={{ marginRight: "0.5em", fontWeight: "bold" }}
-                      >
-                        {item.TITLE}
-                      </span>
-                    </div>
-                  ))
-                )
+                JSON.parse(secondaryInfo.HABILIDADES).map((key) => (
+                  <Badge key={key.ID} mb={2}>
+                    {key.TITLE}
+                  </Badge>
+                ))
               ) : (
-                <div>
-                  <Icon name="warning circle" />
-                  <span>No disponible</span>
-                </div>
+                <Badge>No disponible</Badge>
               )}
             </div>
           </Card>
-          <Card style={{ padding: "1em" }}>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span style={{ fontWeight: "bold", fontSize: "1.3em" }}>
-                Seguridad
-              </span>
-              <button
-                className={style.modalButton}
-                onClick={() => {
-                  setModalsVisibility({ ...modalsVisibility, modal4: true });
-                }}
-              >
-                <Icon name="edit" size="large" />
-              </button>
-            </div>
-            <div>
-              <table style={{ width: "100%" }}>
-                <tbody className={style.personalTbody}>
-                  <tr>
-                    <td className={style.personalLabel}>Correo:{"  "}</td>
-                    <td
-                      style={{
-                        fontWeight: "bold",
-                        fontSize: "1.1em",
-                        paddingLeft: "1em",
-                      }}
-                    >
-                      {userInfo.EMAIL.substring(0, 3) +
-                        "****" +
-                        userInfo.EMAIL.substring(userInfo.EMAIL.length - 10)}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className={style.personalLabel}>Contraseña:</td>
-                    <td
-                      style={{
-                        fontWeight: "bold",
-                        fontSize: "1.1em",
-                        paddingLeft: "1em",
-                      }}
-                    >
-                      *********
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+          <Card
+            title="Seguridad"
+            onClick={() => {
+              setModalsVisibility({ ...modalsVisibility, modal4: true });
+            }}
+          >
+            <Table>
+              <Tbody>
+                <Tr>
+                  <Td style={{ fontWeight: "bold" }}>Email</Td>
+                  <Td style={{ fontSize: "0.85em" }}>
+                    {userInfo.EMAIL.substring(0, 1) +
+                      "****@" +
+                      userInfo.EMAIL.split("@")[1]}
+                  </Td>
+                </Tr>
+                <Tr>
+                  <Td style={{ fontWeight: "bold" }}>Contraseña</Td>
+                  <Td>{userInfo.PASSWORD.replace(/./g, "*")}</Td>
+                </Tr>
+              </Tbody>
+            </Table>
           </Card>
         </div>
         <div className={style.rigth}>
-          <Card className={style.card1}>
-            <div className={style.dataCardHeader}>
-              <h1>Experiencia laboral</h1>
-              <button
-                className={style.enableEditButton}
-                onClick={() => {
-                  setModalsVisibility({ ...modalsVisibility, modal5: true });
-                }}
-              >
-                <Icon
-                  name="add circle"
-                  style={{ marginLeft: "0.5em" }}
-                  size="large"
-                />
-              </button>
-            </div>
-            <Card.Content>
-              <Card.Description>
-                {secondaryInfo.EXPERIENCIA_LABORAL ? (
-                  JSON.parse(secondaryInfo.EXPERIENCIA_LABORAL).length !== 0 ? (
-                    JSON.parse(secondaryInfo.EXPERIENCIA_LABORAL).map((key) => (
-                      <div
-                        key={key.ID}
-                        style={{
-                          marginBottom: "0.5em",
-                          borderBottom: "2px solid #e2e2e2",
-                          paddingBottom: "0.5em",
-                        }}
-                      >
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          <span
-                            style={{ fontSize: "1.2em", fontWeight: "bold" }}
-                          >
-                            {key.PUESTO}
-                          </span>
-                          <button
-                            onClick={() => {
-                              setModalsVisibility({
-                                ...modalsVisibility,
-                                modal5Edit: true,
-                              });
-                              setEditingObjectExperienciaLaboral(key);
-                            }}
-                          >
-                            <Icon name="edit" />
-                          </button>
-                        </div>
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          <span style={{ fontWeight: "bold" }}>
-                            {key.EMPRESA}
-                          </span>
-                          <span>
-                            {key.STILLINTHIS
-                              ? `Desde ${key.FROM}`
-                              : `Desde ${key.FROM} hasta ${key.TO}`}
-                          </span>
-                        </div>
-                        <div>
-                          <p style={{ margin: 0, whiteSpace: "pre-wrap" }}>
-                            {key.DESCRIPCION}
-                          </p>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <>
-                      <h3>Aún no has agregado ninguna experiencia laboral</h3>
-                      <p>
-                        Aumenta tus probabilidades de exito agregando
-                        experiencia en este campo
-                      </p>
-                    </>
-                  )
-                ) : (
-                  <>
-                    <h3>Aún no has agregado ninguna experiencia laboral</h3>
-                    <p>
-                      Aumenta tus probabilidades de exito agregando experiencia
-                      en este campo
-                    </p>
-                  </>
-                )}
-              </Card.Description>
-            </Card.Content>
-          </Card>
-          <Card className={style.card1}>
-            <div className={style.dataCardHeader}>
-              <h1>Grado Educativo</h1>
-              <button
-                className={style.enableEditButton}
-                onClick={() => {
-                  setModalsVisibility({ ...modalsVisibility, modal6: true });
-                }}
-              >
-                <Icon
-                  name="add circle"
-                  style={{ marginLeft: "0.5em" }}
-                  size="large"
-                />
-              </button>
-            </div>
-            <Card.Content>
-              <Card.Description>
-                {secondaryInfo.GRADO_EDUCATIVO ? (
-                  JSON.parse(secondaryInfo.GRADO_EDUCATIVO).length !== 0 ? (
-                    JSON.parse(secondaryInfo.GRADO_EDUCATIVO).map((key) => (
-                      <div
-                        key={key.ID}
-                        style={{
-                          marginBottom: "0.5em",
-                          borderBottom: "2px solid #e2e2e2",
-                          paddingBottom: "0.5em",
-                        }}
-                      >
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          <span
-                            style={{ fontSize: "1.2em", fontWeight: "bold" }}
-                          >
-                            {key.TITULO}
-                          </span>
-                          <button
-                            onClick={() => {
-                              setModalsVisibility({
-                                ...modalsVisibility,
-                                modal6Edit: true,
-                              });
-                              setEditingObjectGradoEducativo(key);
-                            }}
-                          >
-                            <Icon name="edit" />
-                          </button>
-                        </div>
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          <span style={{ fontWeight: "bold" }}>
-                            {key.INSTITUCION}
-                          </span>
-                          <span>
-                            {key.STILLINTHIS
-                              ? `Desde ${key.FROM}`
-                              : `Desde ${key.FROM} hasta ${key.TO}`}
-                          </span>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <>
-                      <h3>Aún no has agregado ningun grado educativo</h3>
-                      <p>
-                        Aumenta tus probabilidades de exito agregando
-                        experiencia en este campo
-                      </p>
-                    </>
-                  )
-                ) : (
-                  <>
-                    <h3>Aún no has agregado ningun grado educativo</h3>
-                    <p>
-                      Aumenta tus probabilidades de exito agregando experiencia
-                      en este campo
-                    </p>
-                  </>
-                )}
-              </Card.Description>
-            </Card.Content>
-          </Card>
-          <Card className={style.card}>
-            <div className={style.dataCardHeader}>
-              <h1>Cursos y certificaciones</h1>
-              <button
-                className={style.enableEditButton}
-                onClick={() => {
-                  setModalsVisibility({ ...modalsVisibility, modal7: true });
-                }}
-              >
-                <Icon
-                  name="add circle"
-                  style={{ marginLeft: "0.5em" }}
-                  size="large"
-                />
-              </button>
-            </div>
-            <Card.Content>
-              <Card.Description>
-                {secondaryInfo.CURSOS_CERTIFICACIONES ? (
-                  JSON.parse(secondaryInfo.CURSOS_CERTIFICACIONES).length !==
-                  0 ? (
-                    JSON.parse(secondaryInfo.CURSOS_CERTIFICACIONES).map(
-                      (key) => (
-                        <div
-                          key={key.ID}
-                          style={{
-                            marginBottom: "0.5em",
-                            borderBottom: "2px solid #e2e2e2",
-                            paddingBottom: "0.5em",
-                          }}
-                        >
-                          <div
-                            style={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                            }}
-                          >
-                            <span
-                              style={{ fontSize: "1.2em", fontWeight: "bold" }}
-                            >
-                              {key.TITULO}
-                            </span>
-                            <button
-                              onClick={() => {
-                                setModalsVisibility({
-                                  ...modalsVisibility,
-                                  modal7Edit: true,
-                                });
-                                setEditingObjectCursosCertificaciones(key);
-                              }}
-                            >
-                              <Icon name="edit" />
-                            </button>
-                          </div>
-                          <div
-                            style={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                            }}
-                          >
-                            <span style={{ fontWeight: "bold" }}>
-                              {key.TIPO}
-                            </span>
-                            <span>
-                              {key.NOTAQUIRED ? `En curso` : `${key.YEAR}`}
-                            </span>
-                          </div>
-                          <div>
-                            <p style={{ margin: 0, whiteSpace: "pre-wrap" }}>
-                              {key.DESCRIPTION}
-                            </p>
-                          </div>
-                        </div>
-                      )
-                    )
-                  ) : (
-                    <>
-                      <h3>Aún no has agregado ningun curso o certificación</h3>
-                      <p>
-                        Aumenta tus probabilidades de exito agregando
-                        experiencia en este campo
-                      </p>
-                    </>
-                  )
-                ) : (
-                  <>
-                    <h3>Aún no has agregado ningun curso o certificación</h3>
-                    <p>
-                      Aumenta tus probabilidades de exito agregando experiencia
-                      en este campo
-                    </p>
-                  </>
-                )}
-              </Card.Description>
-            </Card.Content>
-          </Card>
+          <Card2
+            title="Experiencia laboral"
+            data={secondaryInfo.EXPERIENCIA_LABORAL}
+            onClick={() => {
+              setModalsVisibility({ ...modalsVisibility, modal5: true });
+            }}
+          />
+          <Card2
+            title="Grado Educativo"
+            data={secondaryInfo.GRADO_EDUCATIVO}
+            onClick={() => {
+              setModalsVisibility({ ...modalsVisibility, modal6: true });
+            }}
+          />
+          <Card2
+            title="Cursos y certificaciones"
+            data={secondaryInfo.CURSOS_CERTIFICACIONES}
+            onClick={() => {
+              setModalsVisibility({ ...modalsVisibility, modal7: true });
+            }}
+          />
         </div>
       </div>
+      <Modal1
+        modalsVisibility={modalsVisibility}
+        setModalsVisibility={setModalsVisibility}
+      />
       <Modal2
         modalsVisibility={modalsVisibility}
         setModalsVisibility={setModalsVisibility}
@@ -754,20 +302,393 @@ const Datos = React.memo(() => {
     </>
   );
 });
+const Card = React.memo(({ children, props, title, onClick }) => {
+  return (
+    <Box
+      {...props}
+      boxShadow="md"
+      p={2}
+      rounded="md"
+      bg="white"
+      w="100%"
+      mb={4}
+    >
+      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        {title ? (
+          <span
+            style={{
+              marginRight: "auto",
+              fontWeight: "bold",
+              fontSize: "1.1em",
+            }}
+          >
+            {title}
+          </span>
+        ) : null}
+        <button onClick={onClick}>
+          <Edit />
+        </button>
+      </div>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        {children}
+      </div>
+    </Box>
+  );
+});
+const Card2 = React.memo(({ props, title, data, onClick }) => {
+  return (
+    <Box
+      {...props}
+      boxShadow="md"
+      p={2}
+      rounded="md"
+      bg="white"
+      w="100%"
+      mb={4}
+    >
+      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        {title ? (
+          <span
+            style={{
+              marginRight: "auto",
+              fontWeight: "bold",
+              fontSize: "1.3em",
+            }}
+          >
+            {title}
+          </span>
+        ) : null}
+        <button onClick={onClick}>
+          <Add />
+        </button>
+      </div>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "flex-start",
+        }}
+      >
+        {data ? (
+          JSON.parse(data).map((key) => <div key={key.ID}></div>)
+        ) : (
+          <div className={style.noData}>
+            <span>Aún no has agregado ningún campo.</span>
+            <span>
+              Aumenta tus posibilidades de éxito agregando experiencia en este
+              campo.
+            </span>
+          </div>
+        )}
+      </div>
+    </Box>
+  );
+});
+const Modal1 = React.memo(
+  ({
+    setModalsVisibility,
+    modalsVisibility,
+    userImgError,
+    setUserImgError,
+    setEditModalVisibility,
+    setImageHash,
+  }) => {
+    const fileUploaderButton = React.useRef();
+    const toast = useToast();
+    const RetroError = () => {
+      return (
+        <span style={{ color: "red", fontSize: "0.8em" }}>Requerido*</span>
+      );
+    };
+    const validationSchema = Yup.object().shape({
+      NAMES: Yup.string().required(),
+      LAST_NAME: Yup.string().required(),
+    });
+    const { userInfoState, secondaryInfoState } = React.useContext(MainContext);
+    const [userInfo, setUserInfo] = userInfoState;
+    const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
+    const updateUserPhoto = (userID, image) => {
+      const formData = new FormData();
+      // setModals({ ...modals, submit: true });
+      formData.append("userID", parseInt(userID));
+      formData.append("image", image);
+      axios
+        .post(`${apiRoute}/uploadProfilePhoto.php`, formData, {
+          headers: { "Content-type": "multipart/form-data" },
+        })
+        .then((response) => {
+          console.log(response.data);
+          setUserImgError(true);
+
+          if (response.data.code === 200) {
+            let userInfoCopy = { ...userInfo };
+            console.log(userInfoCopy);
+            userInfoCopy.IMAGE_URL = response.data.IMAGE_URL;
+            setUserInfo(userInfoCopy);
+            setImageHash((imageHash) => imageHash + 1);
+            setUserImgError(false);
+            toast({
+              title: "Imagen actualizada",
+              status: "success",
+              duration: 3000,
+              isClosable: true,
+            });
+          } else {
+            toast({
+              title: "Ocurrio un error, intenta mas tarde.",
+              status: "error",
+              duration: 3000,
+              isClosable: true,
+            });
+          }
+        })
+        .catch(() => {
+          toast({
+            title: "Ocurrio un error, intenta mas tarde.",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+        });
+    };
+    return (
+      <Formik
+        validationSchema={validationSchema}
+        initialValues={{
+          NAMES: userInfo.NAMES,
+          LAST_NAME: userInfo.LAST_NAME,
+          MOTHERS_LAST_NAME: userInfo.MOTHERS_LAST_NAME,
+          TITULO: secondaryInfo.TITULO ? secondaryInfo.TITULO : "",
+        }}
+        onSubmit={(values) => {
+          if (
+            values.NAMES === userInfo.NAMES &&
+            values.LAST_NAME === userInfo.LAST_NAME &&
+            values.MOTHERS_LAST_NAME === userInfo.MOTHERS_LAST_NAME &&
+            values.TITULO === secondaryInfo.TITULO
+          ) {
+            setEditModalVisibility(!editModalVisibility);
+          } else {
+            values["ID"] = parseInt(userInfo.ID);
+            axios
+              .post(`${apiRoute}/updatePrimaryInfo.php`, values)
+              .then(({ data }) => {
+                if (data.code === 200) {
+                  let userInfoCopy = { ...userInfo };
+                  let secondaryInfoCopy = { ...secondaryInfo };
+                  userInfoCopy.NAMES = values.NAMES.toLowerCase();
+                  userInfoCopy.LAST_NAME = values.LAST_NAME.toLowerCase();
+                  userInfoCopy.MOTHERS_LAST_NAME = values.MOTHERS_LAST_NAME.toLowerCase();
+                  secondaryInfoCopy.TITULO = values.TITULO.toLowerCase();
+                  setUserInfo(userInfoCopy);
+                  setSecondaryInfo(secondaryInfoCopy);
+                  setEditModalVisibility(false);
+                  toast({
+                    title: "Información actualizada",
+                    description: "Cambios exitosos",
+                    status: "success",
+                    duration: 3000,
+                    isClosable: true,
+                  });
+                } else {
+                  toast({
+                    title: "Ocurrio un error, intenta mas tarde.",
+                    status: "error",
+                    duration: 3000,
+                    isClosable: true,
+                  });
+                }
+              })
+              .catch((error) => console.log(error));
+          }
+        }}
+      >
+        {({ values, handleChange, errors, handleBlur }) => (
+          <>
+            <Modal
+              isOpen={modalsVisibility.modal1}
+              onClose={() => {
+                setModalsVisibility({ ...modalsVisibility, modal1: false });
+              }}
+              size="xl"
+            >
+              <ModalOverlay />
+              <ModalContent>
+                <ModalHeader>
+                  ¿Quieres actualizar tus datos personales?
+                </ModalHeader>
+                <ModalCloseButton />
+                <ModalBody
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    width: "100%",
+                  }}
+                >
+                  <div className={style.modal1Upper}>
+                    {!userImgError ? (
+                      <button
+                        onClick={() => {
+                          fileUploaderButton.current.click();
+                        }}
+                      >
+                        <input
+                          ref={fileUploaderButton}
+                          type="file"
+                          id="fileUploader"
+                          style={{ display: "none" }}
+                          onChange={(e) =>
+                            updateUserPhoto(userInfo.ID, e.target.files[0])
+                          }
+                          onClick={(event) => {
+                            event.target.value = null;
+                          }}
+                        />
+                        {console.log(`${userInfo.IMAGE_URL}?${Date.now()}`)}
+                        <img
+                          className={style.profile}
+                          src={`${userInfo.IMAGE_URL}?v=${Date.now()}`}
+                          onError={() => {
+                            setUserImgError(true);
+                          }}
+                        />
+                      </button>
+                    ) : (
+                      <div className={style.iconContainer}>
+                        <button
+                          onClick={() => {
+                            fileUploaderButton.current.click();
+                          }}
+                        >
+                          <input
+                            ref={fileUploaderButton}
+                            type="file"
+                            id="fileUploader"
+                            style={{ display: "none" }}
+                            onChange={(e) =>
+                              updateUserPhoto(userInfo.ID, e.target.files[0])
+                            }
+                            onClick={(event) => {
+                              event.target.value = null;
+                            }}
+                          />
+                          <Icon name="user" size="huge" color="grey" />
+                        </button>
+                      </div>
+                    )}
+                    <Form
+                      style={{ display: "flex", flexDirection: "column" }}
+                      id="modal1Form"
+                    >
+                      {errors.NAMES ? <RetroError /> : null}
+                      <Field
+                        type="text"
+                        placeholder="Nombres"
+                        name="NAMES"
+                        onChange={handleChange}
+                        value={values.NAMES}
+                        onBlur={handleBlur}
+                        style={{ textTransform: "capitalize" }}
+                      />
+                      {errors.LAST_NAME ? <RetroError /> : null}
+                      <Field
+                        type="text"
+                        placeholder="Apellido"
+                        name="LAST_NAME"
+                        onChange={handleChange}
+                        value={values.LAST_NAME}
+                        onBlur={handleBlur}
+                        style={{ textTransform: "capitalize" }}
+                      />
+                      <Field
+                        type="text"
+                        placeholder="Apellido Materno"
+                        name="MOTHERS_LAST_NAME"
+                        onChange={handleChange}
+                        value={values.MOTHERS_LAST_NAME}
+                        onBlur={handleBlur}
+                        style={{ textTransform: "capitalize" }}
+                      />
+                      <Field
+                        type="text"
+                        placeholder="Titulo/Puesto"
+                        name="TITULO"
+                        onChange={handleChange}
+                        value={values.TITULO}
+                        onBlur={handleBlur}
+                        style={{ textTransform: "capitalize" }}
+                      />
+                    </Form>
+                  </div>
+                  <div className={style.modal1Lower}>
+                    <div>
+                      <p href="#">Fotografía</p>
+                      <p>
+                        Puedes escoger la fotografía que prefieras pero por
+                        motivos profecionales sugerimos una fotografía de
+                        aspecto formal y seria.
+                      </p>
+                    </div>
+                    <div>
+                      <a href="#">Generar y actualizar CV</a>
+                      <p>
+                        Crea un currículum con nosotros usando tus datos en esta
+                        sección para generarlo de forma automatica y así puedas
+                        enviarlo en tus postulaciones de empleo.
+                      </p>
+                    </div>
+                  </div>
+                </ModalBody>
+                <ModalFooter style={{ justifyContent: "center" }}>
+                  <Button
+                    variant="ghost"
+                    onClick={() => {
+                      setModalsVisibility({
+                        ...modalsVisibility,
+                        modal1: false,
+                      });
+                    }}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    type="submit"
+                    style={{ backgroundColor: "#ECB83C" }}
+                    form="modal1Form"
+                  >
+                    Actualizar
+                  </Button>
+                </ModalFooter>
+              </ModalContent>
+            </Modal>
+          </>
+        )}
+      </Formik>
+    );
+  }
+);
 const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
   const toast = useToast();
-  const [years, setYears] = useState([]);
-  const [days, setDays] = useState();
-  const [selectedCityID, setSelectedCityID] = useState("0");
-  const [selectedStateID, setSelectedStateID] = useState("0");
-  const [selectedYear, setSelectedYear] = useState(moment(new Date()).year());
-  const [selectedMonth, setSelectedMonth] = useState("01");
-  const [selectedDay, setSelectedDay] = useState("01");
-  const [languages, setLanguages] = useState([]);
-  const { userInfoState, secondaryInfoState } = useContext(MainContext);
+  const [years, setYears] = React.useState([]);
+  const [days, setDays] = React.useState();
+  const [selectedCityID, setSelectedCityID] = React.useState("0");
+  const [selectedStateID, setSelectedStateID] = React.useState("0");
+  const [selectedYear, setSelectedYear] = React.useState(
+    moment(new Date()).year()
+  );
+  const [selectedMonth, setSelectedMonth] = React.useState("01");
+  const [selectedDay, setSelectedDay] = React.useState("01");
+  const [languages, setLanguages] = React.useState([]);
+  const { userInfoState, secondaryInfoState } = React.useContext(MainContext);
   const [userInfo, setUserInfo] = userInfoState;
   const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
-  const [languagesList, setLanguagesList] = useState([
+  const [languagesList, setLanguagesList] = React.useState([
     { ID: 1, TITLE: "Español", VALUE: "es" },
     { ID: 2, TITLE: "Inglés", VALUE: "en" },
     { ID: 3, TITLE: "Francés", VALUE: "fr" },
@@ -783,7 +704,7 @@ const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
     });
     setLanguagesList(languagesListCopy);
   };
-  useEffect(() => {
+  React.useEffect(() => {
     // setting state
     userInfo.STATE
       ? setSelectedStateID(
@@ -828,7 +749,7 @@ const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
     }
     setYears(years);
   }, []);
-  useEffect(() => {
+  React.useEffect(() => {
     setDays(
       moment(`${selectedYear},${selectedMonth}`, "YYYY-MM").daysInMonth()
     );
@@ -1136,7 +1057,7 @@ const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
                               );
                             }}
                           >
-                            <Icon name="close" />
+                            <Close />
                           </button>
                         </div>
                       ))
@@ -1198,11 +1119,11 @@ const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
 });
 const Modal3 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
   const toast = useToast();
-  const { secondaryInfoState, userInfoState } = useContext(MainContext);
+  const { secondaryInfoState, userInfoState } = React.useContext(MainContext);
   const [userInfo] = userInfoState;
   const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
-  const [habilities, setHabilities] = useState([]);
-  const [habilitiesList, setHabilitiesList] = useState([
+  const [habilities, setHabilities] = React.useState([]);
+  const [habilitiesList, setHabilitiesList] = React.useState([
     { ID: 1, TITLE: "Pensamiento Crítico", VALUES: "pensamiento critico" },
     { ID: 2, TITLE: "Trabajo en equipo", VALUES: "trabajo en equipo" },
     { ID: 3, TITLE: "Comunicacion", VALUES: "comunicacion" },
@@ -1216,6 +1137,7 @@ const Modal3 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
           ID: userInfo.ID,
         })
         .then(({ data }) => {
+          console.log(data);
           if (data.code === 200) {
             let secondaryInfoCopy = { ...secondaryInfo };
             secondaryInfoCopy.HABILIDADES = JSON.stringify(habilities);
@@ -1254,7 +1176,7 @@ const Modal3 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
     setHabilitiesList(habilitiesListCopy);
   };
   // effects
-  useEffect(() => {
+  React.useEffect(() => {
     if (secondaryInfo.HABILIDADES) {
       if (JSON.parse(secondaryInfo.HABILIDADES).length !== 0) {
         let array = JSON.parse(secondaryInfo.HABILIDADES);
@@ -1321,7 +1243,7 @@ const Modal3 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
                       ]);
                     }}
                   >
-                    <Icon name="close" />
+                    <Close />
                   </button>
                 </div>
               ))
@@ -1383,7 +1305,7 @@ const Modal4 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
       "Las contraseñas tienen que ser iguales"
     ),
   });
-  const { userInfoState } = useContext(MainContext);
+  const { userInfoState } = React.useContext(MainContext);
   const [userInfo, setUserInfo] = userInfoState;
   return (
     <Formik
@@ -1595,21 +1517,21 @@ const Modal5 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
     DESCRIPCION: Yup.string().required(),
   });
   // context
-  const { userInfoState, secondaryInfoState } = useContext(MainContext);
+  const { userInfoState, secondaryInfoState } = React.useContext(MainContext);
   const [userInfo] = userInfoState;
   const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
   // states
-  const [years, setYears] = useState([]);
-  const [from, setFrom] = useState({
+  const [years, setYears] = React.useState([]);
+  const [from, setFrom] = React.useState({
     month: "01",
     year: moment(new Date()).format("YYYY"),
   });
-  const [to, setTo] = useState({
+  const [to, setTo] = React.useState({
     month: "01",
     year: moment(new Date()).format("YYYY"),
   });
   // effects
-  useEffect(() => {
+  React.useEffect(() => {
     let years = [];
     let limit = moment(new Date()).year() - 80;
     for (let i = moment(new Date()).year(); i > limit; i--) {
@@ -1908,16 +1830,16 @@ const Modal5Edit = React.memo(
   }) => {
     const toast = useToast();
     // context
-    const { userInfoState, secondaryInfoState } = useContext(MainContext);
+    const { userInfoState, secondaryInfoState } = React.useContext(MainContext);
     const [userInfo] = userInfoState;
     const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
     // states
-    const [years, setYears] = useState([]);
-    const [from, setFrom] = useState({
+    const [years, setYears] = React.useState([]);
+    const [from, setFrom] = React.useState({
       month: "01",
       year: moment(new Date()).format("YYYY"),
     });
-    const [to, setTo] = useState({
+    const [to, setTo] = React.useState({
       month: "01",
       year: moment(new Date()).format("YYYY"),
     });
@@ -1958,7 +1880,7 @@ const Modal5Edit = React.memo(
         .catch((error) => console.log(error));
     };
     // effects
-    useEffect(() => {
+    React.useEffect(() => {
       let years = [];
       let limit = moment(new Date()).year() - 80;
       for (let i = moment(new Date()).year(); i > limit; i--) {
@@ -2308,21 +2230,21 @@ const Modal6 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
     GRADO: Yup.string().required(),
   });
   // context
-  const { userInfoState, secondaryInfoState } = useContext(MainContext);
+  const { userInfoState, secondaryInfoState } = React.useContext(MainContext);
   const [userInfo] = userInfoState;
   const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
   // states
-  const [years, setYears] = useState([]);
-  const [from, setFrom] = useState({
+  const [years, setYears] = React.useState([]);
+  const [from, setFrom] = React.useState({
     month: "01",
     year: moment(new Date()).format("YYYY"),
   });
-  const [to, setTo] = useState({
+  const [to, setTo] = React.useState({
     month: "01",
     year: moment(new Date()).format("YYYY"),
   });
   // effects
-  useEffect(() => {
+  React.useEffect(() => {
     let years = [];
     let limit = moment(new Date()).year() - 80;
     for (let i = moment(new Date()).year(); i > limit; i--) {
@@ -2663,16 +2585,16 @@ const Modal6Edit = React.memo(
       EDITGRADO: Yup.string().required(),
     });
     // context
-    const { userInfoState, secondaryInfoState } = useContext(MainContext);
+    const { userInfoState, secondaryInfoState } = React.useContext(MainContext);
     const [userInfo] = userInfoState;
     const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
     // states
-    const [years, setYears] = useState([]);
-    const [from, setFrom] = useState({
+    const [years, setYears] = React.useState([]);
+    const [from, setFrom] = React.useState({
       month: "01",
       year: moment(new Date()).format("YYYY"),
     });
-    const [to, setTo] = useState({
+    const [to, setTo] = React.useState({
       month: "01",
       year: moment(new Date()).format("YYYY"),
     });
@@ -2713,7 +2635,7 @@ const Modal6Edit = React.memo(
         .catch((error) => console.log(error));
     };
     // effects
-    useEffect(() => {
+    React.useEffect(() => {
       let years = [];
       let limit = moment(new Date()).year() - 80;
       for (let i = moment(new Date()).year(); i > limit; i--) {
@@ -3029,7 +2951,7 @@ const Modal6Edit = React.memo(
 const Modal7 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
   const toast = useToast();
   // context
-  const { secondaryInfoState, userInfoState } = useContext(MainContext);
+  const { secondaryInfoState, userInfoState } = React.useContext(MainContext);
   const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
   const [userInfo] = userInfoState;
   const validationSchema = Yup.object().shape({
@@ -3038,9 +2960,9 @@ const Modal7 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
     DESCRIPTION: Yup.string().required(),
   });
   // states
-  const [years, setYears] = useState([]);
+  const [years, setYears] = React.useState([]);
   // effects
-  useEffect(() => {
+  React.useEffect(() => {
     let years = [];
     let limit = moment(new Date()).year() - 80;
     for (let i = moment(new Date()).year(); i > limit; i--) {
@@ -3266,7 +3188,7 @@ const Modal7Edit = React.memo(
   }) => {
     const toast = useToast();
     // context
-    const { secondaryInfoState, userInfoState } = useContext(MainContext);
+    const { secondaryInfoState, userInfoState } = React.useContext(MainContext);
     const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
     const [userInfo] = userInfoState;
     const validationSchema = Yup.object().shape({
@@ -3275,7 +3197,7 @@ const Modal7Edit = React.memo(
       EDITDESCRIPTION: Yup.string().required(),
     });
     // states
-    const [years, setYears] = useState([]);
+    const [years, setYears] = React.useState([]);
     // functions
     const deleteThisElement = (key) => {
       let prevArray = [...JSON.parse(secondaryInfo.CURSOS_CERTIFICACIONES)];
@@ -3313,7 +3235,7 @@ const Modal7Edit = React.memo(
         .catch((error) => console.log(error));
     };
     // effects
-    useEffect(() => {
+    React.useEffect(() => {
       let years = [];
       let limit = moment(new Date()).year() - 80;
       for (let i = moment(new Date()).year(); i > limit; i--) {
@@ -3526,7 +3448,7 @@ const Modal7Edit = React.memo(
   }
 );
 const CVModal = React.memo(({ modalsVisibility, setModalsVisibility }) => {
-  const { secondaryInfoState, userInfoState } = useContext(MainContext);
+  const { secondaryInfoState, userInfoState } = React.useContext(MainContext);
   const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
   const [userInfo] = userInfoState;
   return (
@@ -3561,16 +3483,7 @@ const CVModal = React.memo(({ modalsVisibility, setModalsVisibility }) => {
               setModalsVisibility({ ...modalsVisibility, CVmodal: false });
             }}
           >
-            <Icon
-              name="close"
-              style={{
-                margin: 0,
-                display: "flex",
-                justifyContent: "center",
-                justifyItems: "center",
-              }}
-              size="large"
-            />
+            <Close />
           </button>
           <button
             style={{
@@ -3582,16 +3495,7 @@ const CVModal = React.memo(({ modalsVisibility, setModalsVisibility }) => {
               borderRadius: "5em",
             }}
           >
-            <Icon
-              name="download"
-              style={{
-                margin: 0,
-                display: "flex",
-                justifyContent: "center",
-                justifyItems: "center",
-              }}
-              size="large"
-            />
+            <CloudDownload />
           </button>
         </div>
 

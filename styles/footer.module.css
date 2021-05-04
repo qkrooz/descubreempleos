@@ -2,28 +2,36 @@
   background-color: #c40033;
   color: white;
   width: 100%;
-  padding: 1em;
+  max-width: 100%;
   display: flex;
+  padding: 0.5em;
 }
-.icon {
-  width: 69px;
+.infoContainer {
+  flex-grow: 1;
 }
 .iconsContainer {
   margin-left: auto;
   display: flex;
   align-items: center;
 }
-.h3 {
-  color: white !important;
-}
 .h4 {
-  color: white !important;
-  margin-top: 17px;
-  font-weight: bold;
+  font-weight: normal;
+  font-size: 0.9em;
 }
-@media screen and (max-width: 1000px) {
-  .container {
-    position: static;
-    margin-top: 50px;
-  }
+.h3 {
+  margin-bottom: 1em;
+}
+.h3 > a {
+  font-weight: normal;
+  color: white;
+  font-weight: bold;
+  margin-right: 1em;
+  margin-left: 1em;
+}
+.h3 > a:first-child {
+  margin-left: 0;
+}
+
+.icon {
+  margin-right: 1em !important;
 }

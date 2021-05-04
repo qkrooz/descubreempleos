@@ -1,17 +1,11 @@
 body,
-html {
+html,
+#__next {
   margin: 0;
   padding: 0;
   width: 100vw;
-  height: 100vh !important;
-  max-height: 100vh !important;
-  position: relative;
-}
-body {
-  /* overflow: hidden; */
-}
-#_next {
-  max-height: 100vh !important;
+  height: 100vh;
+  overflow: hidden;
 }
 @font-face {
   font-family: "HelveticaNeue";

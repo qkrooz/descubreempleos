@@ -1,11 +1,10 @@
 import React, { useEffect } from "react";
 import { MainContext } from "./_api/resources/MainContext.js";
-import { ChakraProvider } from "@chakra-ui/react";
 import useLocalStorage from "./_api/resources/useLocalStorage";
+import { ChakraProvider } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import apiRoute from "./_api/resources/apiRoute";
 import "../styles/generalstyles.css";
-import "semantic-ui-css/semantic.min.css";
 import axios from "axios";
 const App = React.memo(({ Component, pageProps }) => {
   const router = useRouter();
@@ -21,12 +20,11 @@ const App = React.memo(({ Component, pageProps }) => {
       if (localStorage.getItem("userInfo")) {
         axios
           .post(`${apiRoute}/login.php`, {
-            email: userInfo.EMAIL,
-            password: userInfo.PASSWORD,
+            EMAIL: userInfo.EMAIL,
+            PASSWORD: userInfo.PASSWORD,
           })
           .then(({ data }) => {
             if (data.code === 200) {
-              data.userInfo.IMAGE_URL = data.userInfo.IMAGE_URL.split("/")[9];
               setUserInfo(data.userInfo);
               setSecondaryInfo(data.secondaryInfo);
             } else {
@@ -42,25 +40,22 @@ const App = React.memo(({ Component, pageProps }) => {
     }
   }, []);
   return (
-    <ChakraProvider>
-      <MainContext.Provider
-        value={{
-          userInfoState: [userInfo, setUserInfo],
-          secondaryInfoState: [secondaryInfo, setSecondaryInfo],
-          // functions
-        }}
-      >
+    <MainContext.Provider
+      value={{
+        userInfoState: [userInfo, setUserInfo],
+        secondaryInfoState: [secondaryInfo, setSecondaryInfo],
+        // functions
+      }}
+    >
+      <ChakraProvider>
         <div
           suppressHydrationWarning
-          style={{
-            display: "flex",
-            flexDirection: "column",
-          }}
+          style={{ maxHeight: "100%", overflowY: "auto", overflowX: "hidden" }}
         >
           {typeof window === "undefined" ? null : <Component {...pageProps} />}
         </div>
-      </MainContext.Provider>
-    </ChakraProvider>
+      </ChakraProvider>
+    </MainContext.Provider>
   );
 });
 export default App;

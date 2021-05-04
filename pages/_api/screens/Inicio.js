@@ -1,16 +1,15 @@
 import React from "react";
-import { Card, Grid } from "semantic-ui-react";
 import style from "../../../styles/inicio.module.css";
 // components
 import Footer from "../components/Footer";
-import { HomeUserCard } from "../components/UserCard";
+// import { HomeUserCard } from "../components/UserCard";
 export default function InicioComponent() {
   return (
     <>
       <div className={style.container}>
         <div className={style.left}>
           <p className={style.redtext}> Recomendación del día</p>
-          <Card className={style.card}>
+          {/* <Card className={style.card}>
             <Card.Content>
               <Card.Description>
                 <Grid columns={"equal"} stackable>
@@ -36,12 +35,10 @@ export default function InicioComponent() {
                 </Grid>
               </Card.Description>
             </Card.Content>
-          </Card>
+          </Card> */}
           <p className={style.redtext}>Empleos a los que has aplicado</p>
         </div>
-        <div className={style.rigth}>
-          <HomeUserCard />
-        </div>
+        <div className={style.rigth}>{/* <HomeUserCard /> */}</div>
 
         {/* <Collapse
               defaultActiveKey={["2"]}

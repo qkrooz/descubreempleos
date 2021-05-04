@@ -1,16 +1,6 @@
 import React, { useContext, useState, useRef, useEffect } from "react";
 import { MainContext } from "../resources/MainContext";
 import { Link } from "react-router-dom";
-import { Icon } from "semantic-ui-react";
-import {
-  SearchOutlined,
-  HomeFilled,
-  UserOutlined,
-  MessageFilled,
-  BarChartOutlined,
-  FormOutlined,
-  DatabaseOutlined,
-} from "@ant-design/icons";
 // styles
 import header from "../../../styles/header.module.css";
 import { useRouter } from "next/router";
@@ -40,78 +30,81 @@ const Header = React.memo(() => {
   }, [wrapperRef]);
   return (
     <header className={header.container}>
-      <div className={header.containerInner}>
-        <div className={header.logoContainer}>
-          <Link to="/">Descubre</Link>
-        </div>
-        <nav className={header.linkContainer}>
-          <Link className={header.link} to="/search">
-            <SearchOutlined size={30} style={{ marginRight: "0.5em" }} />
-            Explorar
-          </Link>
-          <Link className={header.link} to="/">
-            <HomeFilled size={30} style={{ marginRight: "0.5em" }} />
-            Inicio
-          </Link>
-          <Link className={header.link} to="/data">
-            <UserOutlined size={30} style={{ marginRight: "0.5em" }} />
-            Mis datos
-          </Link>
-        </nav>
-        <div className={header.navButtonsContainer}>
-          <button className={header.navButton}>
-            <MessageFilled style={{ fontSize: "1.8em", color: "white" }} />
+      <div className={header.logoContainer}>
+        <Link to="/">
+          <img
+            src="https://descubrempleos.com/webServices/img/logo2.png"
+            alt="logo2"
+          />
+        </Link>
+      </div>
+      <nav className={header.linkContainer}>
+        <Link className={header.link} to="/search">
+          {/* <SearchOutlined size={30} style={{ marginRight: "0.5em" }} /> */}
+          Explorar
+        </Link>
+        <Link className={header.link} to="/">
+          {/* <HomeFilled size={30} style={{ marginRight: "0.5em" }} /> */}
+          Inicio
+        </Link>
+        <Link className={header.link} to="/data">
+          {/* <UserOutlined size={30} style={{ marginRight: "0.5em" }} /> */}
+          Mis datos
+        </Link>
+      </nav>
+      <div className={header.navButtonsContainer}>
+        <button className={header.navButton}>
+          {/* <MessageFilled style={{ fontSize: "1.8em", color: "white" }} /> */}
+        </button>
+        <img src="/icon-lamp-white.png" className={header.icon} />
+        <div className={header.menuWrapper} ref={wrapperRef}>
+          <button
+            onClick={() => {
+              setMenuVisible(!menuVisible);
+            }}
+          >
+            {/* <Icon name="bars" size="large" /> */}
           </button>
-          <img src="/icon-lamp-white.png" className={header.icon} />
-          <div className={header.menuWrapper} ref={wrapperRef}>
-            <button
-              onClick={() => {
-                setMenuVisible(!menuVisible);
-              }}
-            >
-              <Icon name="bars" size="large" />
-            </button>
-            {menuVisible ? (
-              <div className={header.menuContainer}>
-                <ul>
-                  <li>
-                    <button
-                      onClick={() => {
-                        router.push("/salud");
-                      }}
-                    >
-                      Salud
-                    </button>
-                  </li>
-                  <li>
-                    <button
-                      onClick={() => {
-                        router.push("/blog");
-                      }}
-                    >
-                      Blog
-                    </button>
-                  </li>
-                  <div className={header.menuDivider} />
-                  <li>
-                    <button>Reportar un problema</button>
-                  </li>
-                  <div className={header.menuDivider} />
-                  <li>
-                    <button
-                      style={{ textAlign: "center" }}
-                      onClick={() => {
-                        setUserInfo({});
-                        router.push("/login");
-                      }}
-                    >
-                      Cerrar Sesión
-                    </button>
-                  </li>
-                </ul>
-              </div>
-            ) : null}
-          </div>
+          {menuVisible ? (
+            <div className={header.menuContainer}>
+              <ul>
+                <li>
+                  <button
+                    onClick={() => {
+                      router.push("/salud");
+                    }}
+                  >
+                    Salud
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => {
+                      router.push("/blog");
+                    }}
+                  >
+                    Blog
+                  </button>
+                </li>
+                <div className={header.menuDivider} />
+                <li>
+                  <button>Reportar un problema</button>
+                </li>
+                <div className={header.menuDivider} />
+                <li>
+                  <button
+                    style={{ textAlign: "center" }}
+                    onClick={() => {
+                      setUserInfo({});
+                      router.push("/login");
+                    }}
+                  >
+                    Cerrar Sesión
+                  </button>
+                </li>
+              </ul>
+            </div>
+          ) : null}
         </div>
       </div>
     </header>
@@ -171,7 +164,7 @@ export const EnterpriseHeader = React.memo(() => {
                 setMenuVisible(true);
               }}
             >
-              <Icon name="bars" size="large" />
+              {/* <Icon name="bars" size="large" /> */}
             </button>
             {menuVisible ? (
               <div className={header.menuContainer}>

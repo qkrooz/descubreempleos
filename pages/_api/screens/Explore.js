@@ -1,5 +1,4 @@
 import React from "react";
-import { Button, Card, Grid, Icon, Input } from "semantic-ui-react";
 import explore from "../../../styles/explore.module.css";
 // components
 import Footer from "../components/Footer";

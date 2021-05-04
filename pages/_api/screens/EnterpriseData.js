@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import apiRoute from "../resources/apiRoute";
 import { MainContext } from "../resources/MainContext";
-import { Icon } from "semantic-ui-react";
 // components
 import Footer from "../components/Footer";
 // style
@@ -18,9 +17,7 @@ const EnterpriseData = React.memo(() => {
             <div className={style.card1}>
               <div className={style.card1Header}>
                 <span />
-                <button>
-                  <Icon name="edit" size="large" />
-                </button>
+                <button>{/* <Icon name="edit" size="large" /> */}</button>
               </div>
               <img
                 src={`${apiRoute}/img/companyprofile/${
@@ -32,18 +29,14 @@ const EnterpriseData = React.memo(() => {
             <div className={style.card1}>
               <div className={style.card1Header}>
                 <span>Seguridad</span>
-                <button>
-                  <Icon name="edit" size="large" />
-                </button>
+                <button>{/* <Icon name="edit" size="large" /> */}</button>
               </div>
               <img src={`${apiRoute}/`} alt="" />
             </div>
             <div className={style.card1}>
               <div className={style.card1Header}>
                 <span>Datos de Cobro</span>
-                <button>
-                  <Icon name="edit" size="large" />
-                </button>
+                <button>{/* <Icon name="edit" size="large" /> */}</button>
               </div>
             </div>
           </div>
