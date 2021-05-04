@@ -193,11 +193,15 @@ const Datos = React.memo(() => {
           >
             <div className={style.habilitiesContainer}>
               {secondaryInfo.HABILIDADES ? (
-                JSON.parse(secondaryInfo.HABILIDADES).map((key) => (
-                  <Badge key={key.ID} mb={2}>
-                    {key.TITLE}
-                  </Badge>
-                ))
+                JSON.parse(secondaryInfo.HABILIDADES).length !== 0 ? (
+                  JSON.parse(secondaryInfo.HABILIDADES).map((key) => (
+                    <Badge key={key.ID} mb={2}>
+                      {key.TITLE}
+                    </Badge>
+                  ))
+                ) : (
+                  <Badge>No disponible</Badge>
+                )
               ) : (
                 <Badge>No disponible</Badge>
               )}
@@ -550,7 +554,6 @@ const Modal1 = React.memo(
                             event.target.value = null;
                           }}
                         />
-                        {console.log(`${userInfo.IMAGE_URL}?${Date.now()}`)}
                         <img
                           className={style.profile}
                           src={`${userInfo.IMAGE_URL}?v=${Date.now()}`}
@@ -1130,40 +1133,36 @@ const Modal3 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
   ]);
   // funciones
   const submitHabilities = () => {
-    if (habilities.length !== 0) {
-      axios
-        .post(`${apiRoute}/updateHabilities.php`, {
-          HABILIDADES: habilities,
-          ID: userInfo.ID,
-        })
-        .then(({ data }) => {
-          console.log(data);
-          if (data.code === 200) {
-            let secondaryInfoCopy = { ...secondaryInfo };
-            secondaryInfoCopy.HABILIDADES = JSON.stringify(habilities);
-            setSecondaryInfo(secondaryInfoCopy);
-            setModalsVisibility({ ...modalsVisibility, modal3: false });
-            toast({
-              title: "Información actualizada",
-              description: "Cambios exitosos",
-              status: "success",
-              duration: 3000,
-              isClosable: true,
-            });
-          } else {
-            toast({
-              title: "Ocurrió un error",
-              description: "Intentar más tarde",
-              status: "error",
-              duration: 3000,
-              isClosable: true,
-            });
-          }
-        })
-        .catch((error) => console.log(error));
-    } else {
-      setModalsVisibility({ ...modalsVisibility, modal3: false });
-    }
+    axios
+      .post(`${apiRoute}/updateHabilities.php`, {
+        HABILIDADES: JSON.stringify(habilities),
+        ID: userInfo.ID,
+      })
+      .then(({ data }) => {
+        console.log(data);
+        if (data.code === 200) {
+          let secondaryInfoCopy = { ...secondaryInfo };
+          secondaryInfoCopy.HABILIDADES = JSON.stringify(habilities);
+          setSecondaryInfo(secondaryInfoCopy);
+          setModalsVisibility({ ...modalsVisibility, modal3: false });
+          toast({
+            title: "Información actualizada",
+            description: "Cambios exitosos",
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+          });
+        } else {
+          toast({
+            title: "Ocurrió un error",
+            description: "Intentar más tarde",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+        }
+      })
+      .catch((error) => console.log(error));
   };
   const purgeHabilities = (array) => {
     let habilitiesListCopy = [...habilitiesList];
@@ -1177,6 +1176,7 @@ const Modal3 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
   };
   // effects
   React.useEffect(() => {
+    console.log(secondaryInfo.HABILIDADES);
     if (secondaryInfo.HABILIDADES) {
       if (JSON.parse(secondaryInfo.HABILIDADES).length !== 0) {
         let array = JSON.parse(secondaryInfo.HABILIDADES);
