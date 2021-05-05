@@ -9,6 +9,15 @@
   padding-top: 1em;
 }
 /* personal */
+.userImageErrorIcon {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f2f2f2;
+  border-radius: 50%;
+}
 .personalLabel {
   font-weight: bold;
   font-size: 1.1em;

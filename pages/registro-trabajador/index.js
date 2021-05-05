@@ -67,9 +67,11 @@ const RegistroTrabajador = React.memo(() => {
               USER_TYPE: "trabajador",
             }}
             onSubmit={(values) => {
+              console.log(values);
               axios
                 .post(`${apiRoute}/register.php`, values)
                 .then(({ data }) => {
+                  console.log(data);
                   switch (data.code) {
                     case 200:
                       setUserInfo(data.userInfo);

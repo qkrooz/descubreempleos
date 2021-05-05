@@ -17,7 +17,7 @@ import {
   ModalCloseButton,
   Button,
 } from "@chakra-ui/react";
-import { Add, Close, CloudDownload, Edit } from "@material-ui/icons";
+import { Add, Close, CloudDownload, Edit, Person } from "@material-ui/icons";
 import { MainContext } from "../resources/MainContext";
 import { Formik, Form, Field } from "formik";
 import moment from "moment";
@@ -50,6 +50,7 @@ const Datos = React.memo(() => {
     CVmodal: false,
   });
   const [disponibleState, setDisponibleState] = React.useState();
+  const [userImageError, setUserImageError] = React.useState(true);
   const [
     editingObjectExperienciaLaboral,
     setEditingObjectExperienciaLaboral,
@@ -103,12 +104,27 @@ const Datos = React.memo(() => {
             }}
           >
             <div className={style.userImage}>
-              <img src={`${userInfo.IMAGE_URL}?v=${Date.now()}`} />
+              {userImageError ? (
+                <div className={style.userImageErrorIcon}>
+                  <Person style={{ fontSize: "5em" }} />
+                </div>
+              ) : (
+                <img
+                  src={`${userInfo.IMAGE_URL}?v=${Date.now()}`}
+                  onError={() => {}}
+                />
+              )}
             </div>
             <span
               className={style.personalLabel}
             >{`${userInfo.NAMES} ${userInfo.LAST_NAME} ${userInfo.MOTHERS_LAST_NAME}`}</span>
-            <span className={style.userTitle}>{`${secondaryInfo.TITULO}`}</span>
+            <span className={style.userTitle}>
+              {secondaryInfo.TITULO ? (
+                secondaryInfo.TITULO
+              ) : (
+                <Badge>titulo no disponible</Badge>
+              )}
+            </span>
             <button className={style.CVButton}>Generar CV</button>
             <div className={style.disponibleContainer}>
               <span>Disponible para trabajar</span>
@@ -130,30 +146,52 @@ const Datos = React.memo(() => {
               <Tbody>
                 <Tr>
                   <Td style={{ fontWeight: "bold" }}>Edad</Td>
-                  <Td>{userInfo.AGE + " años"}</Td>
+                  <Td>
+                    {userInfo.AGE ? (
+                      userInfo.AGE + " años"
+                    ) : (
+                      <Badge>no disponible</Badge>
+                    )}
+                  </Td>
                 </Tr>
                 <Tr>
                   <Td style={{ fontWeight: "bold" }}>Género</Td>
                   <Td style={{ textTransform: "capitalize" }}>
-                    {userInfo.GENRE}
+                    {userInfo.GENRE ? (
+                      userInfo.GENRE
+                    ) : (
+                      <Badge>no disponible</Badge>
+                    )}
                   </Td>
                 </Tr>
                 <Tr>
                   <Td style={{ fontWeight: "bold" }}>Teléfono</Td>
                   <Td style={{ textTransform: "capitalize" }}>
-                    {userInfo.TEL_NUMBER}
+                    {userInfo.TEL_NUMBER ? (
+                      userInfo.TEL_NUMBER
+                    ) : (
+                      <Badge>no disponible</Badge>
+                    )}
                   </Td>
                 </Tr>
                 <Tr>
                   <Td style={{ fontWeight: "bold" }}>Estado</Td>
                   <Td style={{ textTransform: "capitalize" }}>
-                    {userInfo.STATE}
+                    {userInfo.STATE ? (
+                      userInfo.STATE
+                    ) : (
+                      <Badge>no disponible</Badge>
+                    )}
                   </Td>
                 </Tr>
                 <Tr>
                   <Td style={{ fontWeight: "bold" }}>Ciudad</Td>
                   <Td style={{ textTransform: "capitalize" }}>
-                    {userInfo.CITY}
+                    {userInfo.CITY ? (
+                      userInfo.CITY
+                    ) : (
+                      <Badge>no disponible</Badge>
+                    )}
                   </Td>
                 </Tr>
                 <Tr>
@@ -194,7 +232,7 @@ const Datos = React.memo(() => {
               {secondaryInfo.HABILIDADES ? (
                 JSON.parse(secondaryInfo.HABILIDADES).length !== 0 ? (
                   JSON.parse(secondaryInfo.HABILIDADES).map((key) => (
-                    <Badge key={key.ID} mb={2}>
+                    <Badge key={key.ID} mb={5}>
                       {key.TITLE}
                     </Badge>
                   ))
