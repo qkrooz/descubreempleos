@@ -38,6 +38,7 @@
   position: absolute;
   right: 0;
   width: 45vw;
+  max-width: auto;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -62,10 +63,11 @@
 .passwordContainer {
   border-radius: 10px !important;
   border: 1px solid gray !important;
-  width: 100% !important;
+  /* max-width: 100% !important; */
   margin-right: 1em;
   display: flex;
   align-items: center;
+  width: 50%;
 }
 .passwordContainer > button {
   padding: 0.5em;
@@ -75,14 +77,16 @@
   color: gray;
 }
 .row3 > div > input {
-  flex-grow: 1;
   border: none !important;
+  flex-grow: 1;
+  width: 0;
 }
 .row3 > div:last-child {
   margin-right: 0;
 }
 .disclaimer {
   font-size: 0.9em;
+  text-align: center;
 }
 .discLink {
   text-decoration: underline;
@@ -96,4 +100,7 @@
   background-color: #01051d;
   color: white;
   font-weight: bold;
+}
+.fieldError {
+  border: 2px solid red !important;
 }

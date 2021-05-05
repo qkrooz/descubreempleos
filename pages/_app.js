@@ -28,13 +28,15 @@ const App = React.memo(({ Component, pageProps }) => {
               setUserInfo(data.userInfo);
               setSecondaryInfo(data.secondaryInfo);
             } else {
-              setDontUserExistsModal(true);
+              // setDontUserExistsModal(true);
               setUserInfo({});
               setSecondaryInfo({});
             }
           })
           .catch((error) => console.log(error));
       } else {
+        setUserInfo({});
+        setSecondaryInfo({});
         router.push("/entra");
       }
     }
