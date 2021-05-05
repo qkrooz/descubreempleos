@@ -35,7 +35,6 @@ import CVModalComponent from "../components/CVmodal";
 import style from "../../../styles/datos.module.css";
 const Datos = React.memo(() => {
   const toast = useToast();
-
   // states
   const [modalsVisibility, setModalsVisibility] = React.useState({
     modal1: false,
@@ -269,6 +268,8 @@ const Card = React.memo(({ children, props, title, onClick }) => {
       bg="white"
       w="100%"
       mb={4}
+      border="1px"
+      borderColor="#ebebeb"
     >
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         {title ? (
@@ -308,6 +309,8 @@ const Card2 = React.memo(({ props, title, data, onClick }) => {
       bg="white"
       w="100%"
       mb={4}
+      border="1px"
+      borderColor="#ebebeb"
     >
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         {title ? (

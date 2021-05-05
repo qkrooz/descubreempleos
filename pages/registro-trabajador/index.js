@@ -1,302 +1,188 @@
-import React, { useState, useContext } from "react";
-import { MainContext } from "../_api/resources/MainContext";
+import React from "react";
 import Link from "next/link";
-import { Button, Form, Icon, Input } from "semantic-ui-react";
-import style from "../../styles/registroTrabajador_style.module.css";
-import { Grid } from "semantic-ui-react";
-import { useRouter } from "next/router";
-import apiRoute from "../_api/resources/apiRoute";
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-} from "@chakra-ui/react";
-import axios from "axios";
+import { Formik, Form, Field } from "formik";
+import { Box, Text, Flex } from "@chakra-ui/react";
+import Head from "next/head";
+import * as Yup from "yup";
+// style
+import style from "./style.module.css";
+import { EyeFilled, EyeInvisibleFilled } from "@ant-design/icons";
 const RegistroTrabajador = React.memo(() => {
-  const { userInfoState } = useContext(MainContext);
-  const [, setUserInfo] = userInfoState;
-  const route = useRouter();
-  const [passwordInputType, setPasswordInputType] = useState("PASSWORD");
-  const [retroModalVisibility, setRetroModalVisibility] = useState(false);
-  const [retroModal2Visibility, setRetroModal2Visibility] = useState(false);
-  const [formData, setFormData] = useState({
-    NAMES: "",
-    LAST_NAME: "",
-    MOTHERS_LAST_NAME: "",
-    EMAIL: "",
-    PASSWORD: "",
-    PASSWORD2: "",
+  const validation = Yup.object().shape({
+    NAMES: Yup.string().required(),
+    LAST_NAME: Yup.string().required(),
+    MOTHERS_LAST_NAME: Yup.string().required(),
+    EMAIL: Yup.string().required(),
+    PASSWORD1: Yup.string().required(),
+    PASSWORD2: Yup.string().required(),
   });
-  const [errors, setErrors] = useState({
-    empty: false,
-    passwordContainsNumber: false,
-    password8characters: false,
-    passwordEqual: false,
+  const [inputType, setInputType] = React.useState({
+    p1: "password",
+    p2: "password",
   });
-  const SetFormData = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value.toLowerCase() });
-  };
-  const ChangeInputPasswordType = () => {
-    if (passwordInputType === "PASSWORD") {
-      setPasswordInputType("text");
-    } else {
-      setPasswordInputType("PASSWORD");
-    }
-  };
-  const SubmitForm = () => {
-    if (
-      formData.NAMES !== "" &&
-      formData.LAST_NAME !== "" &&
-      formData.MOTHERS_LAST_NAME !== "" &&
-      formData.EMAIL !== "" &&
-      formData.PASSWORD !== "" &&
-      formData.PASSWORD2 !== ""
-    ) {
-      setErrors({ ...errors, empty: false });
-      let regex = /\d/;
-      if (regex.test(formData.PASSWORD) && regex.test(formData.PASSWORD2)) {
-        setErrors({ ...errors, passwordContainsNumber: false });
-        if (formData.PASSWORD.length > 8) {
-          setErrors({ ...errors, password8characters: false });
-          if (formData.PASSWORD === formData.PASSWORD2) {
-            setErrors({
-              empty: false,
-              passwordContainsNumber: false,
-              password8characters: false,
-              passwordEqual: false,
-            });
-            console.log("aqui llego");
-            axios
-              .post(`${apiRoute}/userExists.php`, { EMAIL: formData.EMAIL })
-              .then(({ data }) => {
-                if (data.code === 200) {
-                  setRetroModal2Visibility(true);
-                } else {
-                  setRetroModal2Visibility(false);
-                  setRetroModalVisibility(true);
-                  formData["USER_TYPE"] = "trabajador";
-                  axios
-                    .post(`${apiRoute}/register.php`, formData)
-                    .then(({ data }) => {
-                      if (data.code === 200) {
-                        setTimeout(() => {
-                          setUserInfo(data.userInfo);
-                        }, 1000);
-                      }
-                    })
-                    .catch((error) => console.log(error));
-                }
-              })
-              .catch((error) => console.log(error));
-          } else {
-            setErrors({ ...errors, passwordEqual: true });
-          }
-        } else {
-          setErrors({ ...errors, password8characters: true });
-        }
-      } else {
-        setErrors({ ...errors, passwordContainsNumber: true });
-      }
-    } else {
-      setErrors({ ...errors, empty: true });
-    }
-  };
   return (
-    <div className={style.employeecontainer}>
-      <div className={style.background}>.</div>
-      <Grid columns={2} stackable>
-        <Grid.Column className={style.columnpadding}>
-          <div>
-            <img className={style.img} src="./icon-white2.png" />
-            <h2 className={style.h2}>
-              Las oportunidades de empleo que tenemos para ti
-            </h2>
-            <p className={style.textwhite1}>
-              <Icon className="copyright outline"></Icon> Todos los derechos
-              reservados - Descubre Sa. de CV.
-            </p>
-          </div>
-        </Grid.Column>
-        <Grid.Column className={style.columnpadding}>
-          <div className={style.containerform}>
-            <Form className={style.form} onSubmit={SubmitForm}>
-              <div className={style.formHeader}>
-                <h3> Regístrate como trabajador</h3>
-                <p>
-                  Si lo que buscas es reclutar{" "}
-                  <Link href="/registro-empresa">
-                    regístrate como empresa aquí
-                  </Link>
-                </p>
-              </div>
-              <div className={style.formBody}></div>
-              <Grid columns={3} stackable>
-                <Grid.Column>
-                  <Form.Field className={style.field} onChange={SetFormData}>
-                    <input
-                      placeholder="Nombres"
-                      className={style.input}
-                      name="NAMES"
-                    />
-                  </Form.Field>
-                </Grid.Column>
-                <Grid.Column>
-                  <Form.Field className={style.field}>
-                    <input
-                      placeholder="Apellido paterno"
-                      name="LAST_NAME"
-                      onChange={SetFormData}
-                    />
-                  </Form.Field>
-                </Grid.Column>
-                <Grid.Column>
-                  <Form.Field className={style.field}>
-                    <input
-                      placeholder="Apellido materno"
-                      name="MOTHERS_LAST_NAME"
-                      onChange={SetFormData}
-                    />
-                  </Form.Field>
-                </Grid.Column>
-              </Grid>
-              <Form.Field>
-                <input
-                  placeholder="Correo electrónico"
-                  name="EMAIL"
-                  onChange={SetFormData}
-                />
-              </Form.Field>
-              <Grid columns={2} stackable>
-                <Grid.Column>
-                  <Form.Field>
-                    <Input
-                      icon={
-                        <Icon
-                          name="eye"
-                          link
-                          onClick={ChangeInputPasswordType}
-                        />
-                      }
-                      name="PASSWORD"
+    <>
+      <Head>
+        <link
+          rel="shortcut icon"
+          href="https://descubrempleos.com/webServices/img/favicon.png"
+          type="image/x-icon"
+        />
+        <title>Descubre | Regístrate como trabajador</title>
+      </Head>
+      <div className={style.container}>
+        <div className={style.decorator}></div>
+        <div className={style.brand}>
+          <img
+            src="https://descubrempleos.com/webServices/img/logo2.png"
+            alt="logo2"
+          />
+          <span>
+            {"\u00a9"}Todos los derechos reservados - Descubre Sa. de CV
+          </span>
+        </div>
+        <div className={style.formContainerOutter}>
+          <Formik
+            validationSchema={validation}
+            initialValues={{
+              NAMES: "",
+              LAST_NAME: "",
+              MOTHERS_LAST_NAME: "",
+              EMAIL: "",
+              PASSWORD1: "",
+              PASSWORD2: "",
+            }}
+          >
+            {({ handleChange, values, errors }) => (
+              <Box
+                p={4}
+                borderRadius="10px"
+                border="1px"
+                borderColor="#ebebeb"
+                shadow="lg"
+                w="100%"
+                zIndex="99"
+                backgroundColor="white"
+              >
+                <Text textAlign="start" fontSize="lg" fontWeight="bold">
+                  Regístrate como trabajador
+                </Text>
+                <Flex marginBottom="1em">
+                  <Text mr={0.5}>Si lo que buscas es reclutar</Text>
+                  <Text color="blue.500" textDecoration="underline">
+                    <Link href="/registro-empresa">
+                      regístrate como empresa aquí
+                    </Link>
+                  </Text>
+                </Flex>
+                <Flex justify="space-evenly" className={style.row1}>
+                  <Field
+                    type="text"
+                    placeholder="Nombres"
+                    name="NAMES"
+                    onChange={handleChange}
+                    value={values.NAMES}
+                  />
+                  <Field
+                    type="text"
+                    placeholder="Apellido paterno"
+                    name="LAST_NAME"
+                    onChange={handleChange}
+                    value={values.LAST_NAME}
+                  />
+                  <Field
+                    type="text"
+                    placeholder="Apellido materno"
+                    name="MOTHERS_LAST_NAME"
+                    onChange={handleChange}
+                    value={values.MOTHERS_LAST_NAME}
+                  />
+                </Flex>
+                <Flex justify="space-evenly" className={style.row2}>
+                  <Field
+                    type="text"
+                    placeholder="Correo electrónico"
+                    name="EMAIL"
+                    onChange={handleChange}
+                    value={values.EMAIL}
+                  />
+                </Flex>
+                <Flex className={style.row3}>
+                  <div className={style.passwordContainer}>
+                    <Field
+                      type={inputType.p1}
                       placeholder="Contraseña"
-                      type={passwordInputType}
-                      onChange={SetFormData}
+                      name="PASSWORD1"
+                      className={style.password}
+                      onChange={handleChange}
+                      value={values.PASSWORD1}
                     />
-                  </Form.Field>
-                  <Form.Field>
-                    <Input
-                      icon={
-                        <Icon
-                          name="eye"
-                          link
-                          onClick={ChangeInputPasswordType}
-                        />
-                      }
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setInputType({
+                          ...inputType,
+                          p1: inputType.p1 === "password" ? "text" : "password",
+                        });
+                      }}
+                    >
+                      {inputType.p1 === "password" ? (
+                        <EyeFilled style={{ fontSize: 20 }} />
+                      ) : (
+                        <EyeInvisibleFilled style={{ fontSize: 20 }} />
+                      )}
+                    </button>
+                  </div>
+                  <div className={style.passwordContainer}>
+                    <Field
+                      type={inputType.p2}
+                      placeholder="Confirmar contraseña"
                       name="PASSWORD2"
-                      placeholder="Repite contraseña"
-                      type={passwordInputType}
-                      onChange={SetFormData}
+                      className={style.password}
+                      onChange={handleChange}
+                      value={values.PASSWORD2}
                     />
-                  </Form.Field>
-                </Grid.Column>
-                <Grid.Column>
-                  <ul className={style.ul}>
-                    <li
-                      style={{
-                        color: errors.passwordContainsNumber ? "red" : "green",
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setInputType({
+                          ...inputType,
+                          p2: inputType.p2 === "password" ? "text" : "password",
+                        });
                       }}
                     >
-                      Al menos un número
-                    </li>
-                    <li
-                      style={{
-                        color: errors.password8characters ? "red" : "green",
-                      }}
-                    >
-                      Mínimo de 8 caracteres
-                    </li>
-                    <li
-                      style={{
-                        color: errors.passwordEqual ? "red" : "green",
-                      }}
-                    >
-                      Contraseñas deben ser iguales
-                    </li>
-                  </ul>
-                </Grid.Column>
-              </Grid>
-              <p>
-                Al registrarte con nosotros declaras haber leído y estar de
-                acuerdo con nuestra<a href=""> Política de privacidad</a> así
-                como nuestros <a>Términos y condiciones</a> los cuales son
-                accesibles a través de los respectivos links en sus títulos.
-              </p>
-              {errors.empty ? (
-                <p style={{ color: "red" }}>
-                  Es necesario llenar todos los campos*
-                </p>
-              ) : null}
-              <Button secondary>Regístrate</Button>
-            </Form>
-          </div>
-        </Grid.Column>
-      </Grid>
-      <Modal
-        isOpen={retroModalVisibility}
-        onClose={() => {
-          setRetroModalVisibility(false);
-        }}
-      >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>¡Registro exitoso!</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <span>Serás redireccionado a la página principal en breve.</span>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              mr={3}
-              onClick={() => {
-                setRetroModalVisibility(false);
-                setFormData({});
-              }}
-            >
-              Cerrar
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-      <Modal
-        isOpen={retroModal2Visibility}
-        onClose={() => {
-          setRetroModal2Visibility(false);
-        }}
-      >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Usuario registrado</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <span>Este usuario ya existe</span>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              mr={3}
-              onClick={() => {
-                route.push("/login");
-              }}
-            >
-              Ir al inicio de sesion
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </div>
+                      {inputType.p2 === "password" ? (
+                        <EyeFilled style={{ fontSize: 20 }} />
+                      ) : (
+                        <EyeInvisibleFilled style={{ fontSize: 20 }} />
+                      )}
+                    </button>
+                  </div>
+                </Flex>
+                <span className={style.disclaimer}>
+                  Al registrarte con nosotros declaras haber leído y estar de
+                  acuerdo con nuestrao{" "}
+                  <span className={style.discLink}>
+                    <Link href="/">política de privacidad</Link>
+                  </span>{" "}
+                  así como nuestros{" "}
+                  <span className={style.discLink}>
+                    <Link href="#"> Términos y condiciones</Link>
+                  </span>{" "}
+                  los cuales son accesibles a través de los respectivos links en
+                  sus títulos
+                </span>
+                <Flex mt={2} justify="center">
+                  <button type="submit" className={style.registerButton}>
+                    REGÍSTRATE
+                  </button>
+                </Flex>
+              </Box>
+            )}
+          </Formik>
+        </div>
+      </div>
+    </>
   );
 });
 export default RegistroTrabajador;

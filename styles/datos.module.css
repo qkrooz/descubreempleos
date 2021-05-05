@@ -55,7 +55,7 @@
 }
 .rigth {
   flex-grow: 1;
-  padding: 2em;
+  padding: 1em;
 }
 .noData {
   display: flex;

@@ -1,11 +1,10 @@
 import React from "react";
-import { Card, Form } from "semantic-ui-react";
 import style from "../../styles/salud.module.css";
 
 const Salud = React.memo(() => {
   return (
     <div className={style.content}>
-      <header className={style.header}>
+      {/* <header className={style.header}>
         <img src="./icon-blue2.png" className={style.img}></img>
       </header>
       <div className={style.flexcontainer}>
@@ -91,7 +90,8 @@ const Salud = React.memo(() => {
           <img src="./icon-twitter-blue.png" className={style.image}></img>
         </div>
       </footer>
-    </div >
+    */}
+    </div>
   );
 });
 export default Salud;
