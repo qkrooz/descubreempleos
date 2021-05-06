@@ -10,7 +10,7 @@ import EnterpriseData from "./_api/screens/EnterpriseData";
 import EnterprisePublish from "./_api/screens/EnterprisePublish";
 import EnterpriseStatistics from "./_api/screens/EnterpriseStatistics";
 // components
-import Header from "./_api/components/Header";
+import Header, { EnterpriseHeader } from "./_api/components/Header";
 const Home = React.memo(() => {
   const { userInfoState } = useContext(MainContext);
   const [userInfo] = userInfoState;
@@ -24,7 +24,7 @@ const Home = React.memo(() => {
         />
         <title>Descubre | Inicio</title>
       </Head>
-      {userInfo.USER_TYPE === "trabajador" ? <Header /> : null}
+      {userInfo.USER_TYPE === "trabajador" ? <Header /> : <EnterpriseHeader />}
       <Switch>
         {userInfo.USER_TYPE === "trabajador" ? (
           <>

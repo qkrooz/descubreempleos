@@ -52,7 +52,12 @@ const App = React.memo(({ Component, pageProps }) => {
       <ChakraProvider>
         <div
           suppressHydrationWarning
-          style={{ maxHeight: "100%", overflowY: "auto", overflowX: "hidden" }}
+          style={{
+            height: "100vh",
+            maxHeight: "100vh",
+            overflowY: "scroll",
+            overflowX: "hidden",
+          }}
         >
           {typeof window === "undefined" ? null : <Component {...pageProps} />}
         </div>
