@@ -55,7 +55,7 @@ const App = React.memo(({ Component, pageProps }) => {
           style={{
             height: "100vh",
             maxHeight: "100vh",
-            overflowY: "scroll",
+            overflowY: "auto",
             overflowX: "hidden",
           }}
         >

@@ -20,3 +20,39 @@
   font-weight: bold;
   font-size: 1.1em;
 }
+.dataRow {
+  display: flex;
+  padding: 2em 4em;
+}
+.dataRow > div {
+  width: 50%;
+}
+.dataRow > div > span:first-child {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-right: 0.5em;
+  text-transform: capitalize;
+}
+.disclaimer {
+  font-size: 1em;
+  text-align: center;
+  padding: 2em 3em;
+  border-top: 1px solid #e2e2e2;
+}
+.buttonsRow > button {
+  cursor: pointer;
+  font-size: 1.5em;
+  background-color: #f2ab0a;
+  padding: 0.2em 1em;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+.buttonsRow > button:focus {
+  outline: none;
+}
+.buttonsRow > button:first-child {
+  margin-right: 1em;
+}
+.buttonsRow > button:last-child {
+  background-color: transparent;
+}

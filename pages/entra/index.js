@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import Head from "next/head";
 import { useToast } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import apiRoute from "../_api/resources/apiRoute";
@@ -37,6 +38,10 @@ const Login = React.memo(() => {
   }, [userInfo, secondaryInfo]);
   return (
     <>
+      <Head>
+        <link rel="shortcut icon" href="./favicon.png" type="image/x-icon" />
+        <title>Descubre | Entra</title>
+      </Head>
       <LoadingScreen visible={loading} />
       <div className={style.container}>
         <div className={style.logoContainer}>
@@ -82,7 +87,17 @@ const Login = React.memo(() => {
                   });
                 }
               })
-              .catch((error) => console.log(error));
+              .catch((error) => {
+                if (error)
+                  toast({
+                    title: "Error",
+                    description: "Tienes problemas de conexion",
+                    status: "error",
+                    duration: 3000,
+                    isClosable: true,
+                    position: "bottom-right",
+                  });
+              });
           }}
         >
           {({ values, handleChange, errors }) => (
