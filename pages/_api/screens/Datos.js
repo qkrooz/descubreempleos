@@ -31,12 +31,14 @@ import { PDFViewer } from "@react-pdf/renderer";
 import Footer from "../components/Footer";
 import CVpdf from "../components/CVpdf";
 import CVModalComponent from "../components/CVmodal";
+// modals
+import { Modal1 } from "../components/Modals/";
 // styles
 import style from "../../../styles/datos.module.css";
 const Datos = React.memo(() => {
   const toast = useToast();
   // states
-  const [modalsVisibility, setModalsVisibility] = React.useState({
+  const [modalVisibility, setModalVisibility] = React.useState({
     modal1: false,
     modal2: false,
     modal3: false,
@@ -292,6 +294,10 @@ const Datos = React.memo(() => {
           />
         </div>
       </div>
+      <Modal1
+        modalVisibility={modalsVisibility.modal1}
+        setModalVisibility={setModalVisibility}
+      />
       <Footer />
     </>
   );

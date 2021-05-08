@@ -8,12 +8,13 @@ import {
   ModalBody,
   ModalCloseButton,
   Button,
+  useToast,
 } from "@chakra-ui/react";
 
 export const Modal1 = React.memo(
   ({
-    setModalsVisibility,
-    modalsVisibility,
+    setModalVisibility,
+    modalVisibility,
     userImgError,
     setUserImgError,
     setEditModalVisibility,
@@ -132,9 +133,9 @@ export const Modal1 = React.memo(
         {({ values, handleChange, errors, handleBlur }) => (
           <>
             <Modal
-              isOpen={modalsVisibility.modal1}
+              isOpen={modalVisibility.modal1}
               onClose={() => {
-                setModalsVisibility({ ...modalsVisibility, modal1: false });
+                setModalVisibility({ ...modalVisibility, modal1: false });
               }}
               size="xl"
             >
@@ -268,8 +269,8 @@ export const Modal1 = React.memo(
                   <Button
                     variant="ghost"
                     onClick={() => {
-                      setModalsVisibility({
-                        ...modalsVisibility,
+                      setModalVisibility({
+                        ...modalVisibility,
                         modal1: false,
                       });
                     }}
@@ -292,7 +293,7 @@ export const Modal1 = React.memo(
     );
   }
 );
-// export const Modal2 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
+// export const Modal2 = React.memo(({ modalVisibility, setModalVisibility }) => {
 //   const toast = useToast();
 //   const [years, setYears] = React.useState([]);
 //   const [days, setDays] = React.useState();
@@ -424,8 +425,8 @@ export const Modal1 = React.memo(
 //               secondaryInfoCopy.IDIOMAS = JSON.stringify(values.IDIOMAS);
 //               setUserInfo(userInfoCopy);
 //               setSecondaryInfo(secondaryInfoCopy);
-//               setModalsVisibility({
-//                 ...modalsVisibility,
+//               setModalVisibility({
+//                 ...modalVisibility,
 //                 modal2: false,
 //               });
 //               toast({
@@ -450,10 +451,10 @@ export const Modal1 = React.memo(
 //     >
 //       {({ values, handleChange }) => (
 //         <Modal
-//           isOpen={modalsVisibility.modal2}
+//           isOpen={modalVisibility.modal2}
 //           onClose={() => {
-//             setModalsVisibility({
-//               ...modalsVisibility,
+//             setModalVisibility({
+//               ...modalVisibility,
 //               modal2: false,
 //             });
 //           }}
@@ -714,8 +715,8 @@ export const Modal1 = React.memo(
 //               <Button
 //                 variant="ghost"
 //                 onClick={() => {
-//                   setModalsVisibility({
-//                     ...modalsVisibility,
+//                   setModalVisibility({
+//                     ...modalVisibility,
 //                     modal2: false,
 //                   });
 //                 }}
@@ -736,7 +737,7 @@ export const Modal1 = React.memo(
 //     </Formik>
 //   );
 // });
-// export const Modal3 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
+// export const Modal3 = React.memo(({ modalVisibility, setModalVisibility }) => {
 //   const toast = useToast();
 //   const { secondaryInfoState, userInfoState } = React.useContext(MainContext);
 //   const [userInfo] = userInfoState;
@@ -760,7 +761,7 @@ export const Modal1 = React.memo(
 //           let secondaryInfoCopy = { ...secondaryInfo };
 //           secondaryInfoCopy.HABILIDADES = JSON.stringify(habilities);
 //           setSecondaryInfo(secondaryInfoCopy);
-//           setModalsVisibility({ ...modalsVisibility, modal3: false });
+//           setModalVisibility({ ...modalVisibility, modal3: false });
 //           toast({
 //             title: "Información actualizada",
 //             description: "Cambios exitosos",
@@ -805,10 +806,10 @@ export const Modal1 = React.memo(
 //   }, []);
 //   return (
 //     <Modal
-//       isOpen={modalsVisibility.modal3}
+//       isOpen={modalVisibility.modal3}
 //       onClose={() => {
-//         setModalsVisibility({
-//           ...modalsVisibility,
+//         setModalVisibility({
+//           ...modalVisibility,
 //           modal3: false,
 //         });
 //       }}
@@ -893,8 +894,8 @@ export const Modal1 = React.memo(
 //           <Button
 //             variant="ghost"
 //             onClick={() => {
-//               setModalsVisibility({
-//                 ...modalsVisibility,
+//               setModalVisibility({
+//                 ...modalVisibility,
 //                 modal3: false,
 //               });
 //             }}
@@ -912,7 +913,7 @@ export const Modal1 = React.memo(
 //     </Modal>
 //   );
 // });
-// export const Modal4 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
+// export const Modal4 = React.memo(({ modalVisibility, setModalVisibility }) => {
 //   const toast = useToast();
 //   const validationSchema = Yup.object({
 //     PASSWORD1: Yup.string().required("Password es requerida"),
@@ -941,7 +942,7 @@ export const Modal1 = React.memo(
 //             })
 //             .then(({ data }) => {
 //               if (data.code === 200) {
-//                 setModalsVisibility({ ...modalsVisibility, modal4: false });
+//                 setModalVisibility({ ...modalVisibility, modal4: false });
 //                 let userInfoCopy = { ...userInfo };
 //                 userInfoCopy.PASSWORD = values.PASSWORD2;
 //                 setUserInfo(userInfoCopy);
@@ -972,15 +973,15 @@ export const Modal1 = React.memo(
 //             duration: 3000,
 //             isClosable: true,
 //           });
-//           setModalsVisibility({ ...modalsVisibility, modal4: false });
+//           setModalVisibility({ ...modalVisibility, modal4: false });
 //         }
 //       }}
 //     >
 //       {({ values, handleChange, errors }) => (
 //         <Modal
-//           isOpen={modalsVisibility.modal4}
+//           isOpen={modalVisibility.modal4}
 //           onClose={() => {
-//             setModalsVisibility({ ...modalsVisibility, modal4: false });
+//             setModalVisibility({ ...modalVisibility, modal4: false });
 //           }}
 //         >
 //           <ModalOverlay />
@@ -1103,8 +1104,8 @@ export const Modal1 = React.memo(
 //               <Button
 //                 variant="ghost"
 //                 onClick={() => {
-//                   setModalsVisibility({
-//                     ...modalsVisibility,
+//                   setModalVisibility({
+//                     ...modalVisibility,
 //                     modal4: false,
 //                   });
 //                 }}
@@ -1125,7 +1126,7 @@ export const Modal1 = React.memo(
 //     </Formik>
 //   );
 // });
-// export const Modal5 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
+// export const Modal5 = React.memo(({ modalVisibility, setModalVisibility }) => {
 //   const toast = useToast();
 //   const validationSchema = Yup.object().shape({
 //     PUESTO: Yup.string().required(),
@@ -1206,7 +1207,7 @@ export const Modal1 = React.memo(
 //                   EXPERIENCIA_LABORAL: JSON.stringify(arraysito),
 //                 });
 //               }
-//               setModalsVisibility({ modalsVisibility, modal5: false });
+//               setModalVisibility({ modalVisibility, modal5: false });
 //               toast({
 //                 title: "Información actualizada",
 //                 description: "Cambios exitosos",
@@ -1221,7 +1222,7 @@ export const Modal1 = React.memo(
 //                 STILLINTHIS: false,
 //               });
 //             } else {
-//               setModalsVisibility({ modalsVisibility, modal5: false });
+//               setModalVisibility({ modalVisibility, modal5: false });
 //               toast({
 //                 title: "Ocurrio un error en la actualizacion",
 //                 description: "CIntentar mas tarde",
@@ -1236,9 +1237,9 @@ export const Modal1 = React.memo(
 //     >
 //       {({ values, handleChange, errors, resetForm }) => (
 //         <Modal
-//           isOpen={modalsVisibility.modal5}
+//           isOpen={modalVisibility.modal5}
 //           onClose={() => {
-//             setModalsVisibility({ ...modalsVisibility, modal5: false });
+//             setModalVisibility({ ...modalVisibility, modal5: false });
 //             resetForm({
 //               PUESTO: "",
 //               EMPRESA: "",
@@ -1416,8 +1417,8 @@ export const Modal1 = React.memo(
 //               <Button
 //                 variant="ghost"
 //                 onClick={() => {
-//                   setModalsVisibility({
-//                     ...modalsVisibility,
+//                   setModalVisibility({
+//                     ...modalVisibility,
 //                     modal5: false,
 //                   });
 //                 }}
@@ -1440,8 +1441,8 @@ export const Modal1 = React.memo(
 // });
 // export const Modal5Edit = React.memo(
 //   ({
-//     modalsVisibility,
-//     setModalsVisibility,
+//     modalVisibility,
+//     setModalVisibility,
 //     editingObjectExperienciaLaboral,
 //   }) => {
 //     const toast = useToast();
@@ -1474,7 +1475,7 @@ export const Modal1 = React.memo(
 //               ...secondaryInfo,
 //               EXPERIENCIA_LABORAL: JSON.stringify(newArray),
 //             });
-//             setModalsVisibility({ modalsVisibility, modal5: false });
+//             setModalVisibility({ modalVisibility, modal5: false });
 //             toast({
 //               title: "Información actualizada",
 //               description: "Cambios exitosos",
@@ -1483,7 +1484,7 @@ export const Modal1 = React.memo(
 //               isClosable: true,
 //             });
 //           } else {
-//             setModalsVisibility({ modalsVisibility, modal5: false });
+//             setModalVisibility({ modalVisibility, modal5: false });
 //             toast({
 //               title: "Ocurrio un error en la actualizacion",
 //               description: "CIntentar mas tarde",
@@ -1545,7 +1546,7 @@ export const Modal1 = React.memo(
 //                     ...secondaryInfo,
 //                     EXPERIENCIA_LABORAL: JSON.stringify(oldExperienciaLaboral),
 //                   });
-//                   setModalsVisibility({ modalsVisibility, modal5Edit: false });
+//                   setModalVisibility({ modalVisibility, modal5Edit: false });
 //                   toast({
 //                     title: "Información actualizada",
 //                     description: "Cambios exitosos",
@@ -1554,7 +1555,7 @@ export const Modal1 = React.memo(
 //                     isClosable: true,
 //                   });
 //                 } else {
-//                   setModalsVisibility({ modalsVisibility, modal5Edit: false });
+//                   setModalVisibility({ modalVisibility, modal5Edit: false });
 //                   toast({
 //                     title: "Ocurrio un error en la actualizacion",
 //                     description: "CIntentar mas tarde",
@@ -1569,9 +1570,9 @@ export const Modal1 = React.memo(
 //         >
 //           {({ values, handleChange }) => (
 //             <Modal
-//               isOpen={modalsVisibility.modal5Edit}
+//               isOpen={modalVisibility.modal5Edit}
 //               onClose={() => {
-//                 setModalsVisibility({ ...modalsVisibility, modal5Edit: false });
+//                 setModalVisibility({ ...modalVisibility, modal5Edit: false });
 //               }}
 //               size="xl"
 //             >
@@ -1770,8 +1771,8 @@ export const Modal1 = React.memo(
 //                   <Button
 //                     variant="ghost"
 //                     onClick={() => {
-//                       setModalsVisibility({
-//                         ...modalsVisibility,
+//                       setModalVisibility({
+//                         ...modalVisibility,
 //                         modal5Edit: false,
 //                       });
 //                     }}
@@ -1796,7 +1797,7 @@ export const Modal1 = React.memo(
 //     }
 //   }
 // );
-// export const Modal6 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
+// export const Modal6 = React.memo(({ modalVisibility, setModalVisibility }) => {
 //   const educativeGrades = [
 //     {
 //       ID: 1,
@@ -1921,7 +1922,7 @@ export const Modal1 = React.memo(
 //                   GRADO_EDUCATIVO: JSON.stringify(arraysito),
 //                 });
 //               }
-//               setModalsVisibility({ modalsVisibility, modal6: false });
+//               setModalVisibility({ modalVisibility, modal6: false });
 //               toast({
 //                 title: "Información actualizada",
 //                 description: "Cambios exitosos",
@@ -1936,7 +1937,7 @@ export const Modal1 = React.memo(
 //                 STILLINTHIS: false,
 //               });
 //             } else {
-//               setModalsVisibility({ modalsVisibility, modal6: false });
+//               setModalVisibility({ modalVisibility, modal6: false });
 //               toast({
 //                 title: "Ocurrio un error en la actualizacion",
 //                 description: "CIntentar mas tarde",
@@ -1951,9 +1952,9 @@ export const Modal1 = React.memo(
 //     >
 //       {({ values, handleChange, errors, resetForm }) => (
 //         <Modal
-//           isOpen={modalsVisibility.modal6}
+//           isOpen={modalVisibility.modal6}
 //           onClose={() => {
-//             setModalsVisibility({ ...modalsVisibility, modal6: false });
+//             setModalVisibility({ ...modalVisibility, modal6: false });
 //             resetForm({
 //               TITULO: "",
 //               INSTITUCION: "",
@@ -2128,8 +2129,8 @@ export const Modal1 = React.memo(
 //               <Button
 //                 variant="ghost"
 //                 onClick={() => {
-//                   setModalsVisibility({
-//                     ...modalsVisibility,
+//                   setModalVisibility({
+//                     ...modalVisibility,
 //                     modal6: false,
 //                   });
 //                 }}
@@ -2151,7 +2152,7 @@ export const Modal1 = React.memo(
 //   );
 // });
 // export const Modal6Edit = React.memo(
-//   ({ modalsVisibility, setModalsVisibility, editingObjectGradoEducativo }) => {
+//   ({ modalVisibility, setModalVisibility, editingObjectGradoEducativo }) => {
 //     const educativeGrades = [
 //       {
 //         ID: 1,
@@ -2229,7 +2230,7 @@ export const Modal1 = React.memo(
 //               ...secondaryInfo,
 //               GRADO_EDUCATIVO: JSON.stringify(newArray),
 //             });
-//             setModalsVisibility({ modalsVisibility, modal6Edit: false });
+//             setModalVisibility({ modalVisibility, modal6Edit: false });
 //             toast({
 //               title: "Información actualizada",
 //               description: "Cambios exitosos",
@@ -2238,7 +2239,7 @@ export const Modal1 = React.memo(
 //               isClosable: true,
 //             });
 //           } else {
-//             setModalsVisibility({ modalsVisibility, modal6Edit: false });
+//             setModalVisibility({ modalVisibility, modal6Edit: false });
 //             toast({
 //               title: "Ocurrio un error en la actualizacion",
 //               description: "CIntentar mas tarde",
@@ -2305,7 +2306,7 @@ export const Modal1 = React.memo(
 //                     ...secondaryInfo,
 //                     GRADO_EDUCATIVO: JSON.stringify(oldGradoEducativo),
 //                   });
-//                   setModalsVisibility({ modalsVisibility, modal6Edit: false });
+//                   setModalVisibility({ modalVisibility, modal6Edit: false });
 //                   toast({
 //                     title: "Información actualizada",
 //                     description: "Cambios exitosos",
@@ -2314,7 +2315,7 @@ export const Modal1 = React.memo(
 //                     isClosable: true,
 //                   });
 //                 } else {
-//                   setModalsVisibility({ modalsVisibility, modal6Edit: false });
+//                   setModalVisibility({ modalVisibility, modal6Edit: false });
 //                   toast({
 //                     title: "Ocurrio un error en la actualizacion",
 //                     description: "CIntentar mas tarde",
@@ -2329,9 +2330,9 @@ export const Modal1 = React.memo(
 //         >
 //           {({ values, handleChange, errors, resetForm }) => (
 //             <Modal
-//               isOpen={modalsVisibility.modal6Edit}
+//               isOpen={modalVisibility.modal6Edit}
 //               onClose={() => {
-//                 setModalsVisibility({ ...modalsVisibility, modal6Edit: false });
+//                 setModalVisibility({ ...modalVisibility, modal6Edit: false });
 //                 resetForm({
 //                   EDITTITULO: "",
 //                   EDITINSTITUCION: "",
@@ -2538,8 +2539,8 @@ export const Modal1 = React.memo(
 //                   <Button
 //                     variant="ghost"
 //                     onClick={() => {
-//                       setModalsVisibility({
-//                         ...modalsVisibility,
+//                       setModalVisibility({
+//                         ...modalVisibility,
 //                         modal6Edit: false,
 //                       });
 //                     }}
@@ -2564,7 +2565,7 @@ export const Modal1 = React.memo(
 //     }
 //   }
 // );
-// export const Modal7 = React.memo(({ modalsVisibility, setModalsVisibility }) => {
+// export const Modal7 = React.memo(({ modalVisibility, setModalVisibility }) => {
 //   const toast = useToast();
 //   // context
 //   const { secondaryInfoState, userInfoState } = React.useContext(MainContext);
@@ -2643,7 +2644,7 @@ export const Modal1 = React.memo(
 //                   CURSOS_CERTIFICACIONES: JSON.stringify(arraysito),
 //                 });
 //               }
-//               setModalsVisibility({ modalsVisibility, modal7: false });
+//               setModalVisibility({ modalVisibility, modal7: false });
 //               toast({
 //                 title: "Información actualizada",
 //                 description: "Cambios exitosos",
@@ -2659,7 +2660,7 @@ export const Modal1 = React.memo(
 //                 DESCRIPTION: "",
 //               });
 //             } else {
-//               setModalsVisibility({ modalsVisibility, modal7: false });
+//               setModalVisibility({ modalVisibility, modal7: false });
 //               toast({
 //                 title: "Ocurrio un error en la actualizacion",
 //                 description: "CIntentar mas tarde",
@@ -2674,7 +2675,7 @@ export const Modal1 = React.memo(
 //       }}
 //     >
 //       {({ values, handleChange, errors }) => (
-//         <Modal isOpen={modalsVisibility.modal7} size="md">
+//         <Modal isOpen={modalVisibility.modal7} size="md">
 //           <ModalOverlay />
 //           <ModalCloseButton />
 //           <ModalContent>
@@ -2774,8 +2775,8 @@ export const Modal1 = React.memo(
 //               <Button
 //                 variant="ghost"
 //                 onClick={() => {
-//                   setModalsVisibility({
-//                     ...modalsVisibility,
+//                   setModalVisibility({
+//                     ...modalVisibility,
 //                     modal7: false,
 //                   });
 //                 }}
@@ -2798,8 +2799,8 @@ export const Modal1 = React.memo(
 // });
 // export const Modal7Edit = React.memo(
 //   ({
-//     modalsVisibility,
-//     setModalsVisibility,
+//     modalVisibility,
+//     setModalVisibility,
 //     editingObjectCursosCertificaciones,
 //   }) => {
 //     const toast = useToast();
@@ -2829,7 +2830,7 @@ export const Modal1 = React.memo(
 //               ...secondaryInfo,
 //               CURSOS_CERTIFICACIONES: JSON.stringify(newArray),
 //             });
-//             setModalsVisibility({ modalsVisibility, modal7Edit: false });
+//             setModalVisibility({ modalVisibility, modal7Edit: false });
 //             toast({
 //               title: "Información actualizada",
 //               description: "Cambios exitosos",
@@ -2838,7 +2839,7 @@ export const Modal1 = React.memo(
 //               isClosable: true,
 //             });
 //           } else {
-//             setModalsVisibility({ modalsVisibility, modal7Edit: false });
+//             setModalVisibility({ modalVisibility, modal7Edit: false });
 //             toast({
 //               title: "Ocurrio un error en la actualizacion",
 //               description: "CIntentar mas tarde",
@@ -2905,7 +2906,7 @@ export const Modal1 = React.memo(
 //                       oldCursosCertificaciones
 //                     ),
 //                   });
-//                   setModalsVisibility({ modalsVisibility, modal7Edit: false });
+//                   setModalVisibility({ modalVisibility, modal7Edit: false });
 //                   toast({
 //                     title: "Información actualizada",
 //                     description: "Cambios exitosos",
@@ -2914,7 +2915,7 @@ export const Modal1 = React.memo(
 //                     isClosable: true,
 //                   });
 //                 } else {
-//                   setModalsVisibility({ modalsVisibility, modal7Edit: false });
+//                   setModalVisibility({ modalVisibility, modal7Edit: false });
 //                   toast({
 //                     title: "Ocurrio un error en la actualizacion",
 //                     description: "CIntentar mas tarde",
@@ -2928,7 +2929,7 @@ export const Modal1 = React.memo(
 //           }}
 //         >
 //           {({ values, handleChange, errors }) => (
-//             <Modal isOpen={modalsVisibility.modal7Edit}>
+//             <Modal isOpen={modalVisibility.modal7Edit}>
 //               <ModalOverlay />
 //               <ModalCloseButton />
 //               <ModalContent>
@@ -3037,8 +3038,8 @@ export const Modal1 = React.memo(
 //                   <Button
 //                     variant="ghost"
 //                     onClick={() => {
-//                       setModalsVisibility({
-//                         ...modalsVisibility,
+//                       setModalVisibility({
+//                         ...modalVisibility,
 //                         modal7Edit: false,
 //                       });
 //                     }}
@@ -3063,16 +3064,16 @@ export const Modal1 = React.memo(
 //     }
 //   }
 // );
-// export const CVModal = React.memo(({ modalsVisibility, setModalsVisibility }) => {
+// export const CVModal = React.memo(({ modalVisibility, setModalVisibility }) => {
 //   const { secondaryInfoState, userInfoState } = React.useContext(MainContext);
 //   const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
 //   const [userInfo] = userInfoState;
 //   return (
 //     <Modal
 //       size="6xl"
-//       isOpen={modalsVisibility.CVmodal}
+//       isOpen={modalVisibility.CVmodal}
 //       onClose={() => {
-//         setModalsVisibility({ ...modalsVisibility, CVmodal: false });
+//         setModalVisibility({ ...modalVisibility, CVmodal: false });
 //       }}
 //     >
 //       <ModalOverlay />
@@ -3096,7 +3097,7 @@ export const Modal1 = React.memo(
 //               marginRight: "1em",
 //             }}
 //             onClick={() => {
-//               setModalsVisibility({ ...modalsVisibility, CVmodal: false });
+//               setModalVisibility({ ...modalVisibility, CVmodal: false });
 //             }}
 //           >
 //             <Close />
