@@ -42,7 +42,7 @@ export const CustomModal = React.memo(({ hook, content }) => {
     "STATE",
     "CITY",
   ];
-  const secondaryKeys = ["TITULO", "HABILIDADES"];
+  const secondaryKeys = ["TITULO", "HABILIDADES", "IDIOMAS"];
   const onClose = () => {
     setModal(!modal);
   };

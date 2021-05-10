@@ -217,7 +217,8 @@ const Datos = React.memo(() => {
                       justifyContent: "space-evenly",
                     }}
                   >
-                    {secondaryInfo.IDIOMAS ? (
+                    {console.log(secondaryInfo)}
+                    {/* {secondaryInfo.IDIOMAS ? (
                       JSON.parse(secondaryInfo.IDIOMAS).map((key) => (
                         <Badge
                           key={key.ID}
@@ -230,7 +231,7 @@ const Datos = React.memo(() => {
                       ))
                     ) : (
                       <Badge>No disponible</Badge>
-                    )}
+                    )} */}
                   </Td>
                 </Tr>
               </Tbody>
