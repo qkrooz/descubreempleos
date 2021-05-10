@@ -15,9 +15,7 @@ const Login = React.memo(() => {
   const toast = useToast();
   const router = useRouter();
   // context
-  const { userInfoState, secondaryInfoState } = React.useContext(MainContext);
-  const [userInfo, setUserInfo] = userInfoState;
-  const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
+  const { ResetInfo, SetInfo } = React.useContext(MainContext);
   const loginValidation = Yup.object().shape({
     EMAIL: Yup.string().required().email(),
     PASSWORD: Yup.string().required(),
@@ -25,17 +23,28 @@ const Login = React.memo(() => {
   // states
   const [pswtext, setPswtext] = React.useState("password");
   const [loading, setLoading] = React.useState(true);
-  // effects
   React.useEffect(() => {
-    if (
-      Object.values(userInfo).length !== 0 &&
-      Object.values(secondaryInfo).length !== 0
-    ) {
-      router.push("/");
-    } else {
-      setLoading(false);
+    if (typeof window !== "undefined") {
+      if (localStorage.getItem("userInfo") === null) {
+        ResetInfo();
+        router.push("/entra");
+        setLoading(false);
+      } else {
+        if (
+          Object.values(JSON.parse(localStorage.getItem("userInfo"))).length !==
+            0 &&
+          Object.values(JSON.parse(localStorage.getItem("secondaryInfo")))
+            .length !== 0
+        ) {
+          router.push("/");
+        } else {
+          ResetInfo();
+          router.push("/entra");
+          setLoading(false);
+        }
+      }
     }
-  }, [userInfo, secondaryInfo]);
+  }, []);
   return (
     <>
       <Head>
@@ -61,11 +70,10 @@ const Login = React.memo(() => {
               .post(`${apiRoute}/login.php`, values)
               .then(({ data }) => {
                 if (data.code === 200) {
-                  setUserInfo(data.userInfo);
-                  setSecondaryInfo(data.secondaryInfo);
+                  SetInfo(data);
+                  router.push("/");
                 } else if (data.code === 404) {
-                  setUserInfo({});
-                  setSecondaryInfo({});
+                  ResetInfo();
                   toast({
                     title: "Error",
                     description: "Contraseña o correo eletrónico incorrecto",
@@ -75,8 +83,7 @@ const Login = React.memo(() => {
                     position: "bottom-right",
                   });
                 } else if (data.code === 500) {
-                  setUserInfo({});
-                  setSecondaryInfo({});
+                  ResetInfo();
                   toast({
                     title: "Error",
                     description: "Ha ocurrido un error en el servidor",
@@ -88,7 +95,8 @@ const Login = React.memo(() => {
                 }
               })
               .catch((error) => {
-                if (error)
+                if (error) {
+                  ResetInfo();
                   toast({
                     title: "Error",
                     description: "Tienes problemas de conexion",
@@ -97,6 +105,7 @@ const Login = React.memo(() => {
                     isClosable: true,
                     position: "bottom-right",
                   });
+                }
               });
           }}
         >

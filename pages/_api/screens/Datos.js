@@ -32,27 +32,29 @@ import Footer from "../components/Footer";
 import CVpdf from "../components/CVpdf";
 import CVModalComponent from "../components/CVmodal";
 // modals
-import { Modal1 } from "../components/Modals/";
+import { CustomModal } from "../components/Modals";
 // styles
 import style from "../../../styles/datos.module.css";
 const Datos = React.memo(() => {
   const toast = useToast();
   // states
-  const [modalVisibility, setModalVisibility] = React.useState({
-    modal1: false,
-    modal2: false,
-    modal3: false,
-    modal4: false,
-    modal5: false,
-    modal5Edit: false,
-    modal6: false,
-    modal6Edit: false,
-    modal7: false,
-    modal7Edit: false,
-    CVmodal: false,
-  });
+  const [modal, setModal] = React.useState(false);
+  const [modalContent, setModalContent] = React.useState(0);
+  // const [modalVisibility, setModalVisibility] = React.useState({
+  //   modal1: false,
+  //   modal2: false,
+  //   modal3: false,
+  //   modal4: false,
+  //   modal5: false,
+  //   modal5Edit: false,
+  //   modal6: false,
+  //   modal6Edit: false,
+  //   modal7: false,
+  //   modal7Edit: false,
+  //   CVmodal: false,
+  // });
   const [disponibleState, setDisponibleState] = React.useState();
-  const [userImageError, setUserImageError] = React.useState(true);
+  const [userImageError, setUserImageError] = React.useState(false);
   const [
     editingObjectExperienciaLaboral,
     setEditingObjectExperienciaLaboral,
@@ -84,7 +86,6 @@ const Datos = React.memo(() => {
             status: "success",
             duration: 3000,
             isClosable: true,
-            position: "bottom-right",
           });
           let secondaryInfoCopy = { ...secondaryInfo };
           secondaryInfoCopy.DISPONIBLE = data.current.toString();
@@ -102,7 +103,8 @@ const Datos = React.memo(() => {
         <div className={style.left}>
           <Card
             onClick={() => {
-              setModalsVisibility({ ...modalsVisibility, modal1: true });
+              setModalContent(0);
+              setModal(!modal);
             }}
           >
             <div className={style.userImage}>
@@ -113,7 +115,16 @@ const Datos = React.memo(() => {
               ) : (
                 <img
                   src={`${userInfo.IMAGE_URL}?v=${Date.now()}`}
-                  onError={() => {}}
+                  style={{
+                    borderRadius: "50%",
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    objectPosition: "center",
+                  }}
+                  onError={() => {
+                    setUserImageError(true);
+                  }}
                 />
               )}
             </div>
@@ -141,7 +152,8 @@ const Datos = React.memo(() => {
           <Card
             title="Datos personales"
             onClick={() => {
-              setModalsVisibility({ ...modalsVisibility, modal2: true });
+              setModalContent(1);
+              setModal(!modal);
             }}
           >
             <Table variant="simple" borderBottom="0px">
@@ -227,7 +239,8 @@ const Datos = React.memo(() => {
           <Card
             title="Habilidades"
             onClick={() => {
-              setModalsVisibility({ ...modalsVisibility, modal3: true });
+              setModalContent(2);
+              setModal(!modal);
             }}
           >
             <div className={style.habilitiesContainer}>
@@ -249,7 +262,8 @@ const Datos = React.memo(() => {
           <Card
             title="Seguridad"
             onClick={() => {
-              setModalsVisibility({ ...modalsVisibility, modal4: true });
+              setModalContent(3);
+              setModal(!modal);
             }}
           >
             <Table>
@@ -275,28 +289,31 @@ const Datos = React.memo(() => {
             title="Experiencia laboral"
             data={secondaryInfo.EXPERIENCIA_LABORAL}
             onClick={() => {
-              setModalsVisibility({ ...modalsVisibility, modal5: true });
+              setModalContent(4);
+              setModal(!modal);
             }}
           />
           <Card2
             title="Grado Educativo"
             data={secondaryInfo.GRADO_EDUCATIVO}
             onClick={() => {
-              setModalsVisibility({ ...modalsVisibility, modal6: true });
+              setModalContent(5);
+              setModal(!modal);
             }}
           />
           <Card2
             title="Cursos y certificaciones"
             data={secondaryInfo.CURSOS_CERTIFICACIONES}
             onClick={() => {
-              setModalsVisibility({ ...modalsVisibility, modal7: true });
+              setModalContent(6);
+              setModal(!modal);
             }}
           />
         </div>
       </div>
-      <Modal1
-        modalVisibility={modalsVisibility.modal1}
-        setModalVisibility={setModalVisibility}
+      <CustomModal
+        hook={{ modalState: [modal, setModal] }}
+        content={modalContent}
       />
       <Footer />
     </>

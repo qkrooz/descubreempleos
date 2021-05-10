@@ -28,14 +28,7 @@ import {
 const Header = React.memo(() => {
   const router = useRouter();
   // context
-  const { userInfoState, secondaryInfoState } = useContext(MainContext);
-  const [, setUserInfo] = userInfoState;
-  const [, setSecondaryInfo] = secondaryInfoState;
-  const logout = () => {
-    setUserInfo({});
-    setSecondaryInfo({});
-    router.push("/entra");
-  };
+  const { ResetInfo } = useContext(MainContext);
   return (
     <header className={header.container}>
       <div className={header.logoContainer}>
@@ -76,7 +69,14 @@ const Header = React.memo(() => {
               Salud
             </MenuItem>
             <MenuDivider />
-            <MenuItem color="red" icon={<PowerSettingsNew />} onClick={logout}>
+            <MenuItem
+              color="red"
+              icon={<PowerSettingsNew />}
+              onClick={() => {
+                ResetInfo();
+                router.push("/entra");
+              }}
+            >
               Cerrar sesión
             </MenuItem>
           </MenuList>
@@ -88,14 +88,7 @@ const Header = React.memo(() => {
 export const EnterpriseHeader = React.memo(() => {
   const router = useRouter();
   // context
-  const { userInfoState, secondaryInfoState } = useContext(MainContext);
-  const [, setUserInfo] = userInfoState;
-  const [, setSecondaryInfo] = secondaryInfoState;
-  const logout = () => {
-    setUserInfo({});
-    setSecondaryInfo({});
-    router.push("/entra");
-  };
+  const { ResetInfo } = useContext(MainContext);
   return (
     <header className={header.container}>
       <div className={header.logoContainer}>
@@ -136,7 +129,14 @@ export const EnterpriseHeader = React.memo(() => {
               Salud
             </MenuItem>
             <MenuDivider />
-            <MenuItem color="red" icon={<PowerSettingsNew />} onClick={logout}>
+            <MenuItem
+              color="red"
+              icon={<PowerSettingsNew />}
+              onClick={() => {
+                ResetInfo();
+                router.push("/entra");
+              }}
+            >
               Cerrar sesión
             </MenuItem>
           </MenuList>

@@ -1,4 +1,10 @@
 import React from "react";
+import { MainContext } from "../resources/MainContext";
+import apiRoute from "../resources/apiRoute";
+import { Formik, Form, Field } from "formik";
+import * as Yup from "yup";
+import Cities from "../resources/cities_mexico.json";
+import States from "../resources/states_mexico.json";
 import {
   Modal,
   ModalOverlay,
@@ -9,290 +15,823 @@ import {
   ModalCloseButton,
   Button,
   useToast,
+  Flex,
+  Text,
+  toast,
 } from "@chakra-ui/react";
-
-export const Modal1 = React.memo(
-  ({
-    setModalVisibility,
-    modalVisibility,
-    userImgError,
-    setUserImgError,
-    setEditModalVisibility,
-    setImageHash,
-  }) => {
-    const fileUploaderButton = React.useRef();
-    const toast = useToast();
-    const RetroError = () => {
-      return (
-        <span style={{ color: "red", fontSize: "0.8em" }}>Requerido*</span>
-      );
-    };
-    const validationSchema = Yup.object().shape({
-      NAMES: Yup.string().required(),
-      LAST_NAME: Yup.string().required(),
+import { Close, Person } from "@material-ui/icons";
+import axios from "axios";
+import moment from "moment";
+import style from "../../../styles/modals.module.css";
+const ThisContext = React.createContext();
+export const CustomModal = React.memo(({ hook, content }) => {
+  const toast = useToast();
+  const { userInfoState, secondaryInfoState } = React.useContext(MainContext);
+  const [formInitialValues, setFormInitialValues] = React.useState();
+  const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
+  const [userInfo, setUserInfo] = userInfoState;
+  const { modalState } = hook;
+  const [modal, setModal] = modalState;
+  const primaryKeys = [
+    "NAMES",
+    "LAST_NAME",
+    "MOTHERS_LAST_NAME",
+    "AGE",
+    "GENRE",
+    "TEL_NUMBER",
+    "STATE",
+    "CITY",
+  ];
+  const secondaryKeys = ["TITULO", "HABILIDADES"];
+  const onClose = () => {
+    setModal(!modal);
+  };
+  const setNewInfo = (values) => {
+    let userInfoCopy = { ...userInfo };
+    let secondaryInfoCopy = { ...secondaryInfo };
+    Object.entries(values).forEach((key) => {
+      if (key[0] !== "ID") {
+        if (primaryKeys.includes(key[0])) {
+          userInfoCopy[key[0]] = key[1];
+        } else if (secondaryKeys.includes(key[0])) {
+          secondaryInfoCopy[key[0]] = key[1];
+        }
+      }
     });
-    const { userInfoState, secondaryInfoState } = React.useContext(MainContext);
-    const [userInfo, setUserInfo] = userInfoState;
-    const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
-    const updateUserPhoto = (userID, image) => {
-      const formData = new FormData();
-      // setModals({ ...modals, submit: true });
-      formData.append("userID", parseInt(userID));
-      formData.append("image", image);
-      axios
-        .post(`${apiRoute}/uploadProfilePhoto.php`, formData, {
-          headers: { "Content-type": "multipart/form-data" },
-        })
-        .then((response) => {
-          console.log(response.data);
-          setUserImgError(true);
-
-          if (response.data.code === 200) {
-            let userInfoCopy = { ...userInfo };
-            console.log(userInfoCopy);
-            userInfoCopy.IMAGE_URL = response.data.IMAGE_URL;
-            setUserInfo(userInfoCopy);
-            setImageHash((imageHash) => imageHash + 1);
-            setUserImgError(false);
+    setUserInfo(userInfoCopy);
+    setSecondaryInfo(secondaryInfoCopy);
+  };
+  const FormContentComponent = ModalContentIndex[content].form;
+  React.useEffect(() => {
+    let formInitialValues;
+    formInitialValues = ModalContentIndex[content].formInitialValues;
+    Object.entries(formInitialValues).forEach((key) => {
+      if (primaryKeys.includes(key[0])) {
+        userInfo[key[0]]
+          ? (formInitialValues[key[0]] = userInfo[key[0]])
+          : (formInitialValues[key[0]] = "");
+      } else if (secondaryKeys.includes(key[0])) {
+        secondaryInfo[key[0]]
+          ? (formInitialValues[key[0]] = secondaryInfo[key[0]])
+          : (formInitialValues[key[0]] = "");
+      }
+    });
+    setFormInitialValues(formInitialValues);
+  }, [modal]);
+  return (
+    <Modal
+      isOpen={modal}
+      onClose={onClose}
+      size={ModalContentIndex[content].id === 1 ? "xs" : "xl"}
+    >
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>{ModalContentIndex[content].title}</ModalHeader>
+        <ModalCloseButton />
+        <Formik
+          validationSchema={ModalContentIndex[content].validation}
+          initialValues={formInitialValues}
+          onSubmit={(values) => {
+            values.ID = userInfo.ID;
+            axios
+              .post(ModalContentIndex[content].apiURL, values)
+              .then(({ data }) => {
+                switch (data.code) {
+                  case 200:
+                    setNewInfo(values);
+                    toast({
+                      title: "Información actualizada",
+                      status: "success",
+                      duration: 3000,
+                      isClosable: true,
+                    });
+                    break;
+                  default:
+                    toast({
+                      title: "No se pudo actualizar la información",
+                      status: "error",
+                      duration: 3000,
+                      isClosable: true,
+                    });
+                    break;
+                }
+                onClose();
+              })
+              .catch((error) => console.log(error));
+          }}
+        >
+          {({ values, handleChange, errors }) => (
+            <ThisContext.Provider
+              value={{
+                onClose: onClose,
+                values: values,
+                handleChange: handleChange,
+                errors: errors,
+              }}
+            >
+              <Form>
+                <FormContentComponent
+                  values={values}
+                  handleChange={handleChange}
+                  errors={errors}
+                  onClose={onClose}
+                />
+              </Form>
+            </ThisContext.Provider>
+          )}
+        </Formik>
+      </ModalContent>
+    </Modal>
+  );
+});
+const Content1 = () => {
+  const toast = useToast();
+  const imgInputRef = React.useRef();
+  const { userInfoState } = React.useContext(MainContext);
+  const [userInfo, setUserInfo] = userInfoState;
+  const { onClose, values, handleChange, errors } = React.useContext(
+    ThisContext
+  );
+  const [imgError, setImgError] = React.useState(false);
+  const uploadImage = (e) => {
+    const image = e.target.files[0];
+    const formData = new FormData();
+    formData.append("image", image);
+    formData.append("userID", userInfo.ID);
+    axios
+      .post(`${apiRoute}/uploadProfilePhoto.php`, formData, {
+        headers: { "Content-type": "multipart/form-data" },
+      })
+      .then(({ data }) => {
+        switch (data.code) {
+          case 200:
+            setUserInfo({ ...userInfo, IMAGE_URL: data.IMAGE_URL });
             toast({
               title: "Imagen actualizada",
               status: "success",
               duration: 3000,
               isClosable: true,
             });
-          } else {
+            setImgError(false);
+            break;
+          case 400:
             toast({
-              title: "Ocurrio un error, intenta mas tarde.",
+              title: "No se ha podido actualizar la imagen",
+              description: "Por favor intente mas tarde",
               status: "error",
               duration: 3000,
               isClosable: true,
             });
-          }
-        })
-        .catch(() => {
-          toast({
-            title: "Ocurrio un error, intenta mas tarde.",
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        });
-    };
-    return (
-      <Formik
-        validationSchema={validationSchema}
-        initialValues={{
-          NAMES: userInfo.NAMES,
-          LAST_NAME: userInfo.LAST_NAME,
-          MOTHERS_LAST_NAME: userInfo.MOTHERS_LAST_NAME,
-          TITULO: secondaryInfo.TITULO ? secondaryInfo.TITULO : "",
-        }}
-        onSubmit={(values) => {
-          if (
-            values.NAMES === userInfo.NAMES &&
-            values.LAST_NAME === userInfo.LAST_NAME &&
-            values.MOTHERS_LAST_NAME === userInfo.MOTHERS_LAST_NAME &&
-            values.TITULO === secondaryInfo.TITULO
-          ) {
-            setEditModalVisibility(!editModalVisibility);
-          } else {
-            values["ID"] = parseInt(userInfo.ID);
-            axios
-              .post(`${apiRoute}/updatePrimaryInfo.php`, values)
-              .then(({ data }) => {
-                if (data.code === 200) {
-                  let userInfoCopy = { ...userInfo };
-                  let secondaryInfoCopy = { ...secondaryInfo };
-                  userInfoCopy.NAMES = values.NAMES.toLowerCase();
-                  userInfoCopy.LAST_NAME = values.LAST_NAME.toLowerCase();
-                  userInfoCopy.MOTHERS_LAST_NAME = values.MOTHERS_LAST_NAME.toLowerCase();
-                  secondaryInfoCopy.TITULO = values.TITULO.toLowerCase();
-                  setUserInfo(userInfoCopy);
-                  setSecondaryInfo(secondaryInfoCopy);
-                  setEditModalVisibility(false);
-                  toast({
-                    title: "Información actualizada",
-                    description: "Cambios exitosos",
-                    status: "success",
-                    duration: 3000,
-                    isClosable: true,
-                  });
-                } else {
-                  toast({
-                    title: "Ocurrio un error, intenta mas tarde.",
-                    status: "error",
-                    duration: 3000,
-                    isClosable: true,
-                  });
-                }
-              })
-              .catch((error) => console.log(error));
-          }
-        }}
-      >
-        {({ values, handleChange, errors, handleBlur }) => (
-          <>
-            <Modal
-              isOpen={modalVisibility.modal1}
-              onClose={() => {
-                setModalVisibility({ ...modalVisibility, modal1: false });
-              }}
-              size="xl"
-            >
-              <ModalOverlay />
-              <ModalContent>
-                <ModalHeader>
-                  ¿Quieres actualizar tus datos personales?
-                </ModalHeader>
-                <ModalCloseButton />
-                <ModalBody
+            break;
+          default:
+            break;
+        }
+      })
+      .catch((error) => console.log(error));
+  };
+  return (
+    <>
+      <ModalBody>
+        <Flex>
+          <Flex mr={4} grow={1} direction="column" align="center">
+            {imgError ? (
+              <Flex
+                background="#f2f2f2"
+                width="8em"
+                height="8em"
+                borderRadius="50%"
+                justify="center"
+                align="center"
+                cursor="pointer"
+                onClick={() => {
+                  imgInputRef.current.click();
+                }}
+              >
+                <input
+                  type="file"
+                  hidden
+                  ref={imgInputRef}
+                  onClick={(e) => (e.target.value = null)}
+                  onChange={(e) => uploadImage(e)}
+                />
+                <Person style={{ fontSize: "3.5em" }} />
+              </Flex>
+            ) : (
+              <Flex
+                background="#f2f2f2"
+                width="8em"
+                height="8em"
+                borderRadius="50%"
+                justify="center"
+                align="center"
+                cursor="pointer"
+                cursor="pointer"
+                onClick={() => {
+                  imgInputRef.current.click();
+                }}
+              >
+                <input
+                  type="file"
+                  hidden
+                  ref={imgInputRef}
+                  onClick={(e) => (e.target.value = null)}
+                  onChange={(e) => uploadImage(e)}
+                />
+                <img
+                  src={userInfo.IMAGE_URL + `?v=${Date.now()}`}
+                  alt="userimage"
+                  onError={() => setImgError(true)}
                   style={{
-                    display: "flex",
-                    flexDirection: "column",
+                    borderRadius: "50%",
                     width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    objectPosition: "center",
                   }}
-                >
-                  <div className={style.modal1Upper}>
-                    {!userImgError ? (
-                      <button
-                        onClick={() => {
-                          fileUploaderButton.current.click();
-                        }}
-                      >
-                        <input
-                          ref={fileUploaderButton}
-                          type="file"
-                          id="fileUploader"
-                          style={{ display: "none" }}
-                          onChange={(e) =>
-                            updateUserPhoto(userInfo.ID, e.target.files[0])
-                          }
-                          onClick={(event) => {
-                            event.target.value = null;
-                          }}
-                        />
-                        <img
-                          className={style.profile}
-                          src={`${userInfo.IMAGE_URL}?v=${Date.now()}`}
-                          onError={() => {
-                            setUserImgError(true);
-                          }}
-                        />
-                      </button>
-                    ) : (
-                      <div className={style.iconContainer}>
-                        <button
-                          onClick={() => {
-                            fileUploaderButton.current.click();
-                          }}
-                        >
-                          <input
-                            ref={fileUploaderButton}
-                            type="file"
-                            id="fileUploader"
-                            style={{ display: "none" }}
-                            onChange={(e) =>
-                              updateUserPhoto(userInfo.ID, e.target.files[0])
-                            }
-                            onClick={(event) => {
-                              event.target.value = null;
-                            }}
-                          />
-                          <Icon name="user" size="huge" color="grey" />
-                        </button>
-                      </div>
-                    )}
-                    <Form
-                      style={{ display: "flex", flexDirection: "column" }}
-                      id="modal1Form"
-                    >
-                      {errors.NAMES ? <RetroError /> : null}
-                      <Field
-                        type="text"
-                        placeholder="Nombres"
-                        name="NAMES"
-                        onChange={handleChange}
-                        value={values.NAMES}
-                        onBlur={handleBlur}
-                        style={{ textTransform: "capitalize" }}
-                      />
-                      {errors.LAST_NAME ? <RetroError /> : null}
-                      <Field
-                        type="text"
-                        placeholder="Apellido"
-                        name="LAST_NAME"
-                        onChange={handleChange}
-                        value={values.LAST_NAME}
-                        onBlur={handleBlur}
-                        style={{ textTransform: "capitalize" }}
-                      />
-                      <Field
-                        type="text"
-                        placeholder="Apellido Materno"
-                        name="MOTHERS_LAST_NAME"
-                        onChange={handleChange}
-                        value={values.MOTHERS_LAST_NAME}
-                        onBlur={handleBlur}
-                        style={{ textTransform: "capitalize" }}
-                      />
-                      <Field
-                        type="text"
-                        placeholder="Titulo/Puesto"
-                        name="TITULO"
-                        onChange={handleChange}
-                        value={values.TITULO}
-                        onBlur={handleBlur}
-                        style={{ textTransform: "capitalize" }}
-                      />
-                    </Form>
-                  </div>
-                  <div className={style.modal1Lower}>
-                    <div>
-                      <p href="#">Fotografía</p>
-                      <p>
-                        Puedes escoger la fotografía que prefieras pero por
-                        motivos profecionales sugerimos una fotografía de
-                        aspecto formal y seria.
-                      </p>
-                    </div>
-                    <div>
-                      <a href="#">Generar y actualizar CV</a>
-                      <p>
-                        Crea un currículum con nosotros usando tus datos en esta
-                        sección para generarlo de forma automatica y así puedas
-                        enviarlo en tus postulaciones de empleo.
-                      </p>
-                    </div>
-                  </div>
-                </ModalBody>
-                <ModalFooter style={{ justifyContent: "center" }}>
-                  <Button
-                    variant="ghost"
-                    onClick={() => {
-                      setModalVisibility({
-                        ...modalVisibility,
-                        modal1: false,
-                      });
-                    }}
-                  >
-                    Cancelar
-                  </Button>
-                  <Button
-                    type="submit"
-                    style={{ backgroundColor: "#ECB83C" }}
-                    form="modal1Form"
-                  >
-                    Actualizar
-                  </Button>
-                </ModalFooter>
-              </ModalContent>
-            </Modal>
-          </>
-        )}
-      </Formik>
+                />
+              </Flex>
+            )}
+            <Flex
+              mt="auto"
+              direction="column"
+              background="#ebebeb"
+              textAlign="center"
+              borderRadius="1em"
+              p={3}
+            >
+              <Text fontWeight="bold">Fotografia</Text>
+              <Text>
+                Puedes escoger la fotografía que prefieras pero por motivos
+                profesionales sugerimos una fotografía formal y seria
+              </Text>
+            </Flex>
+          </Flex>
+          <Flex direction="column">
+            <Field
+              onChange={handleChange}
+              value={values.NAMES}
+              name="NAMES"
+              className={errors.NAMES ? style.errorField : null}
+              style={{ marginBottom: "1em", textTransform: "capitalize" }}
+              placeholder="Nombre"
+            />
+            <Field
+              onChange={handleChange}
+              value={values.LAST_NAME}
+              name="LAST_NAME"
+              className={errors.LAST_NAME ? style.errorField : null}
+              style={{ marginBottom: "1em", textTransform: "capitalize" }}
+              placeholder="Apellido paterno"
+            />
+            <Field
+              onChange={handleChange}
+              value={values.MOTHERS_LAST_NAME}
+              name="MOTHERS_LAST_NAME"
+              className={errors.MOTHERS_LAST_NAME ? style.errorField : null}
+              style={{ marginBottom: "1em", textTransform: "capitalize" }}
+              placeholder="Apellido paterno"
+            />
+            <Field
+              onChange={handleChange}
+              value={values.TITULO}
+              name="TITULO"
+              placeholder="Título"
+              style={{ marginBottom: "1em", textTransform: "capitalize" }}
+            />
+            <div>
+              <Text color="Highlight" decoration="underline">
+                Generar CV
+              </Text>
+              <Text size="0.8em">
+                Crea un curriculum con nosotros usando tus datos en esta seccion
+                para generarlo de forma automática y asi puedas enviarlo en tus
+                postulaciones de empleo
+              </Text>
+            </div>
+          </Flex>
+        </Flex>
+      </ModalBody>
+      <ModalFooter>
+        <Button mr={2} type="submit">
+          Actualizar
+        </Button>
+        <Button variant="ghost" onClick={onClose}>
+          Cancelar
+        </Button>
+      </ModalFooter>
+    </>
+  );
+};
+const Content2 = () => {
+  const { onClose, values, handleChange, errors } = React.useContext(
+    ThisContext
+  );
+  const { userInfoState, secondaryInfoState } = React.useContext(MainContext);
+  const [userInfo, setUserInfo] = userInfoState;
+  const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
+  const [languages, setLanguages] = React.useState([]);
+  const [years, setYears] = React.useState([]);
+  const [days, setDays] = React.useState();
+  const [languagesList, setLanguagesList] = React.useState([
+    { ID: 1, TITLE: "Español", VALUE: "es" },
+    { ID: 2, TITLE: "Inglés", VALUE: "en" },
+    { ID: 3, TITLE: "Francés", VALUE: "fr" },
+    { ID: 4, TITLE: "Chino", VALUE: "zh" },
+  ]);
+  const [selectedCityID, setSelectedCityID] = React.useState("0");
+  const [selectedStateID, setSelectedStateID] = React.useState("0");
+  const [selectedYear, setSelectedYear] = React.useState(
+    moment(new Date()).year()
+  );
+  const [selectedMonth, setSelectedMonth] = React.useState("01");
+  const [selectedDay, setSelectedDay] = React.useState("01");
+  const restoreLanguagesList = (value) => {
+    const languagesListCopy = [...languagesList];
+    languagesListCopy.push(value);
+    setLanguagesList(languagesListCopy);
+    const finalLanguagesCopy = [...JSON.parse(values.IDIOMAS)];
+    const newArray = finalLanguagesCopy.filter((item) => item.ID !== value.ID);
+    values.IDIOMAS = JSON.stringify(newArray);
+  };
+  React.useEffect(() => {
+    // setting state
+    userInfo.STATE
+      ? setSelectedStateID(
+          States.states.filter(
+            (item) => item.name.toLowerCase() === userInfo.STATE
+          )[0].id
+        )
+      : null;
+    // setting city
+    userInfo.CITY
+      ? setSelectedCityID(
+          Cities.cities.filter(
+            (item) => item.name.toLowerCase() === userInfo.CITY
+          )[0].id
+        )
+      : null;
+    // setYears
+    userInfo.BIRTH_DATE
+      ? setSelectedYear(moment(userInfo.BIRTH_DATE).format("yyyy"))
+      : null;
+    // setMonth
+    userInfo.BIRTH_DATE
+      ? setSelectedMonth(moment(userInfo.BIRTH_DATE).format("MM"))
+      : null;
+    // setDat
+    userInfo.BIRTH_DATE
+      ? setSelectedDay(moment(userInfo.BIRTH_DATE).format("DD"))
+      : null;
+    if (secondaryInfo.IDIOMAS) {
+      if (JSON.parse(secondaryInfo.IDIOMAS).length !== 0) {
+        let array = JSON.parse(secondaryInfo.IDIOMAS);
+        setLanguages(array);
+        purgeLanguages(array);
+      }
+    } else {
+      setLanguages([]);
+    }
+    let years = [];
+    let limit = moment(new Date()).year() - 80;
+    for (let i = moment(new Date()).year(); i > limit; i--) {
+      years.push(i);
+    }
+    setYears(years);
+  }, []);
+  React.useEffect(() => {
+    setDays(
+      moment(`${selectedYear},${selectedMonth}`, "YYYY-MM").daysInMonth()
     );
-  }
-);
+    values.BIRTH_DATE = `${selectedYear}-${selectedMonth}-${selectedDay}`;
+    values.AGE =
+      moment().diff(values.BIRTH_DATE, "years") !== 0
+        ? moment().diff(values.BIRTH_DATE, "years")
+        : null;
+  }, [selectedYear, selectedMonth, selectedDay]);
+  React.useEffect(() => {
+    if (values.CITYID && values.STATEID) {
+      values.STATE = States.states
+        .filter((item) => item.id === values.STATEID)[0]
+        .name.toLowerCase();
+      values.CITY = Cities.cities
+        .filter((item) => item.id === values.CITYID)[0]
+        .name.toLowerCase();
+    }
+  }, [values.CITYID, values.STATEID]);
+  return (
+    <>
+      <ModalBody>
+        <Flex direction="column">
+          <Flex direction="column" mb={3}>
+            <Flex justify="space-between" w="100%">
+              <Field
+                as="select"
+                onChange={(e) => {
+                  setSelectedDay(e.target.value);
+                }}
+                value={selectedDay}
+                name="AGE"
+                className={errors.AGE ? style.errorField : null}
+                style={{
+                  textTransform: "capitalize",
+                  flexGrow: 1,
+                  marginRight: "0.5em",
+                }}
+              >
+                {Array(days)
+                  .fill(0)
+                  .map((_, i) => (
+                    <option
+                      key={(i + 1).toLocaleString("en-US", {
+                        minimumIntegerDigits: 2,
+                        useGrouping: false,
+                      })}
+                      value={(i + 1).toLocaleString("en-US", {
+                        minimumIntegerDigits: 2,
+                        useGrouping: false,
+                      })}
+                    >
+                      {(i + 1).toLocaleString("en-US", {
+                        minimumIntegerDigits: 2,
+                        useGrouping: false,
+                      })}
+                    </option>
+                  ))}
+              </Field>
+              <Field
+                as="select"
+                onChange={(e) => setSelectedMonth(e.target.value)}
+                value={selectedMonth}
+                name="AGE"
+                className={errors.AGE ? style.errorField : null}
+                style={{
+                  textTransform: "capitalize",
+                  flexGrow: 1,
+                  marginRight: "0.5em",
+                }}
+              >
+                <option value="01">Enero</option>
+                <option value="02">Febrero</option>
+                <option value="03">Marzo</option>
+                <option value="04">Abril</option>
+                <option value="05">Mayo</option>
+                <option value="06">Junio</option>
+                <option value="07">Julio</option>
+                <option value="08">Agosto</option>
+                <option value="09">Septiembre</option>
+                <option value="10">Octubre</option>
+                <option value="11">Noviembre</option>
+                <option value="12">Diciembre</option>
+              </Field>
+              <Field
+                onChange={(e) => setSelectedYear(e.target.value)}
+                value={selectedYear}
+                as="select"
+                name="AGE"
+                className={errors.AGE ? style.errorField : null}
+                style={{ textTransform: "capitalize", flexGrow: 1 }}
+              >
+                {years.map((key) => (
+                  <option key={key} value={key}>
+                    {key}
+                  </option>
+                ))}
+              </Field>
+            </Flex>
+            <Text
+              fontWeight="bold"
+              fontSize="0.7em"
+              color="gray"
+              textTransform="uppercase"
+            >
+              FECHA DE NACIMIENTO
+            </Text>
+          </Flex>
+          <Flex direction="column" mb={3}>
+            <Field
+              as="select"
+              onChange={handleChange}
+              value={values.GENRE}
+              name="GENRE"
+              className={errors.GENRE ? style.errorField : null}
+              style={{ textTransform: "capitalize" }}
+            >
+              <option value="" disabled>
+                Selecionar
+              </option>
+              <option value="fenemino">Femenino</option>
+              <option value="masculino">Masculino</option>
+              <option value="none">No especificar</option>
+            </Field>
+            <Text
+              fontWeight="bold"
+              fontSize="0.7em"
+              color="gray"
+              textTransform="uppercase"
+            >
+              GÉNERO
+            </Text>
+          </Flex>
+          <Flex direction="column" mb={3}>
+            <Field
+              onChange={handleChange}
+              value={values.TEL_NUMBER}
+              name="TEL_NUMBER"
+              className={errors.TEL_NUMBER ? style.errorField : null}
+              style={{ textTransform: "capitalize" }}
+            />
+            <Text
+              fontWeight="bold"
+              fontSize="0.7em"
+              color="gray"
+              textTransform="uppercase"
+            >
+              Número telefónico
+            </Text>
+          </Flex>
+          <Flex direction="column" mb={3}>
+            <Flex w="100%">
+              <Field
+                as="select"
+                style={{ flexGrow: 1, marginRight: "0.5em", width: 0 }}
+                name="STATEID"
+                value={values.STATEID}
+                onChange={handleChange}
+              >
+                {States.states.map((key) => {
+                  return (
+                    <option key={key.id} value={key.id}>
+                      {key.name}
+                    </option>
+                  );
+                })}
+              </Field>
+              <Field
+                name="CITYID"
+                as="select"
+                style={{ flexGrow: 1, width: 0 }}
+                value={values.CITYID}
+                onChange={handleChange}
+                disabled={!Boolean(values.STATEID)}
+              >
+                {Cities.cities
+                  .filter((item) => item.state_id === values.STATEID)
+                  .map((key) => (
+                    <option key={key.id} value={key.id}>
+                      {key.name}
+                    </option>
+                  ))}
+              </Field>
+            </Flex>
+            <Text
+              fontWeight="bold"
+              fontSize="0.7em"
+              color="gray"
+              textTransform="uppercase"
+            >
+              Ubicación
+            </Text>
+          </Flex>
+          <Flex direction="column" mb={3}>
+            {languagesList.length === 0 ? null : (
+              <Field
+                as="select"
+                onChange={(e) => {
+                  const obj = JSON.parse(e.target.value);
+                  setLanguagesList((languagesList) =>
+                    languagesList.filter((item) => item.ID !== obj.ID)
+                  );
+                  const finalValueCopy = [...JSON.parse(values.IDIOMAS)];
+                  finalValueCopy.push(obj);
+                  values.IDIOMAS = JSON.stringify(finalValueCopy);
+                }}
+                style={{ textTransform: "capitalize" }}
+                name="IDIOMAS"
+                value="[]"
+              >
+                <option value="[]" disabled>
+                  Selecciona idiomas
+                </option>
+                {languagesList.map((key) => (
+                  <option value={JSON.stringify(key)} key={key.ID}>
+                    {key.TITLE}
+                  </option>
+                ))}
+              </Field>
+            )}
+            <Text
+              fontWeight="bold"
+              fontSize="0.7em"
+              color="gray"
+              textTransform="uppercase"
+            >
+              Idiomas
+            </Text>
+            <Flex
+              border="1px solid gray"
+              borderRadius="10px"
+              wrap="wrap"
+              justify="center"
+            >
+              {JSON.parse(values.IDIOMAS).length === 0 ? (
+                <Text fontWeight="bold" fontSize="0.9em" m={3} color="gray">
+                  Agrega un idioma
+                </Text>
+              ) : (
+                Object.values(JSON.parse(values.IDIOMAS)).map((key) => (
+                  <div
+                    style={{
+                      backgroundColor: "#ebebeb",
+                      color: "black",
+                      display: "flex",
+                      alignItems: "center",
+                      borderRadius: "2em",
+                      margin: "0.3em",
+                      padding: "0.5em 1em",
+                      paddingRight: "0.5em",
+                    }}
+                    key={key.ID}
+                  >
+                    <span>{key.TITLE}</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        restoreLanguagesList(key);
+                      }}
+                    >
+                      <Close />
+                    </button>
+                  </div>
+                ))
+              )}
+            </Flex>
+          </Flex>
+        </Flex>
+      </ModalBody>
+      <ModalFooter>
+        <Button mr={2} type="submit">
+          Actualizar
+        </Button>
+        <Button variant="ghost" onClick={onClose}>
+          Cancelar
+        </Button>
+      </ModalFooter>
+    </>
+  );
+};
+const Content3 = () => {
+  const { onClose, values, handleChange, errors } = React.useContext(
+    ThisContext
+  );
+  return (
+    <>
+      <ModalBody></ModalBody>
+      <ModalFooter>
+        <Button mr={2} type="submit">
+          Actualizar
+        </Button>
+        <Button variant="ghost" onClick={onClose}>
+          Cancelar
+        </Button>
+      </ModalFooter>
+    </>
+  );
+};
+const Content4 = () => {
+  const { onClose, values, handleChange, errors } = React.useContext(
+    ThisContext
+  );
+  return (
+    <>
+      <ModalBody></ModalBody>
+      <ModalFooter>
+        <Button mr={2} type="submit">
+          Actualizar
+        </Button>
+        <Button variant="ghost" onClick={onClose}>
+          Cancelar
+        </Button>
+      </ModalFooter>
+    </>
+  );
+};
+const Content5 = () => {
+  const { onClose, values, handleChange, errors } = React.useContext(
+    ThisContext
+  );
+  return (
+    <>
+      <ModalBody></ModalBody>
+      <ModalFooter>
+        <Button mr={2} type="submit">
+          Actualizar
+        </Button>
+        <Button variant="ghost" onClick={onClose}>
+          Cancelar
+        </Button>
+      </ModalFooter>
+    </>
+  );
+};
+const Content6 = () => {
+  const { onClose, values, handleChange, errors } = React.useContext(
+    ThisContext
+  );
+  return (
+    <>
+      <ModalBody></ModalBody>
+      <ModalFooter>
+        <Button mr={2} type="submit">
+          Actualizar
+        </Button>
+        <Button variant="ghost" onClick={onClose}>
+          Cancelar
+        </Button>
+      </ModalFooter>
+    </>
+  );
+};
+const Content7 = () => {
+  const { onClose, values, handleChange, errors } = React.useContext(
+    ThisContext
+  );
+
+  return (
+    <>
+      <ModalBody></ModalBody>
+      <ModalFooter>
+        <Button mr={2} type="submit">
+          Actualizar
+        </Button>
+        <Button variant="ghost" onClick={onClose}>
+          Cancelar
+        </Button>
+      </ModalFooter>
+    </>
+  );
+};
+const ModalContentIndex = [
+  {
+    id: 0,
+    title: "",
+    form: () => <Content1 />,
+    apiURL: `${apiRoute}/updatePrimaryInfo.php`,
+    formInitialValues: {
+      NAMES: "",
+      TITULO: "",
+      LAST_NAME: "",
+      MOTHERS_LAST_NAME: "",
+    },
+    validation: Yup.object().shape({
+      NAMES: Yup.string().required("Este campo es requerido"),
+      LAST_NAME: Yup.string().required("Este campo es requerido"),
+      MOTHERS_LAST_NAME: Yup.string().required("Este campo es requerido"),
+    }),
+  },
+  {
+    id: 1,
+    title: "Actualizar datos personales",
+    apiURL: `${apiRoute}/updateTrabajadorSecondaryInfo.php`,
+    form: () => <Content2 />,
+    formInitialValues: {
+      AGE: "",
+      BIRTH_DATE: "",
+      GENRE: "",
+      TEL_NUMBER: "",
+      STATE: "",
+      STATEID: "",
+      CITYID: "",
+      CITY: "",
+      IDIOMAS: JSON.stringify([]),
+    },
+    validation: Yup.object().shape({}),
+  },
+  {
+    id: 2,
+    title: "Actualizar habilidades",
+    form: () => <Content3 />,
+  },
+  {
+    id: 3,
+    title: "Actualizar datos de seguridad",
+    form: () => <Content4 />,
+  },
+  {
+    id: 4,
+    title: "Agregar experiencia laboral",
+    form: () => <Content5 />,
+  },
+  {
+    id: 5,
+    title: "Agregar información académica",
+    form: () => <Content6 />,
+  },
+  {
+    id: 6,
+    title: "Agregar cursos y certificaciones",
+    form: () => <Content7 />,
+  },
+];
 // export const Modal2 = React.memo(({ modalVisibility, setModalVisibility }) => {
 //   const toast = useToast();
 //   const [years, setYears] = React.useState([]);
@@ -304,7 +843,7 @@ export const Modal1 = React.memo(
 //   );
 //   const [selectedMonth, setSelectedMonth] = React.useState("01");
 //   const [selectedDay, setSelectedDay] = React.useState("01");
-//   const [languages, setLanguages] = React.useState([]);
+
 //   const { userInfoState, secondaryInfoState } = React.useContext(MainContext);
 //   const [userInfo, setUserInfo] = userInfoState;
 //   const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
@@ -324,56 +863,6 @@ export const Modal1 = React.memo(
 //     });
 //     setLanguagesList(languagesListCopy);
 //   };
-//   React.useEffect(() => {
-//     // setting state
-//     userInfo.STATE
-//       ? setSelectedStateID(
-//           Estados.states.filter(
-//             (item) => item.name.toLowerCase() === userInfo.STATE
-//           )[0].id
-//         )
-//       : null;
-//     // setting city
-//     userInfo.CITY
-//       ? setSelectedCityID(
-//           Cities.cities.filter(
-//             (item) => item.name.toLowerCase() === userInfo.CITY
-//           )[0].id
-//         )
-//       : NULL;
-//     // setYears
-//     userInfo.BIRTH_DATE
-//       ? setSelectedYear(moment(userInfo.BIRTH_DATE).format("yyyy"))
-//       : null;
-//     // setMonth
-//     userInfo.BIRTH_DATE
-//       ? setSelectedMonth(moment(userInfo.BIRTH_DATE).format("MM"))
-//       : null;
-//     // setDat
-//     userInfo.BIRTH_DATE
-//       ? setSelectedDay(moment(userInfo.BIRTH_DATE).format("DD"))
-//       : null;
-//     if (secondaryInfo.IDIOMAS) {
-//       if (JSON.parse(secondaryInfo.IDIOMAS).length !== 0) {
-//         let array = JSON.parse(secondaryInfo.IDIOMAS);
-//         setLanguages(array);
-//         purgeLanguages(array);
-//       }
-//     } else {
-//       setLanguages([]);
-//     }
-//     let years = [];
-//     let limit = moment(new Date()).year() - 80;
-//     for (let i = moment(new Date()).year(); i > limit; i--) {
-//       years.push(i);
-//     }
-//     setYears(years);
-//   }, []);
-//   React.useEffect(() => {
-//     setDays(
-//       moment(`${selectedYear},${selectedMonth}`, "YYYY-MM").daysInMonth()
-//     );
-//   }, [selectedYear, selectedMonth]);
 //   return (
 //     <Formik
 //       initialValues={{
@@ -478,8 +967,7 @@ export const Modal1 = React.memo(
 //                     <select
 //                       style={{ padding: "0.5em", marginRight: "0.5em" }}
 //                       aria-label="Año"
-//                       onChange={(e) => setSelectedYear(e.target.value)}
-//                       value={selectedYear}
+
 //                     >
 //                       {years.map((key) => (
 //                         <option key={key} value={key}>
@@ -490,8 +978,7 @@ export const Modal1 = React.memo(
 //                     <select
 //                       style={{ padding: "0.5em", marginRight: "0.5em" }}
 //                       aria-label="Año"
-//                       onChange={(e) => setSelectedMonth(e.target.value)}
-//                       value={selectedMonth}
+
 //                     >
 //                       <option value="01">Enero</option>
 //                       <option value="02">Febrero</option>
@@ -546,9 +1033,7 @@ export const Modal1 = React.memo(
 //                       value={values.GENRE}
 //                       onChange={handleChange}
 //                     >
-//                       <option value="fenemino">Femenino</option>
-//                       <option value="masculino">Masculino</option>
-//                       <option value="none">No especificar</option>
+
 //                     </select>
 //                   </div>
 //                   <span>CURP</span>

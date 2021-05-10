@@ -9,34 +9,42 @@ import axios from "axios";
 const App = React.memo(({ Component, pageProps }) => {
   const router = useRouter();
   // states
-  const [userInfo, setUserInfo] = useLocalStorage("userInfo", {});
-  const [secondaryInfo, setSecondaryInfo] = useLocalStorage(
-    "secondaryInfo",
-    {}
-  );
+  const [userInfo, setUserInfo] = React.useState({});
+  const [secondaryInfo, setSecondaryInfo] = React.useState({});
+  // functions
+  const ResetInfo = () => {
+    localStorage.setItem("userInfo", JSON.stringify({}));
+    localStorage.setItem("secondaryInfo", JSON.stringify({}));
+    setUserInfo({});
+    setSecondaryInfo({});
+  };
+  const SetInfo = (data) => {
+    localStorage.setItem("userInfo", JSON.stringify(data.userInfo));
+    localStorage.setItem("secondaryInfo", JSON.stringify(data.secondaryInfo));
+    setUserInfo(data.userInfo);
+    setSecondaryInfo(data.secondaryInfo);
+  };
   // effects
   useEffect(() => {
     if (typeof window !== "undefined") {
-      if (localStorage.getItem("userInfo")) {
+      if (
+        Object.values(JSON.parse(localStorage.getItem("userInfo"))).length !== 0
+      ) {
         axios
           .post(`${apiRoute}/login.php`, {
-            EMAIL: userInfo.EMAIL,
-            PASSWORD: userInfo.PASSWORD,
+            EMAIL: JSON.parse(localStorage.getItem("userInfo")).EMAIL,
+            PASSWORD: JSON.parse(localStorage.getItem("userInfo")).PASSWORD,
           })
           .then(({ data }) => {
             if (data.code === 200) {
-              setUserInfo(data.userInfo);
-              setSecondaryInfo(data.secondaryInfo);
+              SetInfo(data);
             } else {
-              // setDontUserExistsModal(true);
-              setUserInfo({});
-              setSecondaryInfo({});
+              ResetInfo();
             }
           })
           .catch((error) => console.log(error));
       } else {
-        setUserInfo({});
-        setSecondaryInfo({});
+        ResetInfo();
         router.push("/entra");
       }
     }
@@ -47,6 +55,8 @@ const App = React.memo(({ Component, pageProps }) => {
         userInfoState: [userInfo, setUserInfo],
         secondaryInfoState: [secondaryInfo, setSecondaryInfo],
         // functions
+        ResetInfo: ResetInfo,
+        SetInfo: SetInfo,
       }}
     >
       <ChakraProvider>
