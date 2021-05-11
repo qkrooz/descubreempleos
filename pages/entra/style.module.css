@@ -122,8 +122,26 @@
 .links > a:first-child {
   margin-right: 1em;
 }
-@media screen and (min-width: 320px) {
+@media screen and (max-width: 568px) {
+  .container {
+    padding-top: 1em;
+  }
   .logoContainer {
     width: 90%;
+  }
+  .formContainer {
+    padding: 0.5em;
+    padding-top: 1em;
+  }
+  .links > a:first-child {
+    margin-right: 0.5em;
+  }
+  .links > a {
+    font-size: 0.8em;
+  }
+  .captionContainer {
+    font-size: 0.7em;
+    margin-top: auto;
+    margin-bottom: 0.5em;
   }
 }

@@ -19,7 +19,7 @@ import {
   Text,
   toast,
 } from "@chakra-ui/react";
-import { Close, Person } from "@material-ui/icons";
+import { Close, Person, ViewArrayTwoTone } from "@material-ui/icons";
 import axios from "axios";
 import moment from "moment";
 import style from "../../../styles/modals.module.css";
@@ -73,6 +73,12 @@ export const CustomModal = React.memo(({ hook, content }) => {
       } else if (secondaryKeys.includes(key[0])) {
         secondaryInfo[key[0]]
           ? (formInitialValues[key[0]] = secondaryInfo[key[0]])
+          : key[0] === "IDIOMAS" ||
+            key[0] === "HABILIDADES" ||
+            key[0] === "GRADO_EDUCATIVO" ||
+            key[0] === "CURSOS_CERTIFICACIONES" ||
+            key[0] === "EXPERIENCIA_LABORAL"
+          ? (formInitialValues[key[0]] = JSON.stringify([]))
           : (formInitialValues[key[0]] = "");
       }
     });
@@ -93,6 +99,7 @@ export const CustomModal = React.memo(({ hook, content }) => {
           initialValues={formInitialValues}
           onSubmit={(values) => {
             values.ID = userInfo.ID;
+            console.log(values);
             axios
               .post(ModalContentIndex[content].apiURL, values)
               .then(({ data }) => {
@@ -327,9 +334,8 @@ const Content2 = () => {
     ThisContext
   );
   const { userInfoState, secondaryInfoState } = React.useContext(MainContext);
-  const [userInfo, setUserInfo] = userInfoState;
-  const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
-  const [languages, setLanguages] = React.useState([]);
+  const [userInfo] = userInfoState;
+  const [secondaryInfo] = secondaryInfoState;
   const [years, setYears] = React.useState([]);
   const [days, setDays] = React.useState();
   const [languagesList, setLanguagesList] = React.useState([
@@ -338,8 +344,6 @@ const Content2 = () => {
     { ID: 3, TITLE: "Francés", VALUE: "fr" },
     { ID: 4, TITLE: "Chino", VALUE: "zh" },
   ]);
-  const [selectedCityID, setSelectedCityID] = React.useState("0");
-  const [selectedStateID, setSelectedStateID] = React.useState("0");
   const [selectedYear, setSelectedYear] = React.useState(
     moment(new Date()).year()
   );
@@ -355,20 +359,20 @@ const Content2 = () => {
   };
   React.useEffect(() => {
     // setting state
+    values.STATEID = "";
+    values.CITYID = "";
     userInfo.STATE
-      ? setSelectedStateID(
-          States.states.filter(
-            (item) => item.name.toLowerCase() === userInfo.STATE
-          )[0].id
-        )
+      ? (values.STATEID = States.states.filter(
+          (item) => item.name.toLowerCase() === userInfo.STATE
+        )[0].id)
       : null;
     // setting city
     userInfo.CITY
-      ? setSelectedCityID(
-          Cities.cities.filter(
+      ? setTimeout(() => {
+          values.CITYID = Cities.cities.filter(
             (item) => item.name.toLowerCase() === userInfo.CITY
-          )[0].id
-        )
+          )[0].id;
+        }, 1000)
       : null;
     // setYears
     userInfo.BIRTH_DATE
@@ -384,12 +388,17 @@ const Content2 = () => {
       : null;
     if (secondaryInfo.IDIOMAS) {
       if (JSON.parse(secondaryInfo.IDIOMAS).length !== 0) {
-        let array = JSON.parse(secondaryInfo.IDIOMAS);
-        setLanguages(array);
-        purgeLanguages(array);
+        let idiomasCopy = [...JSON.parse(secondaryInfo.IDIOMAS)];
+        values.IDIOMAS = secondaryInfo.IDIOMAS;
+        idiomasCopy.forEach((item) => {
+          const languagesListCopy = [...languagesList];
+          const ID = item.ID;
+          const newArray = languagesListCopy.filter((item2) => item.ID !== ID);
+          setLanguagesList(newArray);
+        });
       }
     } else {
-      setLanguages([]);
+      values.IDIOMAS = JSON.stringify([]);
     }
     let years = [];
     let limit = moment(new Date()).year() - 80;
@@ -408,16 +417,24 @@ const Content2 = () => {
         ? moment().diff(values.BIRTH_DATE, "years")
         : null;
   }, [selectedYear, selectedMonth, selectedDay]);
-  React.useEffect(() => {
-    if (values.CITYID && values.STATEID) {
-      values.STATE = States.states
-        .filter((item) => item.id === values.STATEID)[0]
-        .name.toLowerCase();
-      values.CITY = Cities.cities
-        .filter((item) => item.id === values.CITYID)[0]
-        .name.toLowerCase();
-    }
-  }, [values.CITYID, values.STATEID]);
+  // React.useEffect(() => {
+  //   if (values.CITYID && values.STATEID) {
+  //     values.STATE = States.states
+  //       .filter((item) => item.id === values.STATEID)[0]
+  //       .name.toLowerCase();
+  //     values.CITY = Cities.cities
+  //       .filter((item) => item.id === values.CITYID)[0]
+  //       .name.toLowerCase();
+  //   }
+  // }, [values.CITYID, values.STATEID]);
+  // React.useEffect(() => {
+  //   if (values.STATEID) {
+  //     const cityid = Cities.cities.filter(
+  //       (item) => item.state_id === values.STATEID
+  //     )[0].id;
+  //     values.CITYID = cityid;
+  //   }
+  // }, [values.STATEID]);
   return (
     <>
       <ModalBody>
@@ -601,6 +618,7 @@ const Content2 = () => {
                   setLanguagesList((languagesList) =>
                     languagesList.filter((item) => item.ID !== obj.ID)
                   );
+                  console.log(values.IDIOMAS);
                   const finalValueCopy = [...JSON.parse(values.IDIOMAS)];
                   finalValueCopy.push(obj);
                   values.IDIOMAS = JSON.stringify(finalValueCopy);
@@ -633,36 +651,42 @@ const Content2 = () => {
               wrap="wrap"
               justify="center"
             >
-              {JSON.parse(values.IDIOMAS).length === 0 ? (
+              {values.IDIOMAS ? (
+                JSON.parse(values.IDIOMAS).length === 0 ? (
+                  <Text fontWeight="bold" fontSize="0.9em" m={3} color="gray">
+                    Agrega un idioma
+                  </Text>
+                ) : (
+                  Object.values(JSON.parse(values.IDIOMAS)).map((key) => (
+                    <div
+                      style={{
+                        backgroundColor: "#ebebeb",
+                        color: "black",
+                        display: "flex",
+                        alignItems: "center",
+                        borderRadius: "2em",
+                        margin: "0.3em",
+                        padding: "0.5em 1em",
+                        paddingRight: "0.5em",
+                      }}
+                      key={key.ID}
+                    >
+                      <span>{key.TITLE}</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          restoreLanguagesList(key);
+                        }}
+                      >
+                        <Close />
+                      </button>
+                    </div>
+                  ))
+                )
+              ) : (
                 <Text fontWeight="bold" fontSize="0.9em" m={3} color="gray">
                   Agrega un idioma
                 </Text>
-              ) : (
-                Object.values(JSON.parse(values.IDIOMAS)).map((key) => (
-                  <div
-                    style={{
-                      backgroundColor: "#ebebeb",
-                      color: "black",
-                      display: "flex",
-                      alignItems: "center",
-                      borderRadius: "2em",
-                      margin: "0.3em",
-                      padding: "0.5em 1em",
-                      paddingRight: "0.5em",
-                    }}
-                    key={key.ID}
-                  >
-                    <span>{key.TITLE}</span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        restoreLanguagesList(key);
-                      }}
-                    >
-                      <Close />
-                    </button>
-                  </div>
-                ))
               )}
             </Flex>
           </Flex>

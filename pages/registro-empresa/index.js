@@ -53,7 +53,7 @@ export default function RegistroEmpresa() {
         <title>Descubre | Regístrate como empresa</title>
       </Head>
       <div className={style.container}>
-        <div className={style.decorator}></div>
+        <div className={style.decorator} />
         <div className={style.infoContainer}>
           <img
             src="https://descubrempleos.com/webServices/img/logo2.png"
@@ -150,11 +150,12 @@ export default function RegistroEmpresa() {
                 w="70%"
                 zIndex="99"
                 backgroundColor="white"
+                className={style.formContainer}
               >
                 <Text textAlign="start" fontSize="lg" fontWeight="bold">
                   Regístrate como empresa
                 </Text>
-                <Flex marginBottom="1em">
+                <Flex marginBottom="1em" className={style.advice}>
                   <span style={{ whiteSpace: "normal" }}>
                     Si lo que buscas es trabajo{" "}
                     <span

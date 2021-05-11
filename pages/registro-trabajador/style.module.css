@@ -104,3 +104,57 @@
 .fieldError {
   border: 2px solid red !important;
 }
+@media screen and (max-width: 568px) {
+  .decorator {
+    border-radius: 0;
+    width: 100%;
+    right: 0;
+    transform: translateX(0);
+  }
+  .brand {
+    width: 100%;
+    padding: 0.5em;
+  }
+  .brand > img {
+    width: 85%;
+  }
+  .brand > span {
+    font-size: 0.7em;
+    margin-bottom: 0.5em;
+  }
+  .formContainerOutter {
+    width: 100%;
+    padding: 0;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .formContainer {
+    padding: 0.5em !important;
+  }
+  .disclaimer {
+    font-size: 0.7em;
+  }
+  .row1 {
+    flex-direction: column;
+    margin-bottom: 0.5em;
+  }
+  .row1 > input {
+    padding: 0.3em !important;
+    margin-bottom: 0.5em;
+  }
+  .row1 > input:last-child {
+    margin-bottom: 0;
+  }
+  .row2 {
+    margin-bottom: 0.5em;
+  }
+  .row2 > input {
+    padding: 0.3em !important;
+  }
+  .row3 > input {
+    padding: 0.3em !important;
+  }
+  .suggestion {
+    font-size: 0.8em;
+  }
+}

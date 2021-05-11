@@ -114,3 +114,56 @@
   cursor: pointer;
   text-align: center;
 }
+@media screen and (max-width: 568px) {
+  .container {
+    overflow: auto;
+  }
+  .decorator {
+    border-radius: 0;
+    height: 175vh;
+  }
+  .infoContainer {
+    padding: 0.5em;
+    padding-top: 0;
+  }
+  .infoContainer > img {
+    width: 85%;
+  }
+  .infoContainer > span {
+    font-size: 0.7em;
+  }
+  .formContainerOutter {
+    justify-content: flex-start;
+    height: auto;
+    margin-top: 5em;
+  }
+  .formContainer {
+    width: 100% !important;
+    padding: 0.5em;
+    border-radius: 0 !important;
+  }
+  .advice {
+    font-size: 0.7em;
+  }
+  .disclaimer {
+    font-size: 0.6em;
+  }
+  .row1,
+  .row2,
+  .row3 {
+    flex-direction: column;
+  }
+  .row1 > input,
+  .row2 > input,
+  .row2 > div,
+  .row3 > input,
+  .row3 > select,
+  .row3 > div {
+    width: 100%;
+    margin-bottom: 0.5em;
+  }
+  .row1 > input:last-child,
+  .row2 > div:last-child {
+    margin-bottom: 0;
+  }
+}

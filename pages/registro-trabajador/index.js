@@ -44,7 +44,7 @@ const RegistroTrabajador = React.memo(() => {
         <title>Descubre | Regístrate como trabajador</title>
       </Head>
       <div className={style.container}>
-        <div className={style.decorator}></div>
+        <div className={style.decorator} />
         <div className={style.brand}>
           <img
             src="https://descubrempleos.com/webServices/img/logo2.png"
@@ -70,7 +70,6 @@ const RegistroTrabajador = React.memo(() => {
               axios
                 .post(`${apiRoute}/register.php`, values)
                 .then(({ data }) => {
-                  console.log(data);
                   switch (data.code) {
                     case 200:
                       setUserInfo(data.userInfo);
@@ -122,11 +121,12 @@ const RegistroTrabajador = React.memo(() => {
                 w="100%"
                 zIndex="99"
                 backgroundColor="white"
+                className={style.formContainer}
               >
                 <Text textAlign="start" fontSize="lg" fontWeight="bold">
                   Regístrate como trabajador
                 </Text>
-                <Flex marginBottom="1em">
+                <Flex marginBottom="1em" className={style.suggestion}>
                   <span style={{ whiteSpace: "normal" }}>
                     Si lo que buscas es reclutar{" "}
                     <span

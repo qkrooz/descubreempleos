@@ -215,23 +215,29 @@ const Datos = React.memo(() => {
                       textTransform: "capitalize",
                       display: "flex",
                       justifyContent: "space-evenly",
+                      flexWrap: "wrap",
                     }}
                   >
-                    {console.log(secondaryInfo)}
-                    {/* {secondaryInfo.IDIOMAS ? (
-                      JSON.parse(secondaryInfo.IDIOMAS).map((key) => (
-                        <Badge
-                          key={key.ID}
-                          mb={
-                            JSON.parse(secondaryInfo.IDIOMAS).length > 2 ? 2 : 0
-                          }
-                        >
-                          {key.TITLE}
-                        </Badge>
-                      ))
+                    {secondaryInfo.IDIOMAS ? (
+                      JSON.parse(secondaryInfo.IDIOMAS).length === 0 ? (
+                        <Badge>No disponible</Badge>
+                      ) : (
+                        JSON.parse(secondaryInfo.IDIOMAS).map((key) => (
+                          <Badge
+                            key={key.ID}
+                            mb={
+                              JSON.parse(secondaryInfo.IDIOMAS).length > 2
+                                ? 2
+                                : 0
+                            }
+                          >
+                            {key.TITLE}
+                          </Badge>
+                        ))
+                      )
                     ) : (
                       <Badge>No disponible</Badge>
-                    )} */}
+                    )}
                   </Td>
                 </Tr>
               </Tbody>

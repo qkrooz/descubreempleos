@@ -42,15 +42,15 @@ const Header = React.memo(() => {
       <nav className={header.linkContainer}>
         <Link className={header.link} to="/search">
           <Search size={30} style={{ marginRight: "0.5em" }} />
-          Explorar
+          <span>Explorar</span>
         </Link>
         <Link className={header.link} to="/">
           <Home size={30} style={{ marginRight: "0.5em" }} />
-          Inicio
+          <span>Inicio</span>
         </Link>
         <Link className={header.link} to="/data">
           <Person size={30} style={{ marginRight: "0.5em" }} />
-          Mis datos
+          <span>Mis datos</span>
         </Link>
       </nav>
       <div className={header.navButtonsContainer}>
