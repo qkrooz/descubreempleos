@@ -134,6 +134,7 @@ export const CustomModal = React.memo(({ hook, content }) => {
                 values: values,
                 handleChange: handleChange,
                 errors: errors,
+                content: content,
               }}
             >
               <Form>
@@ -330,7 +331,7 @@ const Content1 = () => {
   );
 };
 const Content2 = () => {
-  const { onClose, values, handleChange, errors } = React.useContext(
+  const { onClose, values, handleChange, errors, content } = React.useContext(
     ThisContext
   );
   const { userInfoState, secondaryInfoState } = React.useContext(MainContext);
@@ -349,6 +350,8 @@ const Content2 = () => {
   );
   const [selectedMonth, setSelectedMonth] = React.useState("01");
   const [selectedDay, setSelectedDay] = React.useState("01");
+  const [stateID, setStateID] = React.useState();
+  const [cityID, setCityID] = React.useState();
   const restoreLanguagesList = (value) => {
     const languagesListCopy = [...languagesList];
     languagesListCopy.push(value);
@@ -358,55 +361,63 @@ const Content2 = () => {
     values.IDIOMAS = JSON.stringify(newArray);
   };
   React.useEffect(() => {
-    // setting state
-    values.STATEID = "";
-    values.CITYID = "";
-    userInfo.STATE
-      ? (values.STATEID = States.states.filter(
-          (item) => item.name.toLowerCase() === userInfo.STATE
-        )[0].id)
-      : null;
-    // setting city
-    userInfo.CITY
-      ? setTimeout(() => {
-          values.CITYID = Cities.cities.filter(
-            (item) => item.name.toLowerCase() === userInfo.CITY
-          )[0].id;
-        }, 1000)
-      : null;
-    // setYears
+    // --------------------
+    // BIRTH DATE
+    // --------------------
+    ////Set Year
     userInfo.BIRTH_DATE
       ? setSelectedYear(moment(userInfo.BIRTH_DATE).format("yyyy"))
       : null;
-    // setMonth
+    //// setMonth
     userInfo.BIRTH_DATE
       ? setSelectedMonth(moment(userInfo.BIRTH_DATE).format("MM"))
       : null;
-    // setDat
+    //// setDaY
     userInfo.BIRTH_DATE
       ? setSelectedDay(moment(userInfo.BIRTH_DATE).format("DD"))
       : null;
-    if (secondaryInfo.IDIOMAS) {
-      if (JSON.parse(secondaryInfo.IDIOMAS).length !== 0) {
-        let idiomasCopy = [...JSON.parse(secondaryInfo.IDIOMAS)];
-        values.IDIOMAS = secondaryInfo.IDIOMAS;
-        idiomasCopy.forEach((item) => {
-          const languagesListCopy = [...languagesList];
-          const ID = item.ID;
-          const newArray = languagesListCopy.filter((item2) => item.ID !== ID);
-          setLanguagesList(newArray);
-        });
-      }
-    } else {
-      values.IDIOMAS = JSON.stringify([]);
-    }
     let years = [];
     let limit = moment(new Date()).year() - 80;
     for (let i = moment(new Date()).year(); i > limit; i--) {
       years.push(i);
     }
     setYears(years);
-  }, []);
+    // --------------------
+    // STATE & CITY
+    // --------------------
+    if (userInfo.STATE) {
+      setStateID(
+        States.states.filter(
+          (item) => item.name.toLowerCase() === userInfo.STATE
+        )[0].id
+      );
+    } else {
+      setStateID("0");
+    }
+    if (userInfo.CITY) {
+      setCityID(
+        Cities.cities.filter(
+          (item) => item.name.toLowerCase() === userInfo.CITY
+        )[0].id
+      );
+    } else {
+      setCityID("0");
+    }
+    // --------------------
+    // IDIOMAS
+    // --------------------
+    if (secondaryInfo.IDIOMAS) {
+      if (JSON.parse(secondaryInfo.IDIOMAS).length !== 0) {
+        let temporalListCopy = [...languagesList];
+        JSON.parse(secondaryInfo.IDIOMAS).forEach((item, i) => {
+          temporalListCopy = temporalListCopy.filter(
+            (key) => key.ID !== item.ID
+          );
+        });
+        setLanguagesList(temporalListCopy);
+      }
+    }
+  }, [content]);
   React.useEffect(() => {
     setDays(
       moment(`${selectedYear},${selectedMonth}`, "YYYY-MM").daysInMonth()
@@ -417,24 +428,22 @@ const Content2 = () => {
         ? moment().diff(values.BIRTH_DATE, "years")
         : null;
   }, [selectedYear, selectedMonth, selectedDay]);
-  // React.useEffect(() => {
-  //   if (values.CITYID && values.STATEID) {
-  //     values.STATE = States.states
-  //       .filter((item) => item.id === values.STATEID)[0]
-  //       .name.toLowerCase();
-  //     values.CITY = Cities.cities
-  //       .filter((item) => item.id === values.CITYID)[0]
-  //       .name.toLowerCase();
-  //   }
-  // }, [values.CITYID, values.STATEID]);
-  // React.useEffect(() => {
-  //   if (values.STATEID) {
-  //     const cityid = Cities.cities.filter(
-  //       (item) => item.state_id === values.STATEID
-  //     )[0].id;
-  //     values.CITYID = cityid;
-  //   }
-  // }, [values.STATEID]);
+  React.useEffect(() => {
+    if (stateID) {
+      const state = States.states
+        .filter((item) => item.id === stateID)[0]
+        .name.toLowerCase();
+      values.STATE = state;
+    }
+  }, [stateID]);
+  React.useEffect(() => {
+    if (cityID) {
+      const city = Cities.cities
+        .filter((item) => item.id === cityID)[0]
+        .name.toLowerCase();
+      values.CITY = city;
+    }
+  }, [cityID, content]);
   return (
     <>
       <ModalBody>
@@ -571,9 +580,9 @@ const Content2 = () => {
               <Field
                 as="select"
                 style={{ flexGrow: 1, marginRight: "0.5em", width: 0 }}
-                name="STATEID"
-                value={values.STATEID}
-                onChange={handleChange}
+                value={stateID}
+                onChange={(e) => setStateID(e.target.value)}
+                onBlur={null}
               >
                 {States.states.map((key) => {
                   return (
@@ -584,15 +593,15 @@ const Content2 = () => {
                 })}
               </Field>
               <Field
-                name="CITYID"
                 as="select"
                 style={{ flexGrow: 1, width: 0 }}
-                value={values.CITYID}
-                onChange={handleChange}
-                disabled={!Boolean(values.STATEID)}
+                value={cityID}
+                onChange={(e) => setCityID(e.target.value)}
+                disabled={stateID !== "0" ? false : true}
+                onBlur={null}
               >
                 {Cities.cities
-                  .filter((item) => item.state_id === values.STATEID)
+                  .filter((item) => item.state_id === stateID)
                   .map((key) => (
                     <option key={key.id} value={key.id}>
                       {key.name}
@@ -823,8 +832,6 @@ const ModalContentIndex = [
       GENRE: "",
       TEL_NUMBER: "",
       STATE: "",
-      STATEID: "",
-      CITYID: "",
       CITY: "",
       IDIOMAS: JSON.stringify([]),
     },
