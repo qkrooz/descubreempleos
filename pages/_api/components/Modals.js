@@ -19,7 +19,7 @@ import {
   Text,
   toast,
 } from "@chakra-ui/react";
-import { Close, Person, ViewArrayTwoTone } from "@material-ui/icons";
+import { Close, Person } from "@material-ui/icons";
 import axios from "axios";
 import moment from "moment";
 import style from "../../../styles/modals.module.css";
@@ -88,7 +88,7 @@ export const CustomModal = React.memo(({ hook, content }) => {
     <Modal
       isOpen={modal}
       onClose={onClose}
-      size={ModalContentIndex[content].id === 1 ? "xs" : "xl"}
+      size={ModalContentIndex[content].id in [, 1, 2] ? "xs" : "xl"}
     >
       <ModalOverlay />
       <ModalContent>
@@ -99,7 +99,6 @@ export const CustomModal = React.memo(({ hook, content }) => {
           initialValues={formInitialValues}
           onSubmit={(values) => {
             values.ID = userInfo.ID;
-            console.log(values);
             axios
               .post(ModalContentIndex[content].apiURL, values)
               .then(({ data }) => {
@@ -627,7 +626,6 @@ const Content2 = () => {
                   setLanguagesList((languagesList) =>
                     languagesList.filter((item) => item.ID !== obj.ID)
                   );
-                  console.log(values.IDIOMAS);
                   const finalValueCopy = [...JSON.parse(values.IDIOMAS)];
                   finalValueCopy.push(obj);
                   values.IDIOMAS = JSON.stringify(finalValueCopy);
