@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import {
   Box,
   Switch,
@@ -8,22 +8,21 @@ import {
   Td,
   Badge,
   useToast,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  Button,
+  Flex,
+  Text,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
 } from "@chakra-ui/react";
-import { Add, Close, CloudDownload, Edit, Person } from "@material-ui/icons";
+import { Add, Delete, Edit, MoreVert, Person } from "@material-ui/icons";
 import { MainContext } from "../resources/MainContext";
-import { Formik, Form, Field } from "formik";
-import moment from "moment";
-import * as Yup from "yup";
-import Estados from "../resources/states_mexico.json";
-import Cities from "../resources/cities_mexico.json";
 import axios from "axios";
 import apiRoute from "../resources/apiRoute";
 import { PDFViewer } from "@react-pdf/renderer";
@@ -32,43 +31,22 @@ import Footer from "../components/Footer";
 import CVpdf from "../components/CVpdf";
 import CVModalComponent from "../components/CVmodal";
 // modals
-import { CustomModal } from "../components/Modals";
+import { CustomModal, ConfirmDelete } from "../components/Modals";
 // styles
 import style from "../../../styles/datos.module.css";
+const DatosContext = React.createContext();
 const Datos = React.memo(() => {
   const toast = useToast();
   // states
-  const [modal, setModal] = React.useState(false);
-  const [modalContent, setModalContent] = React.useState(0);
-  // const [modalVisibility, setModalVisibility] = React.useState({
-  //   modal1: false,
-  //   modal2: false,
-  //   modal3: false,
-  //   modal4: false,
-  //   modal5: false,
-  //   modal5Edit: false,
-  //   modal6: false,
-  //   modal6Edit: false,
-  //   modal7: false,
-  //   modal7Edit: false,
-  //   CVmodal: false,
-  // });
-  const [disponibleState, setDisponibleState] = React.useState();
-  const [userImageError, setUserImageError] = React.useState(false);
-  const [
-    editingObjectExperienciaLaboral,
-    setEditingObjectExperienciaLaboral,
-  ] = React.useState({});
-  const [
-    editingObjectGradoEducativo,
-    setEditingObjectGradoEducativo,
-  ] = React.useState({});
-  const [
-    editingObjectCursosCertificaciones,
-    setEditingObjectCursosCertificaciones,
-  ] = React.useState({});
+  const [modal, setModal] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [modalContent, setModalContent] = useState(0);
+  const [workingItem, setWorkingItem] = useState();
+  const [deleteFunction, setDeleteFunction] = useState();
+  const [disponibleState, setDisponibleState] = useState();
+  const [userImageError, setUserImageError] = useState(false);
   // context
-  const { userInfoState, secondaryInfoState } = React.useContext(MainContext);
+  const { userInfoState, secondaryInfoState } = useContext(MainContext);
   const [userInfo] = userInfoState;
   const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
   // functions
@@ -97,8 +75,15 @@ const Datos = React.memo(() => {
       })
       .catch((error) => console.log(error));
   };
+
   return (
-    <>
+    <DatosContext.Provider
+      value={{
+        workingItemState: [workingItem, setWorkingItem],
+        deleteFunctionState: [deleteFunction, setDeleteFunction],
+        confirmDeleteState: [confirmDelete, setConfirmDelete],
+      }}
+    >
       <div className={style.container}>
         <div className={style.left}>
           <Card
@@ -215,26 +200,19 @@ const Datos = React.memo(() => {
                       textTransform: "capitalize",
                       display: "flex",
                       justifyContent: "space-evenly",
-                      flexWrap: "wrap",
                     }}
                   >
                     {secondaryInfo.IDIOMAS ? (
-                      JSON.parse(secondaryInfo.IDIOMAS).length === 0 ? (
-                        <Badge>No disponible</Badge>
-                      ) : (
-                        JSON.parse(secondaryInfo.IDIOMAS).map((key) => (
-                          <Badge
-                            key={key.ID}
-                            mb={
-                              JSON.parse(secondaryInfo.IDIOMAS).length > 2
-                                ? 2
-                                : 0
-                            }
-                          >
-                            {key.TITLE}
-                          </Badge>
-                        ))
-                      )
+                      JSON.parse(secondaryInfo.IDIOMAS).map((key) => (
+                        <Badge
+                          key={key.ID}
+                          mb={
+                            JSON.parse(secondaryInfo.IDIOMAS).length > 2 ? 2 : 0
+                          }
+                        >
+                          {key.TITLE}
+                        </Badge>
+                      ))
                     ) : (
                       <Badge>No disponible</Badge>
                     )}
@@ -299,6 +277,7 @@ const Datos = React.memo(() => {
               setModalContent(4);
               setModal(!modal);
             }}
+            RenderItem={ExperienciLaboralItem}
           />
           <Card2
             title="Grado Educativo"
@@ -322,8 +301,13 @@ const Datos = React.memo(() => {
         hook={{ modalState: [modal, setModal] }}
         content={modalContent}
       />
+      <ConfirmDelete
+        hook={{ dialogState: [confirmDelete, setConfirmDelete] }}
+        workingItem={workingItem}
+        deleteFunction={deleteFunction}
+      />
       <Footer />
-    </>
+    </DatosContext.Provider>
   );
 });
 const Card = React.memo(({ children, props, title, onClick }) => {
@@ -367,7 +351,7 @@ const Card = React.memo(({ children, props, title, onClick }) => {
     </Box>
   );
 });
-const Card2 = React.memo(({ props, title, data, onClick }) => {
+const Card2 = React.memo(({ props, title, data, onClick, RenderItem }) => {
   return (
     <Box
       {...props}
@@ -404,7 +388,19 @@ const Card2 = React.memo(({ props, title, data, onClick }) => {
         }}
       >
         {data ? (
-          JSON.parse(data).map((key) => <div key={key.ID}></div>)
+          JSON.parse(data).length !== 0 ? (
+            JSON.parse(data).map((key) => (
+              <RenderItem key={key.ID} data={key} />
+            ))
+          ) : (
+            <div className={style.noData}>
+              <span>Aún no has agregado ningún campo.</span>
+              <span>
+                Aumenta tus posibilidades de éxito agregando experiencia en este
+                campo.
+              </span>
+            </div>
+          )
         ) : (
           <div className={style.noData}>
             <span>Aún no has agregado ningún campo.</span>
@@ -418,5 +414,103 @@ const Card2 = React.memo(({ props, title, data, onClick }) => {
     </Box>
   );
 });
-
+const ExperienciLaboralItem = React.memo(({ data }) => {
+  const toast = useToast();
+  const {
+    workingItemState,
+    deleteFunctionState,
+    confirmDeleteState,
+  } = useContext(DatosContext);
+  const [, setConfirmDelete] = confirmDeleteState;
+  const [, setWorkingItem] = workingItemState;
+  const [, setDeleteFunction] = deleteFunctionState;
+  const { userInfoState, secondaryInfoState } = useContext(MainContext);
+  const [userInfo] = userInfoState;
+  const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
+  const DeleteFromExperienciaLaboral = (data) => {
+    const experienciaLaboralCopy = [
+      ...JSON.parse(secondaryInfo.EXPERIENCIA_LABORAL),
+    ];
+    const newArray = experienciaLaboralCopy.filter(
+      (item) => item.ID !== data.ID
+    );
+    axios
+      .post(`${apiRoute}/updateExperienciaLaboral.php`, {
+        ID: userInfo.ID,
+        EXPERIENCIA_LABORAL: JSON.stringify(newArray),
+      })
+      .then(({ data }) => {
+        if (data.code === 200) {
+          setSecondaryInfo({
+            ...secondaryInfo,
+            EXPERIENCIA_LABORAL: JSON.stringify(newArray),
+          });
+          toast({
+            title: "Información actualizada",
+            description: "Has actualizado tu experiencia laboral",
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+          });
+        } else {
+          toast({
+            title: "Ocurrió un error",
+            description: "Por favor intente más tarde",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+        }
+      })
+      .catch((error) => {
+        if (error)
+          toast({
+            title: "Ocurrió un error",
+            description: "Por favor intente más tarde",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+      });
+  };
+  return (
+    <Flex direction="column" w="100%" borderBottom="1px solid black">
+      <Flex justify="space-between">
+        <Text fontWeight="bold" mt={4}>
+          {data.PUESTO}
+        </Text>
+        <Menu>
+          <MenuButton as="button">
+            <MoreVert style={{ fontSize: "1em", color: "gray" }} />
+          </MenuButton>
+          <MenuList>
+            <MenuItem icon={<Edit />}>Editar</MenuItem>
+            <MenuItem
+              icon={<Delete />}
+              onClick={() => {
+                setWorkingItem(data);
+                setDeleteFunction(DeleteFromExperienciaLaboral);
+                setConfirmDelete(true);
+              }}
+              color="red"
+            >
+              Eliminar
+            </MenuItem>
+          </MenuList>
+        </Menu>
+      </Flex>
+      <Flex justify="space-between">
+        <Text>{data.EMPRESA}</Text>
+        <Text fontSize="0.9em" color="gray">
+          {data.STILL
+            ? `Desde ${data.FECHA_INICIO}`
+            : `Desde ${data.FECHA_INICIO} hasta ${data.FECHA_FIN}`}
+        </Text>
+      </Flex>
+      <Text fontSize="0.9em" mb={4}>
+        {data.DESCRIPCION}
+      </Text>
+    </Flex>
+  );
+});
 export default Datos;
