@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState, useContext, useEffect } from "react";
+import { useRouter } from "next/router";
 import { MainContext } from "../resources/MainContext";
 import apiRoute from "../resources/apiRoute";
 import { Formik, Form, Field } from "formik";
@@ -25,9 +26,12 @@ import moment from "moment";
 import style from "../../../styles/modals.module.css";
 const ThisContext = React.createContext();
 export const CustomModal = React.memo(({ hook, content }) => {
+  const router = useRouter();
   const toast = useToast();
-  const { userInfoState, secondaryInfoState } = React.useContext(MainContext);
-  const [formInitialValues, setFormInitialValues] = React.useState();
+  const { userInfoState, secondaryInfoState, ResetInfo } = useContext(
+    MainContext
+  );
+  const [formInitialValues, setFormInitialValues] = useState();
   const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
   const [userInfo, setUserInfo] = userInfoState;
   const { modalState } = hook;
@@ -41,6 +45,8 @@ export const CustomModal = React.memo(({ hook, content }) => {
     "TEL_NUMBER",
     "STATE",
     "CITY",
+    "PASSWORD",
+    "EMAIL",
   ];
   const secondaryKeys = ["TITULO", "HABILIDADES", "IDIOMAS"];
   const onClose = () => {
@@ -62,7 +68,7 @@ export const CustomModal = React.memo(({ hook, content }) => {
     setSecondaryInfo(secondaryInfoCopy);
   };
   const FormContentComponent = ModalContentIndex[content].form;
-  React.useEffect(() => {
+  useEffect(() => {
     let formInitialValues;
     formInitialValues = ModalContentIndex[content].formInitialValues;
     Object.entries(formInitialValues).forEach((key) => {
@@ -88,7 +94,7 @@ export const CustomModal = React.memo(({ hook, content }) => {
     <Modal
       isOpen={modal}
       onClose={onClose}
-      size={ModalContentIndex[content].id in [, 1, 2] ? "xs" : "xl"}
+      size={ModalContentIndex[content].modalSize}
     >
       <ModalOverlay />
       <ModalContent>
@@ -99,54 +105,75 @@ export const CustomModal = React.memo(({ hook, content }) => {
           initialValues={formInitialValues}
           onSubmit={(values) => {
             values.ID = userInfo.ID;
-            axios
-              .post(ModalContentIndex[content].apiURL, values)
-              .then(({ data }) => {
-                switch (data.code) {
-                  case 200:
-                    setNewInfo(values);
-                    toast({
-                      title: "Información actualizada",
-                      status: "success",
-                      duration: 3000,
-                      isClosable: true,
-                    });
-                    break;
-                  default:
-                    toast({
-                      title: "No se pudo actualizar la información",
-                      status: "error",
-                      duration: 3000,
-                      isClosable: true,
-                    });
-                    break;
-                }
-                onClose();
-              })
-              .catch((error) => console.log(error));
+            console.log(values);
+            // axios
+            //   .post(ModalContentIndex[content].apiURL, values)
+            //   .then(({ data }) => {
+            //     switch (data.code) {
+            //       case 200:
+            //         setNewInfo(values);
+            //         toast({
+            //           title: "Información actualizada",
+            //           status: "success",
+            //           duration: 3000,
+            //           isClosable: true,
+            //         });
+            //         break;
+            //       default:
+            //         toast({
+            //           title: "No se pudo actualizar la información",
+            //           status: "error",
+            //           duration: 3000,
+            //           isClosable: true,
+            //         });
+            //         break;
+            //     }
+            //     if (data.willSignOut) {
+            //       toast({
+            //         title: "Cerrando sesión...",
+            //         status: "info",
+            //         duration: 3000,
+            //       });
+            //       setTimeout(() => {
+            //         ResetInfo();
+            //         router.push("/entra");
+            //       }, 3500);
+            //     }
+            //     onClose();
+            //   })
+            //   .catch((error) => console.log(error));
           }}
         >
           {({ values, handleChange, errors }) => (
-            <ThisContext.Provider
-              value={{
-                onClose: onClose,
-                values: values,
-                handleChange: handleChange,
-                errors: errors,
-                content: content,
-              }}
-            >
-              <Form>
-                <FormContentComponent
-                  values={values}
-                  handleChange={handleChange}
-                  errors={errors}
-                  onClose={onClose}
-                />
-              </Form>
-            </ThisContext.Provider>
+            <ModalBody>
+              <ThisContext.Provider
+                value={{
+                  values: values,
+                  handleChange: handleChange,
+                  errors: errors,
+                  content: content,
+                }}
+              >
+                <Form id="modalForm">
+                  <FormContentComponent
+                    values={values}
+                    handleChange={handleChange}
+                    errors={errors}
+                    onClose={onClose}
+                  />
+                </Form>
+              </ThisContext.Provider>
+            </ModalBody>
           )}
         </Formik>
+        <ModalFooter>
+          <Button mr={2} type="submit" form="modalForm">
+            Actualizar
+          </Button>
+          <Button variant="ghost" onClick={onClose}>
+            Cancelar
+          </Button>
+        </ModalFooter>
       </ModalContent>
     </Modal>
   );
@@ -154,12 +181,10 @@ export const CustomModal = React.memo(({ hook, content }) => {
 const Content1 = () => {
   const toast = useToast();
   const imgInputRef = React.useRef();
-  const { userInfoState } = React.useContext(MainContext);
+  const { userInfoState } = useContext(MainContext);
   const [userInfo, setUserInfo] = userInfoState;
-  const { onClose, values, handleChange, errors } = React.useContext(
-    ThisContext
-  );
-  const [imgError, setImgError] = React.useState(false);
+  const { values, handleChange, errors } = useContext(ThisContext);
+  const [imgError, setImgError] = useState(false);
   const uploadImage = (e) => {
     const image = e.target.files[0];
     const formData = new FormData();
@@ -197,160 +222,144 @@ const Content1 = () => {
       .catch((error) => console.log(error));
   };
   return (
-    <>
-      <ModalBody>
-        <Flex>
-          <Flex mr={4} grow={1} direction="column" align="center">
-            {imgError ? (
-              <Flex
-                background="#f2f2f2"
-                width="8em"
-                height="8em"
-                borderRadius="50%"
-                justify="center"
-                align="center"
-                cursor="pointer"
-                onClick={() => {
-                  imgInputRef.current.click();
-                }}
-              >
-                <input
-                  type="file"
-                  hidden
-                  ref={imgInputRef}
-                  onClick={(e) => (e.target.value = null)}
-                  onChange={(e) => uploadImage(e)}
-                />
-                <Person style={{ fontSize: "3.5em" }} />
-              </Flex>
-            ) : (
-              <Flex
-                background="#f2f2f2"
-                width="8em"
-                height="8em"
-                borderRadius="50%"
-                justify="center"
-                align="center"
-                cursor="pointer"
-                cursor="pointer"
-                onClick={() => {
-                  imgInputRef.current.click();
-                }}
-              >
-                <input
-                  type="file"
-                  hidden
-                  ref={imgInputRef}
-                  onClick={(e) => (e.target.value = null)}
-                  onChange={(e) => uploadImage(e)}
-                />
-                <img
-                  src={userInfo.IMAGE_URL + `?v=${Date.now()}`}
-                  alt="userimage"
-                  onError={() => setImgError(true)}
-                  style={{
-                    borderRadius: "50%",
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    objectPosition: "center",
-                  }}
-                />
-              </Flex>
-            )}
-            <Flex
-              mt="auto"
-              direction="column"
-              background="#ebebeb"
-              textAlign="center"
-              borderRadius="1em"
-              p={3}
-            >
-              <Text fontWeight="bold">Fotografia</Text>
-              <Text>
-                Puedes escoger la fotografía que prefieras pero por motivos
-                profesionales sugerimos una fotografía formal y seria
-              </Text>
-            </Flex>
+    <Flex>
+      <Flex mr={4} grow={1} direction="column" align="center">
+        {imgError ? (
+          <Flex
+            background="#f2f2f2"
+            width="8em"
+            height="8em"
+            borderRadius="50%"
+            justify="center"
+            align="center"
+            cursor="pointer"
+            onClick={() => {
+              imgInputRef.current.click();
+            }}
+          >
+            <input
+              type="file"
+              hidden
+              ref={imgInputRef}
+              onClick={(e) => (e.target.value = null)}
+              onChange={(e) => uploadImage(e)}
+            />
+            <Person style={{ fontSize: "3.5em" }} />
           </Flex>
-          <Flex direction="column">
-            <Field
-              onChange={handleChange}
-              value={values.NAMES}
-              name="NAMES"
-              className={errors.NAMES ? style.errorField : null}
-              style={{ marginBottom: "1em", textTransform: "capitalize" }}
-              placeholder="Nombre"
+        ) : (
+          <Flex
+            background="#f2f2f2"
+            width="8em"
+            height="8em"
+            borderRadius="50%"
+            justify="center"
+            align="center"
+            cursor="pointer"
+            cursor="pointer"
+            onClick={() => {
+              imgInputRef.current.click();
+            }}
+          >
+            <input
+              type="file"
+              hidden
+              ref={imgInputRef}
+              onClick={(e) => (e.target.value = null)}
+              onChange={(e) => uploadImage(e)}
             />
-            <Field
-              onChange={handleChange}
-              value={values.LAST_NAME}
-              name="LAST_NAME"
-              className={errors.LAST_NAME ? style.errorField : null}
-              style={{ marginBottom: "1em", textTransform: "capitalize" }}
-              placeholder="Apellido paterno"
+            <img
+              src={userInfo.IMAGE_URL + `?v=${Date.now()}`}
+              alt="userimage"
+              onError={() => setImgError(true)}
+              style={{
+                borderRadius: "50%",
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                objectPosition: "center",
+              }}
             />
-            <Field
-              onChange={handleChange}
-              value={values.MOTHERS_LAST_NAME}
-              name="MOTHERS_LAST_NAME"
-              className={errors.MOTHERS_LAST_NAME ? style.errorField : null}
-              style={{ marginBottom: "1em", textTransform: "capitalize" }}
-              placeholder="Apellido paterno"
-            />
-            <Field
-              onChange={handleChange}
-              value={values.TITULO}
-              name="TITULO"
-              placeholder="Título"
-              style={{ marginBottom: "1em", textTransform: "capitalize" }}
-            />
-            <div>
-              <Text color="Highlight" decoration="underline">
-                Generar CV
-              </Text>
-              <Text size="0.8em">
-                Crea un curriculum con nosotros usando tus datos en esta seccion
-                para generarlo de forma automática y asi puedas enviarlo en tus
-                postulaciones de empleo
-              </Text>
-            </div>
           </Flex>
+        )}
+        <Flex
+          mt="auto"
+          direction="column"
+          background="#ebebeb"
+          textAlign="center"
+          borderRadius="1em"
+          p={3}
+        >
+          <Text fontWeight="bold">Fotografia</Text>
+          <Text>
+            Puedes escoger la fotografía que prefieras pero por motivos
+            profesionales sugerimos una fotografía formal y seria
+          </Text>
         </Flex>
-      </ModalBody>
-      <ModalFooter>
-        <Button mr={2} type="submit">
-          Actualizar
-        </Button>
-        <Button variant="ghost" onClick={onClose}>
-          Cancelar
-        </Button>
-      </ModalFooter>
-    </>
+      </Flex>
+      <Flex direction="column">
+        <Field
+          onChange={handleChange}
+          value={values.NAMES}
+          name="NAMES"
+          className={errors.NAMES ? style.errorField : null}
+          style={{ marginBottom: "1em", textTransform: "capitalize" }}
+          placeholder="Nombre"
+        />
+        <Field
+          onChange={handleChange}
+          value={values.LAST_NAME}
+          name="LAST_NAME"
+          className={errors.LAST_NAME ? style.errorField : null}
+          style={{ marginBottom: "1em", textTransform: "capitalize" }}
+          placeholder="Apellido paterno"
+        />
+        <Field
+          onChange={handleChange}
+          value={values.MOTHERS_LAST_NAME}
+          name="MOTHERS_LAST_NAME"
+          className={errors.MOTHERS_LAST_NAME ? style.errorField : null}
+          style={{ marginBottom: "1em", textTransform: "capitalize" }}
+          placeholder="Apellido paterno"
+        />
+        <Field
+          onChange={handleChange}
+          value={values.TITULO}
+          name="TITULO"
+          placeholder="Título"
+          style={{ marginBottom: "1em", textTransform: "capitalize" }}
+        />
+        <div>
+          <Text color="Highlight" decoration="underline">
+            Generar CV
+          </Text>
+          <Text size="0.8em">
+            Crea un curriculum con nosotros usando tus datos en esta seccion
+            para generarlo de forma automática y asi puedas enviarlo en tus
+            postulaciones de empleo
+          </Text>
+        </div>
+      </Flex>
+    </Flex>
   );
 };
 const Content2 = () => {
-  const { onClose, values, handleChange, errors, content } = React.useContext(
-    ThisContext
-  );
-  const { userInfoState, secondaryInfoState } = React.useContext(MainContext);
+  const { values, handleChange, errors, content } = useContext(ThisContext);
+  const { userInfoState, secondaryInfoState } = useContext(MainContext);
   const [userInfo] = userInfoState;
   const [secondaryInfo] = secondaryInfoState;
-  const [years, setYears] = React.useState([]);
-  const [days, setDays] = React.useState();
-  const [languagesList, setLanguagesList] = React.useState([
+  const [years, setYears] = useState([]);
+  const [days, setDays] = useState();
+  const [languagesList, setLanguagesList] = useState([
     { ID: 1, TITLE: "Español", VALUE: "es" },
     { ID: 2, TITLE: "Inglés", VALUE: "en" },
     { ID: 3, TITLE: "Francés", VALUE: "fr" },
     { ID: 4, TITLE: "Chino", VALUE: "zh" },
   ]);
-  const [selectedYear, setSelectedYear] = React.useState(
-    moment(new Date()).year()
-  );
-  const [selectedMonth, setSelectedMonth] = React.useState("01");
-  const [selectedDay, setSelectedDay] = React.useState("01");
-  const [stateID, setStateID] = React.useState();
-  const [cityID, setCityID] = React.useState();
+  const [selectedYear, setSelectedYear] = useState(moment(new Date()).year());
+  const [selectedMonth, setSelectedMonth] = useState("01");
+  const [selectedDay, setSelectedDay] = useState("01");
+  const [stateID, setStateID] = useState();
+  const [cityID, setCityID] = useState();
   const restoreLanguagesList = (value) => {
     const languagesListCopy = [...languagesList];
     languagesListCopy.push(value);
@@ -359,7 +368,7 @@ const Content2 = () => {
     const newArray = finalLanguagesCopy.filter((item) => item.ID !== value.ID);
     values.IDIOMAS = JSON.stringify(newArray);
   };
-  React.useEffect(() => {
+  useEffect(() => {
     // --------------------
     // BIRTH DATE
     // --------------------
@@ -408,7 +417,7 @@ const Content2 = () => {
     if (secondaryInfo.IDIOMAS) {
       if (JSON.parse(secondaryInfo.IDIOMAS).length !== 0) {
         let temporalListCopy = [...languagesList];
-        JSON.parse(secondaryInfo.IDIOMAS).forEach((item, i) => {
+        JSON.parse(secondaryInfo.IDIOMAS).forEach((item) => {
           temporalListCopy = temporalListCopy.filter(
             (key) => key.ID !== item.ID
           );
@@ -417,7 +426,7 @@ const Content2 = () => {
       }
     }
   }, [content]);
-  React.useEffect(() => {
+  useEffect(() => {
     setDays(
       moment(`${selectedYear},${selectedMonth}`, "YYYY-MM").daysInMonth()
     );
@@ -427,7 +436,7 @@ const Content2 = () => {
         ? moment().diff(values.BIRTH_DATE, "years")
         : null;
   }, [selectedYear, selectedMonth, selectedDay]);
-  React.useEffect(() => {
+  useEffect(() => {
     if (stateID) {
       const state = States.states
         .filter((item) => item.id === stateID)[0]
@@ -435,7 +444,7 @@ const Content2 = () => {
       values.STATE = state;
     }
   }, [stateID]);
-  React.useEffect(() => {
+  useEffect(() => {
     if (cityID) {
       const city = Cities.cities
         .filter((item) => item.id === cityID)[0]
@@ -444,57 +453,492 @@ const Content2 = () => {
     }
   }, [cityID, content]);
   return (
-    <>
-      <ModalBody>
-        <Flex direction="column">
-          <Flex direction="column" mb={3}>
-            <Flex justify="space-between" w="100%">
-              <Field
-                as="select"
-                onChange={(e) => {
-                  setSelectedDay(e.target.value);
-                }}
-                value={selectedDay}
-                name="AGE"
-                className={errors.AGE ? style.errorField : null}
-                style={{
-                  textTransform: "capitalize",
-                  flexGrow: 1,
-                  marginRight: "0.5em",
+    <Flex direction="column">
+      <Flex direction="column" mb={3}>
+        <Flex justify="space-between" w="100%">
+          <Field
+            as="select"
+            onChange={(e) => {
+              setSelectedDay(e.target.value);
+            }}
+            value={selectedDay}
+            name="AGE"
+            className={errors.AGE ? style.errorField : null}
+            style={{
+              textTransform: "capitalize",
+              flexGrow: 1,
+              marginRight: "0.5em",
+            }}
+          >
+            {Array(days)
+              .fill(0)
+              .map((_, i) => (
+                <option
+                  key={(i + 1).toLocaleString("en-US", {
+                    minimumIntegerDigits: 2,
+                    useGrouping: false,
+                  })}
+                  value={(i + 1).toLocaleString("en-US", {
+                    minimumIntegerDigits: 2,
+                    useGrouping: false,
+                  })}
+                >
+                  {(i + 1).toLocaleString("en-US", {
+                    minimumIntegerDigits: 2,
+                    useGrouping: false,
+                  })}
+                </option>
+              ))}
+          </Field>
+          <Field
+            as="select"
+            onChange={(e) => setSelectedMonth(e.target.value)}
+            value={selectedMonth}
+            name="AGE"
+            className={errors.AGE ? style.errorField : null}
+            style={{
+              textTransform: "capitalize",
+              flexGrow: 1,
+              marginRight: "0.5em",
+            }}
+          >
+            <option value="01">Enero</option>
+            <option value="02">Febrero</option>
+            <option value="03">Marzo</option>
+            <option value="04">Abril</option>
+            <option value="05">Mayo</option>
+            <option value="06">Junio</option>
+            <option value="07">Julio</option>
+            <option value="08">Agosto</option>
+            <option value="09">Septiembre</option>
+            <option value="10">Octubre</option>
+            <option value="11">Noviembre</option>
+            <option value="12">Diciembre</option>
+          </Field>
+          <Field
+            onChange={(e) => setSelectedYear(e.target.value)}
+            value={selectedYear}
+            as="select"
+            name="AGE"
+            className={errors.AGE ? style.errorField : null}
+            style={{ textTransform: "capitalize", flexGrow: 1 }}
+          >
+            {years.map((key) => (
+              <option key={key} value={key}>
+                {key}
+              </option>
+            ))}
+          </Field>
+        </Flex>
+        <Text
+          fontWeight="bold"
+          fontSize="0.7em"
+          color="gray"
+          textTransform="uppercase"
+        >
+          FECHA DE NACIMIENTO
+        </Text>
+      </Flex>
+      <Flex direction="column" mb={3}>
+        <Field
+          as="select"
+          onChange={handleChange}
+          value={values.GENRE}
+          name="GENRE"
+          className={errors.GENRE ? style.errorField : null}
+          style={{ textTransform: "capitalize" }}
+        >
+          <option value="" disabled>
+            Selecionar
+          </option>
+          <option value="fenemino">Femenino</option>
+          <option value="masculino">Masculino</option>
+          <option value="none">No especificar</option>
+        </Field>
+        <Text
+          fontWeight="bold"
+          fontSize="0.7em"
+          color="gray"
+          textTransform="uppercase"
+        >
+          GÉNERO
+        </Text>
+      </Flex>
+      <Flex direction="column" mb={3}>
+        <Field
+          onChange={handleChange}
+          value={values.TEL_NUMBER}
+          name="TEL_NUMBER"
+          className={errors.TEL_NUMBER ? style.errorField : null}
+          style={{ textTransform: "capitalize" }}
+        />
+        <Text
+          fontWeight="bold"
+          fontSize="0.7em"
+          color="gray"
+          textTransform="uppercase"
+        >
+          Número telefónico
+        </Text>
+      </Flex>
+      <Flex direction="column" mb={3}>
+        <Flex w="100%">
+          <Field
+            as="select"
+            style={{ flexGrow: 1, marginRight: "0.5em", width: 0 }}
+            value={stateID}
+            onChange={(e) => setStateID(e.target.value)}
+            onBlur={null}
+          >
+            {States.states.map((key) => {
+              return (
+                <option key={key.id} value={key.id}>
+                  {key.name}
+                </option>
+              );
+            })}
+          </Field>
+          <Field
+            as="select"
+            style={{ flexGrow: 1, width: 0 }}
+            value={cityID}
+            onChange={(e) => setCityID(e.target.value)}
+            disabled={stateID !== "0" ? false : true}
+            onBlur={null}
+          >
+            {Cities.cities
+              .filter((item) => item.state_id === stateID)
+              .map((key) => (
+                <option key={key.id} value={key.id}>
+                  {key.name}
+                </option>
+              ))}
+          </Field>
+        </Flex>
+        <Text
+          fontWeight="bold"
+          fontSize="0.7em"
+          color="gray"
+          textTransform="uppercase"
+        >
+          Ubicación
+        </Text>
+      </Flex>
+      <Flex direction="column" mb={3}>
+        {languagesList.length === 0 ? null : (
+          <Field
+            as="select"
+            onChange={(e) => {
+              const obj = JSON.parse(e.target.value);
+              setLanguagesList((languagesList) =>
+                languagesList.filter((item) => item.ID !== obj.ID)
+              );
+              const finalValueCopy = [...JSON.parse(values.IDIOMAS)];
+              finalValueCopy.push(obj);
+              values.IDIOMAS = JSON.stringify(finalValueCopy);
+            }}
+            style={{ textTransform: "capitalize" }}
+            name="IDIOMAS"
+            value="[]"
+          >
+            <option value="[]" disabled>
+              Selecciona idiomas
+            </option>
+            {languagesList.map((key) => (
+              <option value={JSON.stringify(key)} key={key.ID}>
+                {key.TITLE}
+              </option>
+            ))}
+          </Field>
+        )}
+        <Text
+          fontWeight="bold"
+          fontSize="0.7em"
+          color="gray"
+          textTransform="uppercase"
+        >
+          Idiomas
+        </Text>
+        <Flex
+          border="1px solid gray"
+          borderRadius="10px"
+          wrap="wrap"
+          justify="center"
+        >
+          {values.IDIOMAS ? (
+            JSON.parse(values.IDIOMAS).length === 0 ? (
+              <Text fontWeight="bold" fontSize="0.9em" m={3} color="gray">
+                Agrega un idioma
+              </Text>
+            ) : (
+              Object.values(JSON.parse(values.IDIOMAS)).map((key) => (
+                <div
+                  style={{
+                    backgroundColor: "#ebebeb",
+                    color: "black",
+                    display: "flex",
+                    alignItems: "center",
+                    borderRadius: "2em",
+                    margin: "0.3em",
+                    padding: "0.5em 1em",
+                    paddingRight: "0.5em",
+                  }}
+                  key={key.ID}
+                >
+                  <span>{key.TITLE}</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      restoreLanguagesList(key);
+                    }}
+                  >
+                    <Close />
+                  </button>
+                </div>
+              ))
+            )
+          ) : (
+            <Text fontWeight="bold" fontSize="0.9em" m={3} color="gray">
+              Agrega un idioma
+            </Text>
+          )}
+        </Flex>
+      </Flex>
+    </Flex>
+  );
+};
+const Content3 = () => {
+  const { values, content } = useContext(ThisContext);
+  const { secondaryInfoState } = useContext(MainContext);
+  const [secondaryInfo] = secondaryInfoState;
+  const [habilidadesList, setHabilidadesList] = useState([
+    { ID: 1, TITLE: "Pensamiento Crítico", VALUES: "pensamiento critico" },
+    { ID: 2, TITLE: "Trabajo en equipo", VALUES: "trabajo en equipo" },
+    { ID: 3, TITLE: "Comunicacion", VALUES: "comunicacion" },
+  ]);
+  const restoreHabilidades = (key) => {
+    const newHabilitiesList = [...habilidadesList, key];
+    const temporalValues = [...JSON.parse(values.HABILIDADES)];
+    setHabilidadesList(newHabilitiesList);
+    const newArray = temporalValues.filter((item) => item.ID !== key.ID);
+    values.HABILIDADES = JSON.stringify(newArray);
+  };
+  const purgeHabilidades = (e) => {
+    const item = JSON.parse(e.target.value);
+    const habilidadesListCopy = [...habilidadesList];
+    const formValuesCopy = [...JSON.parse(values.HABILIDADES)];
+    const newArray = habilidadesListCopy.filter(
+      (item2) => item2.ID !== item.ID
+    );
+    formValuesCopy.push(item);
+    values.HABILIDADES = JSON.stringify(formValuesCopy);
+    setHabilidadesList(newArray);
+  };
+  useEffect(() => {
+    if (secondaryInfo.HABILIDADES) {
+      if (JSON.parse(secondaryInfo.HABILIDADES).length !== 0) {
+        let temporalHabilidadesListCopy = [...habilidadesList];
+        JSON.parse(secondaryInfo.HABILIDADES).forEach((item) => {
+          temporalHabilidadesListCopy = temporalHabilidadesListCopy.filter(
+            (key) => key.ID !== item.ID
+          );
+        });
+        setHabilidadesList(temporalHabilidadesListCopy);
+      }
+    }
+  }, [content]);
+  return (
+    <Flex direction="column">
+      <Flex>
+        {habilidadesList.length !== 0 ? (
+          <Field
+            as="select"
+            name="HABILIDADES"
+            onChange={(e) => {
+              purgeHabilidades(e);
+            }}
+          >
+            <option value="">Selecciona habilidades</option>
+            {Object.values(habilidadesList).map((key) => (
+              <option value={JSON.stringify(key)} key={key.ID}>
+                {key.TITLE}
+              </option>
+            ))}
+          </Field>
+        ) : null}
+      </Flex>
+      <Flex
+        mt={3}
+        borderColor="gray"
+        borderWidth="1px"
+        borderRadius="10px"
+        wrap="wrap"
+        justify="space-evenly"
+      >
+        {JSON.parse(values.HABILIDADES).length !== 0 ? (
+          Object.values(JSON.parse(values.HABILIDADES)).map((key) => (
+            <div
+              key={key.ID}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                padding: "0.5em",
+                backgroundColor: "#ebebeb",
+                borderRadius: "2em",
+                margin: "0.5em",
+              }}
+            >
+              <span>{key.TITLE}</span>
+              <button
+                type="button"
+                onClick={() => {
+                  restoreHabilidades(key);
                 }}
               >
-                {Array(days)
-                  .fill(0)
-                  .map((_, i) => (
-                    <option
-                      key={(i + 1).toLocaleString("en-US", {
-                        minimumIntegerDigits: 2,
-                        useGrouping: false,
-                      })}
-                      value={(i + 1).toLocaleString("en-US", {
-                        minimumIntegerDigits: 2,
-                        useGrouping: false,
-                      })}
-                    >
-                      {(i + 1).toLocaleString("en-US", {
-                        minimumIntegerDigits: 2,
-                        useGrouping: false,
-                      })}
-                    </option>
-                  ))}
-              </Field>
+                <Close />
+              </button>
+            </div>
+          ))
+        ) : (
+          <Text color="gray" m={4}>
+            Elije al menos una habilidadad
+          </Text>
+        )}
+      </Flex>
+    </Flex>
+  );
+};
+const Content4 = () => {
+  const { values, handleChange, errors } = useContext(ThisContext);
+  return (
+    <Flex direction="column">
+      <Flex mb={3} justify="space-between" align="center">
+        <div children="Correo electrónico:" style={{ marginRight: "1em" }} />
+        <Field value={values.EMAIL} readOnly style={{ width: "50%" }} />
+      </Flex>
+      {errors.OLDPASSWORD ? (
+        <Flex justify="flex-end">
+          <Text color="red" fontWeight="bold" fontSize="0.6em">
+            La contraseña es incorrecta*
+          </Text>
+        </Flex>
+      ) : null}
+      <Flex mb={3} justify="space-between" align="center">
+        <div children="Contraseña anterior:" style={{ marginRight: "1em" }} />
+        <Field
+          name="OLDPASSWORD"
+          onChange={handleChange}
+          value={values.OLDPASSWROD}
+          style={{ width: "50%" }}
+        />
+      </Flex>
+      {errors.PASSWORD1 ? (
+        <Flex justify="flex-end">
+          <Text color="red" fontWeight="bold" fontSize="0.6em">
+            Este campo es requerido*
+          </Text>
+        </Flex>
+      ) : null}
+      <Flex mb={3} justify="space-between" align="center">
+        <div children="Nueva contraseña:" style={{ marginRight: "1em" }} />
+        <Field
+          name="PASSWORD1"
+          onChange={handleChange}
+          value={values.PASSWORD1}
+          style={{ width: "50%" }}
+        />
+      </Flex>
+      {errors.PASSWORD2 ? (
+        <Flex justify="flex-end">
+          <Text color="red" fontWeight="bold" fontSize="0.6em">
+            Las contraseñas no son iguales*
+          </Text>
+        </Flex>
+      ) : null}
+      <Flex mb={3} justify="space-between" align="center">
+        <div children="Confirmar contraseña:" style={{ marginRight: "1em" }} />
+        <Field
+          name="PASSWORD2"
+          onChange={handleChange}
+          value={values.PASSWORD2}
+          style={{ width: "50%" }}
+        />
+      </Flex>
+    </Flex>
+  );
+};
+const Content5 = () => {
+  const { values, handleChange, errors } = useContext(ThisContext);
+  const [years, setYears] = useState([]);
+  const [from, setFrom] = useState({
+    month: "01",
+    year: moment(new Date()).format("YYYY"),
+  });
+  const [to, setTo] = useState({
+    month: "01",
+    year: moment(new Date()).format("YYYY"),
+  });
+  useEffect(() => {
+    let years = [];
+    let limit = moment(new Date()).year() - 80;
+    for (let i = moment(new Date()).year(); i > limit; i--) {
+      years.push(i);
+    }
+    setYears(years);
+  }, []);
+  useEffect(() => {
+    values.FECHA_INICIO = `${from.month}/${from.year}`;
+  }, [from]);
+  useEffect(() => {
+    values.FECHA_FIN = `${to.month}/${to.year}`;
+  }, [to]);
+  useEffect(() => {
+    if (values.STILL) {
+      delete values.FECHA_FIN;
+    } else {
+      values.FECHA_FIN = `${to.month}/${to.year}`;
+    }
+  }, [values.STILL]);
+  return (
+    <Flex direction="column">
+      <Flex mb="0.5em">
+        <Flex direction="column" w="60%" justify="space-evenly">
+          <Field
+            value={values.PUESTO}
+            name="PUESTO"
+            onChange={handleChange}
+            placeholder="Puesto desarrollado"
+          />
+          {errors.PUESTO ? (
+            <Text color="red" fontSize="0.7em">
+              Campo requerido*
+            </Text>
+          ) : null}
+          <Field
+            value={values.EMPRESA}
+            name="EMPRESA"
+            onChange={handleChange}
+            placeholder="Empresa"
+            style={{ marginTop: "0.5em" }}
+          />
+          {errors.EMPRESA ? (
+            <Text color="red" fontSize="0.7em">
+              Campo requerido*
+            </Text>
+          ) : null}
+        </Flex>
+        <Flex direction="column" grow={1}>
+          <Flex align="center" justify="center" direction="column">
+            <Flex align="center" mb={3}>
+              <Text children="De" mr={3} flexGrow={1} />
               <Field
+                value={from.month}
                 as="select"
-                onChange={(e) => setSelectedMonth(e.target.value)}
-                value={selectedMonth}
-                name="AGE"
-                className={errors.AGE ? style.errorField : null}
-                style={{
-                  textTransform: "capitalize",
-                  flexGrow: 1,
-                  marginRight: "0.5em",
-                }}
+                style={{ marginRight: "0.5em", width: "5em" }}
+                onChange={(e) => setFrom({ ...from, month: e.target.value })}
+                onBlur={null}
               >
+                <option value="">Mes</option>
                 <option value="01">Enero</option>
                 <option value="02">Febrero</option>
                 <option value="03">Marzo</option>
@@ -509,13 +953,12 @@ const Content2 = () => {
                 <option value="12">Diciembre</option>
               </Field>
               <Field
-                onChange={(e) => setSelectedYear(e.target.value)}
-                value={selectedYear}
+                onBlur={null}
                 as="select"
-                name="AGE"
-                className={errors.AGE ? style.errorField : null}
-                style={{ textTransform: "capitalize", flexGrow: 1 }}
+                value={from.year}
+                onChange={(e) => setFrom({ ...from, year: e.target.value })}
               >
+                <option value="">Año</option>
                 {years.map((key) => (
                   <option key={key} value={key}>
                     {key}
@@ -523,287 +966,94 @@ const Content2 = () => {
                 ))}
               </Field>
             </Flex>
-            <Text
-              fontWeight="bold"
-              fontSize="0.7em"
-              color="gray"
-              textTransform="uppercase"
-            >
-              FECHA DE NACIMIENTO
-            </Text>
-          </Flex>
-          <Flex direction="column" mb={3}>
-            <Field
-              as="select"
-              onChange={handleChange}
-              value={values.GENRE}
-              name="GENRE"
-              className={errors.GENRE ? style.errorField : null}
-              style={{ textTransform: "capitalize" }}
-            >
-              <option value="" disabled>
-                Selecionar
-              </option>
-              <option value="fenemino">Femenino</option>
-              <option value="masculino">Masculino</option>
-              <option value="none">No especificar</option>
-            </Field>
-            <Text
-              fontWeight="bold"
-              fontSize="0.7em"
-              color="gray"
-              textTransform="uppercase"
-            >
-              GÉNERO
-            </Text>
-          </Flex>
-          <Flex direction="column" mb={3}>
-            <Field
-              onChange={handleChange}
-              value={values.TEL_NUMBER}
-              name="TEL_NUMBER"
-              className={errors.TEL_NUMBER ? style.errorField : null}
-              style={{ textTransform: "capitalize" }}
-            />
-            <Text
-              fontWeight="bold"
-              fontSize="0.7em"
-              color="gray"
-              textTransform="uppercase"
-            >
-              Número telefónico
-            </Text>
-          </Flex>
-          <Flex direction="column" mb={3}>
-            <Flex w="100%">
-              <Field
-                as="select"
-                style={{ flexGrow: 1, marginRight: "0.5em", width: 0 }}
-                value={stateID}
-                onChange={(e) => setStateID(e.target.value)}
-                onBlur={null}
-              >
-                {States.states.map((key) => {
-                  return (
-                    <option key={key.id} value={key.id}>
-                      {key.name}
-                    </option>
-                  );
-                })}
-              </Field>
-              <Field
-                as="select"
-                style={{ flexGrow: 1, width: 0 }}
-                value={cityID}
-                onChange={(e) => setCityID(e.target.value)}
-                disabled={stateID !== "0" ? false : true}
-                onBlur={null}
-              >
-                {Cities.cities
-                  .filter((item) => item.state_id === stateID)
-                  .map((key) => (
-                    <option key={key.id} value={key.id}>
-                      {key.name}
+            {!values.STILL ? (
+              <Flex align="center" mb={3}>
+                <Text children="A" mr={3} flexGrow={1} w="1em" />
+                <Field
+                  onBlur={null}
+                  value={to.month}
+                  as="select"
+                  style={{ marginRight: "0.5em", width: "5em" }}
+                  onChange={(e) => setTo({ ...to, month: e.target.value })}
+                >
+                  <option value="">Mes</option>
+                  <option value="01">Enero</option>
+                  <option value="02">Febrero</option>
+                  <option value="03">Marzo</option>
+                  <option value="04">Abril</option>
+                  <option value="05">Mayo</option>
+                  <option value="06">Junio</option>
+                  <option value="07">Julio</option>
+                  <option value="08">Agosto</option>
+                  <option value="09">Septiembre</option>
+                  <option value="10">Octubre</option>
+                  <option value="11">Noviembre</option>
+                  <option value="12">Diciembre</option>
+                </Field>
+                <Field
+                  onBlur={null}
+                  as="select"
+                  value={to.year}
+                  onChange={(e) => setTo({ ...to, year: e.target.value })}
+                >
+                  <option value="">Año</option>
+                  {years.map((key) => (
+                    <option key={key} value={key}>
+                      {key}
                     </option>
                   ))}
-              </Field>
-            </Flex>
-            <Text
-              fontWeight="bold"
-              fontSize="0.7em"
-              color="gray"
-              textTransform="uppercase"
-            >
-              Ubicación
-            </Text>
+                </Field>
+              </Flex>
+            ) : null}
           </Flex>
-          <Flex direction="column" mb={3}>
-            {languagesList.length === 0 ? null : (
-              <Field
-                as="select"
-                onChange={(e) => {
-                  const obj = JSON.parse(e.target.value);
-                  setLanguagesList((languagesList) =>
-                    languagesList.filter((item) => item.ID !== obj.ID)
-                  );
-                  const finalValueCopy = [...JSON.parse(values.IDIOMAS)];
-                  finalValueCopy.push(obj);
-                  values.IDIOMAS = JSON.stringify(finalValueCopy);
-                }}
-                style={{ textTransform: "capitalize" }}
-                name="IDIOMAS"
-                value="[]"
-              >
-                <option value="[]" disabled>
-                  Selecciona idiomas
-                </option>
-                {languagesList.map((key) => (
-                  <option value={JSON.stringify(key)} key={key.ID}>
-                    {key.TITLE}
-                  </option>
-                ))}
-              </Field>
-            )}
-            <Text
-              fontWeight="bold"
-              fontSize="0.7em"
-              color="gray"
-              textTransform="uppercase"
-            >
-              Idiomas
-            </Text>
-            <Flex
-              border="1px solid gray"
-              borderRadius="10px"
-              wrap="wrap"
-              justify="center"
-            >
-              {values.IDIOMAS ? (
-                JSON.parse(values.IDIOMAS).length === 0 ? (
-                  <Text fontWeight="bold" fontSize="0.9em" m={3} color="gray">
-                    Agrega un idioma
-                  </Text>
-                ) : (
-                  Object.values(JSON.parse(values.IDIOMAS)).map((key) => (
-                    <div
-                      style={{
-                        backgroundColor: "#ebebeb",
-                        color: "black",
-                        display: "flex",
-                        alignItems: "center",
-                        borderRadius: "2em",
-                        margin: "0.3em",
-                        padding: "0.5em 1em",
-                        paddingRight: "0.5em",
-                      }}
-                      key={key.ID}
-                    >
-                      <span>{key.TITLE}</span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          restoreLanguagesList(key);
-                        }}
-                      >
-                        <Close />
-                      </button>
-                    </div>
-                  ))
-                )
-              ) : (
-                <Text fontWeight="bold" fontSize="0.9em" m={3} color="gray">
-                  Agrega un idioma
-                </Text>
-              )}
-            </Flex>
+          <Flex align="center" justify="center">
+            <Text children="¿Aún en este puesto?" fontSize="0.9em" mr={3} />
+            <input
+              type="checkbox"
+              name="STILL"
+              value={values.STILL}
+              onChange={handleChange}
+            />
           </Flex>
         </Flex>
-      </ModalBody>
-      <ModalFooter>
-        <Button mr={2} type="submit">
-          Actualizar
-        </Button>
-        <Button variant="ghost" onClick={onClose}>
-          Cancelar
-        </Button>
-      </ModalFooter>
-    </>
-  );
-};
-const Content3 = () => {
-  const { onClose, values, handleChange, errors } = React.useContext(
-    ThisContext
-  );
-  return (
-    <>
-      <ModalBody></ModalBody>
-      <ModalFooter>
-        <Button mr={2} type="submit">
-          Actualizar
-        </Button>
-        <Button variant="ghost" onClick={onClose}>
-          Cancelar
-        </Button>
-      </ModalFooter>
-    </>
-  );
-};
-const Content4 = () => {
-  const { onClose, values, handleChange, errors } = React.useContext(
-    ThisContext
-  );
-  return (
-    <>
-      <ModalBody></ModalBody>
-      <ModalFooter>
-        <Button mr={2} type="submit">
-          Actualizar
-        </Button>
-        <Button variant="ghost" onClick={onClose}>
-          Cancelar
-        </Button>
-      </ModalFooter>
-    </>
-  );
-};
-const Content5 = () => {
-  const { onClose, values, handleChange, errors } = React.useContext(
-    ThisContext
-  );
-  return (
-    <>
-      <ModalBody></ModalBody>
-      <ModalFooter>
-        <Button mr={2} type="submit">
-          Actualizar
-        </Button>
-        <Button variant="ghost" onClick={onClose}>
-          Cancelar
-        </Button>
-      </ModalFooter>
-    </>
+      </Flex>
+      <Field
+        maxrows={6}
+        rows={4}
+        as="textarea"
+        name="DESCRIPCION"
+        value={values.DESCRIPCION}
+        onChange={handleChange}
+        maxLength={400}
+      />
+      <Flex w="100%">
+        {errors.DESCRIPCION ? (
+          <Text color="red" fontSize="0.7em">
+            Campo requerido*
+          </Text>
+        ) : null}
+        <Text
+          ml="auto"
+          color="gray"
+          fontSize="0.8em"
+        >{`${values.DESCRIPCION.length}/400`}</Text>
+      </Flex>
+    </Flex>
   );
 };
 const Content6 = () => {
-  const { onClose, values, handleChange, errors } = React.useContext(
-    ThisContext
-  );
-  return (
-    <>
-      <ModalBody></ModalBody>
-      <ModalFooter>
-        <Button mr={2} type="submit">
-          Actualizar
-        </Button>
-        <Button variant="ghost" onClick={onClose}>
-          Cancelar
-        </Button>
-      </ModalFooter>
-    </>
-  );
+  const { onClose, values, handleChange, errors } = useContext(ThisContext);
+  return <></>;
 };
 const Content7 = () => {
-  const { onClose, values, handleChange, errors } = React.useContext(
-    ThisContext
-  );
+  const { onClose, values, handleChange, errors } = useContext(ThisContext);
 
-  return (
-    <>
-      <ModalBody></ModalBody>
-      <ModalFooter>
-        <Button mr={2} type="submit">
-          Actualizar
-        </Button>
-        <Button variant="ghost" onClick={onClose}>
-          Cancelar
-        </Button>
-      </ModalFooter>
-    </>
-  );
+  return <></>;
 };
 const ModalContentIndex = [
   {
     id: 0,
+    modalSize: "xl",
     title: "",
     form: () => <Content1 />,
     apiURL: `${apiRoute}/updatePrimaryInfo.php`,
@@ -821,6 +1071,7 @@ const ModalContentIndex = [
   },
   {
     id: 1,
+    modalSize: "xs",
     title: "Actualizar datos personales",
     apiURL: `${apiRoute}/updateTrabajadorSecondaryInfo.php`,
     form: () => <Content2 />,
@@ -837,6 +1088,7 @@ const ModalContentIndex = [
   },
   {
     id: 2,
+    modalSize: "xl",
     title: "Actualizar habilidades",
     apiURL: `${apiRoute}/updateHabilities.php`,
     form: () => <Content3 />,
@@ -847,414 +1099,61 @@ const ModalContentIndex = [
   },
   {
     id: 3,
+    modalSize: "md",
     title: "Actualizar datos de seguridad",
+    apiURL: `${apiRoute}/updatePassword.php`,
     form: () => <Content4 />,
+    formInitialValues: {
+      PASSWORD1: "",
+      PASSWORD2: "",
+      EMAIL: "",
+      PASSWORD: "",
+      OLDPASSWORD: "",
+    },
+    validation: Yup.object().shape({
+      OLDPASSWORD: Yup.string()
+        .required("Campo requerido")
+        .oneOf([Yup.ref("PASSWORD"), null], "Las contraseña no es correcta"),
+      PASSWORD1: Yup.string().required("Campo requerido"),
+      PASSWORD2: Yup.string()
+        .required("Campo requerido")
+        .oneOf([Yup.ref("PASSWORD1"), null], "Las contraseñas no son iguales"),
+    }),
   },
   {
     id: 4,
     title: "Agregar experiencia laboral",
+    modalSize: "xl",
+    apiURL: `${apiRoute}/updateExperienciaLaboral.phps`,
+    formInitialValues: {
+      PUESTO: "",
+      EMPRESA: "",
+      DESCRIPCION: "",
+      FECHA_INICIO: "",
+      FECHA_FIN: "",
+      STILL: false,
+    },
     form: () => <Content5 />,
+    validation: Yup.object().shape({
+      PUESTO: Yup.string().required(),
+      EMPRESA: Yup.string().required(),
+      DESCRIPCION: Yup.string().required(),
+    }),
   },
   {
     id: 5,
     title: "Agregar información académica",
     form: () => <Content6 />,
+    validation: Yup.object().shape({}),
   },
   {
     id: 6,
     title: "Agregar cursos y certificaciones",
     form: () => <Content7 />,
+    validation: Yup.object().shape({}),
   },
 ];
-// export const Modal3 = React.memo(({ modalVisibility, setModalVisibility }) => {
-//   const toast = useToast();
-//   const { secondaryInfoState, userInfoState } = React.useContext(MainContext);
-//   const [userInfo] = userInfoState;
-//   const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
-//   const [habilities, setHabilities] = React.useState([]);
-//   const [habilitiesList, setHabilitiesList] = React.useState([
-//     { ID: 1, TITLE: "Pensamiento Crítico", VALUES: "pensamiento critico" },
-//     { ID: 2, TITLE: "Trabajo en equipo", VALUES: "trabajo en equipo" },
-//     { ID: 3, TITLE: "Comunicacion", VALUES: "comunicacion" },
-//   ]);
-//   // funciones
-//   const submitHabilities = () => {
-//     axios
-//       .post(`${apiRoute}/updateHabilities.php`, {
-//         HABILIDADES: JSON.stringify(habilities),
-//         ID: userInfo.ID,
-//       })
-//       .then(({ data }) => {
-//         console.log(data);
-//         if (data.code === 200) {
-//           let secondaryInfoCopy = { ...secondaryInfo };
-//           secondaryInfoCopy.HABILIDADES = JSON.stringify(habilities);
-//           setSecondaryInfo(secondaryInfoCopy);
-//           setModalVisibility({ ...modalVisibility, modal3: false });
-//           toast({
-//             title: "Información actualizada",
-//             description: "Cambios exitosos",
-//             status: "success",
-//             duration: 3000,
-//             isClosable: true,
-//           });
-//         } else {
-//           toast({
-//             title: "Ocurrió un error",
-//             description: "Intentar más tarde",
-//             status: "error",
-//             duration: 3000,
-//             isClosable: true,
-//           });
-//         }
-//       })
-//       .catch((error) => console.log(error));
-//   };
-//   const purgeHabilities = (array) => {
-//     let habilitiesListCopy = [...habilitiesList];
-//     array.forEach((item1) => {
-//       let index = habilitiesListCopy.findIndex(
-//         (item2) => item2.ID === item1.ID
-//       );
-//       habilitiesListCopy.splice(index, 1);
-//     });
-//     setHabilitiesList(habilitiesListCopy);
-//   };
-//   // effects
-//   React.useEffect(() => {
-//     console.log(secondaryInfo.HABILIDADES);
-//     if (secondaryInfo.HABILIDADES) {
-//       if (JSON.parse(secondaryInfo.HABILIDADES).length !== 0) {
-//         let array = JSON.parse(secondaryInfo.HABILIDADES);
-//         setHabilities(array);
-//         purgeHabilities(array);
-//       }
-//     } else {
-//       setHabilities([]);
-//     }
-//   }, []);
-//   return (
-//     <Modal
-//       isOpen={modalVisibility.modal3}
-//       onClose={() => {
-//         setModalVisibility({
-//           ...modalVisibility,
-//           modal3: false,
-//         });
-//       }}
-//       size="md"
-//     >
-//       <ModalOverlay />
-//       <ModalCloseButton />
-//       <ModalContent>
-//         <ModalHeader>Actualizar habilidades</ModalHeader>
-//         <ModalBody>
-//           <div
-//             style={{
-//               border: "1px solid #e2e2e2",
-//               borderRadius: "10px",
-//               display: "flex",
-//               flexWrap: "wrap",
-//               justifyContent: "space-around",
-//               padding: "0.5em",
-//               marginBottom: "1em",
-//             }}
-//           >
-//             {habilities.length === 0 ? (
-//               <span>No hay habilidades seleccionadas</span>
-//             ) : (
-//               habilities.map((key) => (
-//                 <div
-//                   key={key.ID}
-//                   style={{
-//                     display: "flex",
-//                     alignItems: "center",
-//                     padding: "0.5em 0.5em 0.5em 1em",
-//                     backgroundColor: "#e2e2e2",
-//                     borderRadius: "2em",
-//                     marginBottom: "1em",
-//                   }}
-//                 >
-//                   <span style={{ marginRight: "0.5em", fontWeight: "bold" }}>
-//                     {key.TITLE}
-//                   </span>
-//                   <button
-//                     onClick={() => {
-//                       setHabilities((habilities) =>
-//                         habilities.filter((item) => item.ID !== key.ID)
-//                       );
-//                       setHabilitiesList((habilitiesList) => [
-//                         ...habilitiesList,
-//                         key,
-//                       ]);
-//                     }}
-//                   >
-//                     <Close />
-//                   </button>
-//                 </div>
-//               ))
-//             )}
-//           </div>
-//           {habilitiesList.length === 0 ? null : (
-//             <select
-//               name="HABILIDADES"
-//               onChange={(e) => {
-//                 setHabilitiesList((habilitiesList) =>
-//                   habilitiesList.filter(
-//                     (item) => item.ID !== JSON.parse(e.target.value).ID
-//                   )
-//                 );
-//                 setHabilities((habilities) => [
-//                   ...habilities,
-//                   JSON.parse(e.target.value),
-//                 ]);
-//               }}
-//             >
-//               <option value="none">Selecciona una habilidad</option>
-//               {habilitiesList.map((key) => (
-//                 <option key={key.ID} value={JSON.stringify(key)}>
-//                   {key.TITLE}
-//                 </option>
-//               ))}
-//             </select>
-//           )}
-//         </ModalBody>
-//         <ModalFooter>
-//           <Button
-//             variant="ghost"
-//             onClick={() => {
-//               setModalVisibility({
-//                 ...modalVisibility,
-//                 modal3: false,
-//               });
-//             }}
-//           >
-//             Cancelar
-//           </Button>
-//           <Button
-//             onClick={submitHabilities}
-//             style={{ backgroundColor: "#ECB83C" }}
-//           >
-//             Actualizar
-//           </Button>
-//         </ModalFooter>
-//       </ModalContent>
-//     </Modal>
-//   );
-// });
-// export const Modal4 = React.memo(({ modalVisibility, setModalVisibility }) => {
-//   const toast = useToast();
-//   const validationSchema = Yup.object({
-//     PASSWORD1: Yup.string().required("Password es requerida"),
-//     PASSWORD2: Yup.string().oneOf(
-//       [Yup.ref("PASSWORD1"), null],
-//       "Las contraseñas tienen que ser iguales"
-//     ),
-//   });
-//   const { userInfoState } = React.useContext(MainContext);
-//   const [userInfo, setUserInfo] = userInfoState;
-//   return (
-//     <Formik
-//       validationSchema={validationSchema}
-//       initialValues={{
-//         EMAIL: userInfo.EMAIL,
-//         PASSWORD1: "",
-//         PASSWORD2: "",
-//         OLDPASSWORD: "",
-//       }}
-//       onSubmit={(values) => {
-//         if (values.OLDPASSWORD === userInfo.PASSWORD) {
-//           axios
-//             .post(`${apiRoute}/updatePassword.php`, {
-//               ID: userInfo.ID,
-//               PASSWORD: values.PASSWORD2,
-//             })
-//             .then(({ data }) => {
-//               if (data.code === 200) {
-//                 setModalVisibility({ ...modalVisibility, modal4: false });
-//                 let userInfoCopy = { ...userInfo };
-//                 userInfoCopy.PASSWORD = values.PASSWORD2;
-//                 setUserInfo(userInfoCopy);
-//                 toast({
-//                   title: "Información actualizada",
-//                   description: "Cambios exitosos",
-//                   status: "success",
-//                   duration: 3000,
-//                   isClosable: true,
-//                 });
-//               } else {
-//                 toast({
-//                   title: "Ocurrió un error inesperado",
-//                   description: "Favor de intentar mas tarde",
-//                   status: "error",
-//                   duration: 3000,
-//                   isClosable: true,
-//                 });
-//               }
-//             })
-//             .catch((error) => console.log(error));
-//         } else {
-//           toast({
-//             title: "No se ha actualizado ningún dato",
-//             description:
-//               "Ingresa tu contraseña anterior y las nuevas dos contraseñas tienen que ser iguales",
-//             status: "info",
-//             duration: 3000,
-//             isClosable: true,
-//           });
-//           setModalVisibility({ ...modalVisibility, modal4: false });
-//         }
-//       }}
-//     >
-//       {({ values, handleChange, errors }) => (
-//         <Modal
-//           isOpen={modalVisibility.modal4}
-//           onClose={() => {
-//             setModalVisibility({ ...modalVisibility, modal4: false });
-//           }}
-//         >
-//           <ModalOverlay />
-//           <ModalCloseButton />
-//           <ModalContent>
-//             <ModalHeader>Actualizar Información</ModalHeader>
-//             <ModalBody>
-//               <Form id="modal4Form" style={{ width: "100%" }}>
-//                 <div
-//                   style={{
-//                     width: "100%",
-//                     marginBottom: "1em",
-//                     display: "flex",
-//                     justifyContent: "space-between",
-//                   }}
-//                 >
-//                   <span style={{ marginRight: "1em" }}>Email</span>
-//                   <Field
-//                     name="EMAIL"
-//                     type="email"
-//                     onChange={handleChange}
-//                     value={values.EMAIL}
-//                     readOnly
-//                   />
-//                 </div>
-//                 <div
-//                   style={{
-//                     width: "100%",
-//                     marginBottom: "1em",
-//                     display: "flex",
-//                     justifyContent: "space-between",
-//                     alignItems: "center",
-//                   }}
-//                 >
-//                   <span style={{ marginRight: "1em" }}>
-//                     Contraseña anterior
-//                   </span>
-//                   <div
-//                     style={{
-//                       display: "flex",
-//                       flexDirection: "column",
-//                       alignItems: "flex-start",
-//                     }}
-//                   >
-//                     <Field
-//                       name="OLDPASSWORD"
-//                       type="password"
-//                       onChange={handleChange}
-//                       value={values.OLDPASSWORD}
-//                     />
-//                     {errors.OLDPASSWORD ? (
-//                       <span style={{ color: "red" }}>Campo requerido</span>
-//                     ) : null}
-//                   </div>
-//                 </div>
 
-//                 <div
-//                   style={{
-//                     width: "100%",
-//                     marginBottom: "1em",
-//                     display: "flex",
-//                     justifyContent: "space-between",
-//                     alignItems: "center",
-//                   }}
-//                 >
-//                   <span style={{ marginRight: "1em" }}>Nueva Contraseña</span>
-//                   <div
-//                     style={{
-//                       display: "flex",
-//                       flexDirection: "column",
-//                       alignItems: "flex-start",
-//                     }}
-//                   >
-//                     <Field
-//                       name="PASSWORD1"
-//                       type="password"
-//                       onChange={handleChange}
-//                       value={values.PASSWORD1}
-//                     />
-//                     {errors.PASSWORD1 ? (
-//                       <span style={{ color: "red" }}>Campo requerido</span>
-//                     ) : null}
-//                   </div>
-//                 </div>
-//                 <div
-//                   style={{
-//                     width: "100%",
-//                     marginBottom: "1em",
-//                     display: "flex",
-//                     justifyContent: "space-between",
-//                     alignItems: "center",
-//                   }}
-//                 >
-//                   <span style={{ marginRight: "1em" }}>
-//                     Repita nueva contraseña
-//                   </span>
-//                   <div
-//                     style={{
-//                       display: "flex",
-//                       flexDirection: "column",
-//                       alignItems: "flex-start",
-//                     }}
-//                   >
-//                     <Field
-//                       name="PASSWORD2"
-//                       type="password"
-//                       value={values.PASSWORD2}
-//                       onChange={handleChange}
-//                     />
-//                     {errors.PASSWORD1 ? (
-//                       <span style={{ color: "red" }}>
-//                         Las contraseñas tienen que ser iguales*
-//                       </span>
-//                     ) : null}
-//                   </div>
-//                 </div>
-//               </Form>
-//             </ModalBody>
-//             <ModalFooter>
-//               <Button
-//                 variant="ghost"
-//                 onClick={() => {
-//                   setModalVisibility({
-//                     ...modalVisibility,
-//                     modal4: false,
-//                   });
-//                 }}
-//               >
-//                 Cancelar
-//               </Button>
-//               <Button
-//                 type="submit"
-//                 style={{ backgroundColor: "#ECB83C" }}
-//                 form="modal4Form"
-//               >
-//                 Actualizar
-//               </Button>
-//             </ModalFooter>
-//           </ModalContent>
-//         </Modal>
-//       )}
-//     </Formik>
-//   );
-// });
 // export const Modal5 = React.memo(({ modalVisibility, setModalVisibility }) => {
 //   const toast = useToast();
 //   const validationSchema = Yup.object().shape({
@@ -1263,21 +1162,21 @@ const ModalContentIndex = [
 //     DESCRIPCION: Yup.string().required(),
 //   });
 //   // context
-//   const { userInfoState, secondaryInfoState } = React.useContext(MainContext);
+//   const { userInfoState, secondaryInfoState } = useContext(MainContext);
 //   const [userInfo] = userInfoState;
 //   const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
 //   // states
-//   const [years, setYears] = React.useState([]);
-//   const [from, setFrom] = React.useState({
+//   const [years, setYears] = useState([]);
+//   const [from, setFrom] = useState({
 //     month: "01",
 //     year: moment(new Date()).format("YYYY"),
 //   });
-//   const [to, setTo] = React.useState({
+//   const [to, setTo] = useState({
 //     month: "01",
 //     year: moment(new Date()).format("YYYY"),
 //   });
 //   // effects
-//   React.useEffect(() => {
+//   useEffect(() => {
 //     let years = [];
 //     let limit = moment(new Date()).year() - 80;
 //     for (let i = moment(new Date()).year(); i > limit; i--) {
@@ -1576,16 +1475,16 @@ const ModalContentIndex = [
 //   }) => {
 //     const toast = useToast();
 //     // context
-//     const { userInfoState, secondaryInfoState } = React.useContext(MainContext);
+//     const { userInfoState, secondaryInfoState } = useContext(MainContext);
 //     const [userInfo] = userInfoState;
 //     const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
 //     // states
-//     const [years, setYears] = React.useState([]);
-//     const [from, setFrom] = React.useState({
+//     const [years, setYears] = useState([]);
+//     const [from, setFrom] = useState({
 //       month: "01",
 //       year: moment(new Date()).format("YYYY"),
 //     });
-//     const [to, setTo] = React.useState({
+//     const [to, setTo] = useState({
 //       month: "01",
 //       year: moment(new Date()).format("YYYY"),
 //     });
@@ -1626,7 +1525,7 @@ const ModalContentIndex = [
 //         .catch((error) => console.log(error));
 //     };
 //     // effects
-//     React.useEffect(() => {
+//     useEffect(() => {
 //       let years = [];
 //       let limit = moment(new Date()).year() - 80;
 //       for (let i = moment(new Date()).year(); i > limit; i--) {
@@ -1976,21 +1875,21 @@ const ModalContentIndex = [
 //     GRADO: Yup.string().required(),
 //   });
 //   // context
-//   const { userInfoState, secondaryInfoState } = React.useContext(MainContext);
+//   const { userInfoState, secondaryInfoState } = useContext(MainContext);
 //   const [userInfo] = userInfoState;
 //   const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
 //   // states
-//   const [years, setYears] = React.useState([]);
-//   const [from, setFrom] = React.useState({
+//   const [years, setYears] = useState([]);
+//   const [from, setFrom] = useState({
 //     month: "01",
 //     year: moment(new Date()).format("YYYY"),
 //   });
-//   const [to, setTo] = React.useState({
+//   const [to, setTo] = useState({
 //     month: "01",
 //     year: moment(new Date()).format("YYYY"),
 //   });
 //   // effects
-//   React.useEffect(() => {
+//   useEffect(() => {
 //     let years = [];
 //     let limit = moment(new Date()).year() - 80;
 //     for (let i = moment(new Date()).year(); i > limit; i--) {
@@ -2331,16 +2230,16 @@ const ModalContentIndex = [
 //       EDITGRADO: Yup.string().required(),
 //     });
 //     // context
-//     const { userInfoState, secondaryInfoState } = React.useContext(MainContext);
+//     const { userInfoState, secondaryInfoState } = useContext(MainContext);
 //     const [userInfo] = userInfoState;
 //     const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
 //     // states
-//     const [years, setYears] = React.useState([]);
-//     const [from, setFrom] = React.useState({
+//     const [years, setYears] = useState([]);
+//     const [from, setFrom] = useState({
 //       month: "01",
 //       year: moment(new Date()).format("YYYY"),
 //     });
-//     const [to, setTo] = React.useState({
+//     const [to, setTo] = useState({
 //       month: "01",
 //       year: moment(new Date()).format("YYYY"),
 //     });
@@ -2381,7 +2280,7 @@ const ModalContentIndex = [
 //         .catch((error) => console.log(error));
 //     };
 //     // effects
-//     React.useEffect(() => {
+//     useEffect(() => {
 //       let years = [];
 //       let limit = moment(new Date()).year() - 80;
 //       for (let i = moment(new Date()).year(); i > limit; i--) {
@@ -2697,7 +2596,7 @@ const ModalContentIndex = [
 // export const Modal7 = React.memo(({ modalVisibility, setModalVisibility }) => {
 //   const toast = useToast();
 //   // context
-//   const { secondaryInfoState, userInfoState } = React.useContext(MainContext);
+//   const { secondaryInfoState, userInfoState } = useContext(MainContext);
 //   const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
 //   const [userInfo] = userInfoState;
 //   const validationSchema = Yup.object().shape({
@@ -2706,9 +2605,9 @@ const ModalContentIndex = [
 //     DESCRIPTION: Yup.string().required(),
 //   });
 //   // states
-//   const [years, setYears] = React.useState([]);
+//   const [years, setYears] = useState([]);
 //   // effects
-//   React.useEffect(() => {
+//   useEffect(() => {
 //     let years = [];
 //     let limit = moment(new Date()).year() - 80;
 //     for (let i = moment(new Date()).year(); i > limit; i--) {
@@ -2934,7 +2833,7 @@ const ModalContentIndex = [
 //   }) => {
 //     const toast = useToast();
 //     // context
-//     const { secondaryInfoState, userInfoState } = React.useContext(MainContext);
+//     const { secondaryInfoState, userInfoState } = useContext(MainContext);
 //     const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
 //     const [userInfo] = userInfoState;
 //     const validationSchema = Yup.object().shape({
@@ -2943,7 +2842,7 @@ const ModalContentIndex = [
 //       EDITDESCRIPTION: Yup.string().required(),
 //     });
 //     // states
-//     const [years, setYears] = React.useState([]);
+//     const [years, setYears] = useState([]);
 //     // functions
 //     const deleteThisElement = (key) => {
 //       let prevArray = [...JSON.parse(secondaryInfo.CURSOS_CERTIFICACIONES)];
@@ -2981,7 +2880,7 @@ const ModalContentIndex = [
 //         .catch((error) => console.log(error));
 //     };
 //     // effects
-//     React.useEffect(() => {
+//     useEffect(() => {
 //       let years = [];
 //       let limit = moment(new Date()).year() - 80;
 //       for (let i = moment(new Date()).year(); i > limit; i--) {
@@ -3194,7 +3093,7 @@ const ModalContentIndex = [
 //   }
 // );
 // export const CVModal = React.memo(({ modalVisibility, setModalVisibility }) => {
-//   const { secondaryInfoState, userInfoState } = React.useContext(MainContext);
+//   const { secondaryInfoState, userInfoState } = useContext(MainContext);
 //   const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
 //   const [userInfo] = userInfoState;
 //   return (
