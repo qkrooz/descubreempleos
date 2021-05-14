@@ -117,7 +117,7 @@ export const CustomModal = React.memo(({ hook, content }) => {
           initialValues={formInitialValues}
           onSubmit={(values) => {
             values.ID = userInfo.ID;
-            // console.log(values);
+            console.log(values);
             axios
               .post(ModalContentIndex[content].apiURL, values)
               .then(({ data }) => {

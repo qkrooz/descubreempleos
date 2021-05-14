@@ -70,11 +70,12 @@ const RegistroTrabajador = React.memo(() => {
               axios
                 .post(`${apiRoute}/register.php`, values)
                 .then(({ data }) => {
+                  console.log(data);
                   switch (data.code) {
                     case 200:
                       setUserInfo(data.userInfo);
                       setSecondaryInfo(data.secondaryInfo);
-                      router.push("/");
+                      // router.push("/");
                       break;
                     case 400:
                       toast({
@@ -111,7 +112,7 @@ const RegistroTrabajador = React.memo(() => {
                 .catch((error) => console.log(error));
             }}
           >
-            {({ handleChange, values, errors }) => (
+            {({ handleChange, values, errors, isSubmitting }) => (
               <Box
                 p={4}
                 borderRadius="10px"
@@ -257,7 +258,11 @@ const RegistroTrabajador = React.memo(() => {
                     en sus títulos
                   </div>
                   <Flex mt={2} justify="center">
-                    <button type="submit" className={style.registerButton}>
+                    <button
+                      className={style.registerButton}
+                      type="submit"
+                      disabled={isSubmitting}
+                    >
                       REGÍSTRATE
                     </button>
                   </Flex>
