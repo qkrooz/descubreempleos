@@ -66,7 +66,8 @@ const RegistroTrabajador = React.memo(() => {
               PASSWORD2: "",
               USER_TYPE: "trabajador",
             }}
-            onSubmit={(values) => {
+            onSubmit={(values, { setSubmitting }) => {
+              setSubmitting(true);
               axios
                 .post(`${apiRoute}/register.php`, values)
                 .then(({ data }) => {
@@ -75,9 +76,11 @@ const RegistroTrabajador = React.memo(() => {
                     case 200:
                       setUserInfo(data.userInfo);
                       setSecondaryInfo(data.secondaryInfo);
-                      // router.push("/");
+                      router.push("/");
                       break;
                     case 400:
+                      setSubmitting(false);
+
                       toast({
                         title: `Error`,
                         description:
@@ -88,6 +91,8 @@ const RegistroTrabajador = React.memo(() => {
                       });
                       break;
                     case 600:
+                      setSubmitting(false);
+
                       toast({
                         title: `Error`,
                         description: "Este usuario ya está registrado",
@@ -97,6 +102,8 @@ const RegistroTrabajador = React.memo(() => {
                       });
                       break;
                     case 404:
+                      setSubmitting(false);
+
                       toast({
                         title: `Error`,
                         description: "Hay un error en la conexión al servidor",
@@ -142,7 +149,7 @@ const RegistroTrabajador = React.memo(() => {
                     </span>
                   </span>
                 </Flex>
-                <Form>
+                <Form id="registroTrabajadorForm">
                   <Flex justify="space-evenly" className={style.row1}>
                     <Field
                       type="text"
@@ -257,16 +264,17 @@ const RegistroTrabajador = React.memo(() => {
                     los cuales son accesibles a través de los respectivos links
                     en sus títulos
                   </div>
-                  <Flex mt={2} justify="center">
-                    <button
-                      className={style.registerButton}
-                      type="submit"
-                      disabled={isSubmitting}
-                    >
-                      REGÍSTRATE
-                    </button>
-                  </Flex>
                 </Form>
+                <Flex mt={2} justify="center">
+                  <button
+                    className={style.registerButton}
+                    type="submit"
+                    form="registroTrabajadorForm"
+                    disabled={isSubmitting}
+                  >
+                    REGÍSTRATE
+                  </button>
+                </Flex>
               </Box>
             )}
           </Formik>
