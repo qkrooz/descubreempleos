@@ -34,15 +34,15 @@ const ThisContext = React.createContext();
 export const CustomModal = React.memo(({ hook, content }) => {
   const router = useRouter();
   const toast = useToast();
-  const { userInfoState, secondaryInfoState, ResetInfo } = useContext(
-    MainContext
-  );
+  const { userInfoState, secondaryInfoState, ResetInfo } =
+    useContext(MainContext);
   const [formInitialValues, setFormInitialValues] = useState();
   const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
   const [userInfo, setUserInfo] = userInfoState;
   const { modalState } = hook;
   const [modal, setModal] = modalState;
   const primaryKeys = [
+    "BIRTH_DATE",
     "NAMES",
     "LAST_NAME",
     "MOTHERS_LAST_NAME",
@@ -59,6 +59,8 @@ export const CustomModal = React.memo(({ hook, content }) => {
     "HABILIDADES",
     "IDIOMAS",
     "EXPERIENCIA_LABORAL",
+    "GRADO_EDUCATIVO",
+    "CURSOS_CERTIFICACIONES",
   ];
 
   const onClose = () => {
@@ -70,6 +72,7 @@ export const CustomModal = React.memo(({ hook, content }) => {
     Object.entries(values).forEach((key) => {
       if (key[0] !== "ID") {
         if (primaryKeys.includes(key[0])) {
+          key[1] === "todo méxico" ? (key[1] = null) : null;
           userInfoCopy[key[0]] = key[1];
           setUserInfo(userInfoCopy);
         } else if (secondaryKeys.includes(key[0])) {
@@ -117,10 +120,10 @@ export const CustomModal = React.memo(({ hook, content }) => {
           initialValues={formInitialValues}
           onSubmit={(values) => {
             values.ID = userInfo.ID;
-            console.log(values);
             axios
               .post(ModalContentIndex[content].apiURL, values)
               .then(({ data }) => {
+                // console.log(data);
                 switch (data.code) {
                   case 200:
                     setNewInfo(values);
@@ -223,6 +226,16 @@ const Content1 = () => {
               title: "No se ha podido actualizar la imagen",
               description: "Por favor intente mas tarde",
               status: "error",
+              duration: 3000,
+              isClosable: true,
+            });
+            break;
+          case 500:
+            toast({
+              title: "Este tipo de archivo no es aceptado",
+              description:
+                "Por favor intente con un archivo con extension, jpg, jpeg o png.",
+              status: "warning",
               duration: 3000,
               isClosable: true,
             });
@@ -506,13 +519,13 @@ const Content2 = () => {
             as="select"
             onChange={(e) => setSelectedMonth(e.target.value)}
             value={selectedMonth}
-            name="AGE"
             className={errors.AGE ? style.errorField : null}
             style={{
               textTransform: "capitalize",
               flexGrow: 1,
               marginRight: "0.5em",
             }}
+            onBlur={null}
           >
             <option value="01">Enero</option>
             <option value="02">Febrero</option>

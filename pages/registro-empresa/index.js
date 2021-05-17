@@ -1,14 +1,15 @@
 import React from "react";
-import { Formik, Form, Field } from "formik";
 import { MainContext } from "../_api/resources/MainContext";
+import apiRoute from "../_api/resources/apiRoute";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { Formik, Form, Field } from "formik";
+
 import * as Yup from "yup";
 import { Box, Text, Flex, useToast } from "@chakra-ui/react";
 import { EyeFilled, EyeInvisibleFilled } from "@ant-design/icons";
 import axios from "axios";
-import apiRoute from "../_api/resources/apiRoute";
 // style
 import style from "./style.module.css";
 import { AddCircle, Check } from "@material-ui/icons";
@@ -33,9 +34,7 @@ export default function RegistroEmpresa() {
     BUSINESS_TYPE: Yup.string().required("Campo requerido"),
   });
   // cointext
-  const { userInfoState, secondaryInfoState } = React.useContext(MainContext);
-  const [, setUserInfo] = userInfoState;
-  const [, setSecondaryInfo] = secondaryInfoState;
+  const { SetInfo } = React.useContext(MainContext);
   // states
   const [inputType, setInputType] = React.useState({
     p1: "password",
@@ -99,10 +98,10 @@ export default function RegistroEmpresa() {
                   headers: { "Content-type": "multipart/form-data" },
                 })
                 .then(({ data }) => {
+                  console.log(data);
                   switch (data.code) {
                     case 200:
-                      setUserInfo(data.userInfo);
-                      setSecondaryInfo(data.secondaryInfo);
+                      SetInfo(data);
                       router.push("/");
                       break;
                     case 400:

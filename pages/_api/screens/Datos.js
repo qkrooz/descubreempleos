@@ -20,6 +20,14 @@ import {
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
+  Button,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
 } from "@chakra-ui/react";
 import { Add, Delete, Edit, MoreVert, Person } from "@material-ui/icons";
 import { MainContext } from "../resources/MainContext";
@@ -31,20 +39,20 @@ import Footer from "../components/Footer";
 import CVpdf from "../components/CVpdf";
 import CVModalComponent from "../components/CVmodal";
 // modals
-import { CustomModal, ConfirmDelete } from "../components/Modals";
+import { CustomModal } from "../components/Modals";
 // styles
 import style from "../../../styles/datos.module.css";
-const DatosContext = React.createContext();
 const Datos = React.memo(() => {
   const toast = useToast();
   // states
   const [modal, setModal] = useState(false);
-  const [confirmDelete, setConfirmDelete] = useState(false);
   const [modalContent, setModalContent] = useState(0);
-  const [workingItem, setWorkingItem] = useState();
-  const [deleteFunction, setDeleteFunction] = useState();
   const [disponibleState, setDisponibleState] = useState();
   const [userImageError, setUserImageError] = useState(false);
+  const [workingOrder, setWrokingOrder] = useState({});
+  const [editionModals, setEditionModals] = useState({
+    workingExperience: false,
+  });
   // context
   const { userInfoState, secondaryInfoState } = useContext(MainContext);
   const [userInfo] = userInfoState;
@@ -63,27 +71,24 @@ const Datos = React.memo(() => {
             description: "Has cambiado tu disponibilidad de trabajo",
             status: "success",
             duration: 3000,
-            isClosable: true,
           });
           let secondaryInfoCopy = { ...secondaryInfo };
           secondaryInfoCopy.DISPONIBLE = data.current.toString();
           setSecondaryInfo(secondaryInfoCopy);
           setDisponibleState(!Boolean(disponibleState));
         } else {
-          console.log("ocurrio un error");
+          toast({
+            title: "Ocurrió un error",
+            description: "No se ha podido actualizar tu disponibilidad.",
+            status: "warning",
+            duration: 3000,
+          });
         }
       })
       .catch((error) => console.log(error));
   };
-
   return (
-    <DatosContext.Provider
-      value={{
-        workingItemState: [workingItem, setWorkingItem],
-        deleteFunctionState: [deleteFunction, setDeleteFunction],
-        confirmDeleteState: [confirmDelete, setConfirmDelete],
-      }}
-    >
+    <>
       <div className={style.container}>
         <div className={style.left}>
           <Card
@@ -92,12 +97,14 @@ const Datos = React.memo(() => {
               setModal(!modal);
             }}
           >
-            <div className={style.userImage}>
-              {userImageError ? (
+            {userImageError ? (
+              <div className={style.userImage}>
                 <div className={style.userImageErrorIcon}>
                   <Person style={{ fontSize: "5em" }} />
                 </div>
-              ) : (
+              </div>
+            ) : (
+              <div className={style.userImage}>
                 <img
                   src={`${userInfo.IMAGE_URL}?v=${Date.now()}`}
                   style={{
@@ -111,8 +118,8 @@ const Datos = React.memo(() => {
                     setUserImageError(true);
                   }}
                 />
-              )}
-            </div>
+              </div>
+            )}
             <span
               className={style.personalLabel}
             >{`${userInfo.NAMES} ${userInfo.LAST_NAME} ${userInfo.MOTHERS_LAST_NAME}`}</span>
@@ -146,7 +153,7 @@ const Datos = React.memo(() => {
                 <Tr>
                   <Td style={{ fontWeight: "bold" }}>Edad</Td>
                   <Td>
-                    {userInfo.AGE ? (
+                    {parseInt(userInfo.AGE) ? (
                       userInfo.AGE + " años"
                     ) : (
                       <Badge>no disponible</Badge>
@@ -166,7 +173,7 @@ const Datos = React.memo(() => {
                 <Tr>
                   <Td style={{ fontWeight: "bold" }}>Teléfono</Td>
                   <Td style={{ textTransform: "capitalize" }}>
-                    {userInfo.TEL_NUMBER ? (
+                    {parseInt(userInfo.TEL_NUMBER) ? (
                       userInfo.TEL_NUMBER
                     ) : (
                       <Badge>no disponible</Badge>
@@ -203,16 +210,22 @@ const Datos = React.memo(() => {
                     }}
                   >
                     {secondaryInfo.IDIOMAS ? (
-                      JSON.parse(secondaryInfo.IDIOMAS).map((key) => (
-                        <Badge
-                          key={key.ID}
-                          mb={
-                            JSON.parse(secondaryInfo.IDIOMAS).length > 2 ? 2 : 0
-                          }
-                        >
-                          {key.TITLE}
-                        </Badge>
-                      ))
+                      JSON.parse(secondaryInfo.IDIOMAS).length !== 0 ? (
+                        JSON.parse(secondaryInfo.IDIOMAS).map((key) => (
+                          <Badge
+                            key={key.ID}
+                            mb={
+                              JSON.parse(secondaryInfo.IDIOMAS).length > 2
+                                ? 2
+                                : 0
+                            }
+                          >
+                            {key.TITLE}
+                          </Badge>
+                        ))
+                      ) : (
+                        <Badge>No disponible</Badge>
+                      )
                     ) : (
                       <Badge>No disponible</Badge>
                     )}
@@ -298,16 +311,19 @@ const Datos = React.memo(() => {
         </div>
       </div>
       <CustomModal
-        hook={{ modalState: [modal, setModal] }}
+        hook={{
+          modalState: [modal, setModal],
+        }}
         content={modalContent}
       />
-      <ConfirmDelete
-        hook={{ dialogState: [confirmDelete, setConfirmDelete] }}
-        workingItem={workingItem}
-        deleteFunction={deleteFunction}
+      <ExperienciaLaboralEdition
+        hook={{
+          workingOrderHook: [workingOrder, setWrokingOrder],
+          visibilityHook: [editionModals, setEditionModals],
+        }}
       />
       <Footer />
-    </DatosContext.Provider>
+    </>
   );
 });
 const Card = React.memo(({ children, props, title, onClick }) => {
@@ -416,17 +432,10 @@ const Card2 = React.memo(({ props, title, data, onClick, RenderItem }) => {
 });
 const ExperienciLaboralItem = React.memo(({ data }) => {
   const toast = useToast();
-  const {
-    workingItemState,
-    deleteFunctionState,
-    confirmDeleteState,
-  } = useContext(DatosContext);
-  const [, setConfirmDelete] = confirmDeleteState;
-  const [, setWorkingItem] = workingItemState;
-  const [, setDeleteFunction] = deleteFunctionState;
   const { userInfoState, secondaryInfoState } = useContext(MainContext);
   const [userInfo] = userInfoState;
   const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
+  const [alertDialogVis, setAlertDialogVis] = useState(false);
   const DeleteFromExperienciaLaboral = (data) => {
     const experienciaLaboralCopy = [
       ...JSON.parse(secondaryInfo.EXPERIENCIA_LABORAL),
@@ -474,43 +483,95 @@ const ExperienciLaboralItem = React.memo(({ data }) => {
       });
   };
   return (
-    <Flex direction="column" w="100%" borderBottom="1px solid black">
-      <Flex justify="space-between">
-        <Text fontWeight="bold" mt={4}>
-          {data.PUESTO}
+    <>
+      <Flex direction="column" w="100%" borderBottom="1px solid black">
+        <Flex justify="space-between">
+          <Text fontWeight="bold" mt={4}>
+            {data.PUESTO}
+          </Text>
+          <Menu>
+            <MenuButton as="button">
+              <MoreVert style={{ fontSize: "1.2em", color: "gray" }} />
+            </MenuButton>
+            <MenuList>
+              <MenuItem icon={<Edit />}>Editar</MenuItem>
+              <MenuItem
+                icon={<Delete />}
+                onClick={() => {
+                  setAlertDialogVis(true);
+                }}
+                color="red"
+              >
+                Eliminar
+              </MenuItem>
+            </MenuList>
+          </Menu>
+        </Flex>
+        <Flex justify="space-between">
+          <Text>{data.EMPRESA}</Text>
+          <Text fontSize="0.9em" color="gray">
+            {data.STILL
+              ? `Desde ${data.FECHA_INICIO}`
+              : `Desde ${data.FECHA_INICIO} hasta ${data.FECHA_FIN}`}
+          </Text>
+        </Flex>
+        <Text fontSize="0.9em" mb={4}>
+          {data.DESCRIPCION}
         </Text>
-        <Menu>
-          <MenuButton as="button">
-            <MoreVert style={{ fontSize: "1em", color: "gray" }} />
-          </MenuButton>
-          <MenuList>
-            <MenuItem icon={<Edit />}>Editar</MenuItem>
-            <MenuItem
-              icon={<Delete />}
+      </Flex>
+      <AlertDialog isOpen={alertDialogVis}>
+        <AlertDialogOverlay />
+        <AlertDialogContent>
+          <AlertDialogHeader fontSize="lg" fontWeight="bold">
+            ¿Eliminar este registro?
+          </AlertDialogHeader>
+          <AlertDialogBody>Esta acción no se puede deshacer</AlertDialogBody>
+          <AlertDialogFooter>
+            <Button
               onClick={() => {
-                setWorkingItem(data);
-                setDeleteFunction(DeleteFromExperienciaLaboral);
-                setConfirmDelete(true);
+                setAlertDialogVis(false);
               }}
-              color="red"
+            >
+              Cancelar
+            </Button>
+            <Button
+              colorScheme="red"
+              onClick={() => {
+                DeleteFromExperienciaLaboral(data);
+              }}
+              ml={3}
             >
               Eliminar
-            </MenuItem>
-          </MenuList>
-        </Menu>
-      </Flex>
-      <Flex justify="space-between">
-        <Text>{data.EMPRESA}</Text>
-        <Text fontSize="0.9em" color="gray">
-          {data.STILL
-            ? `Desde ${data.FECHA_INICIO}`
-            : `Desde ${data.FECHA_INICIO} hasta ${data.FECHA_FIN}`}
-        </Text>
-      </Flex>
-      <Text fontSize="0.9em" mb={4}>
-        {data.DESCRIPCION}
-      </Text>
-    </Flex>
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  );
+});
+const ExperienciaLaboralEdition = React.memo(({ hook }) => {
+  const { workingOrderHook, visibilityHook } = hook;
+  const [workingOrder, setWorkingOrder] = workingOrderHook;
+  const [editionModals, setEditionModals] = visibilityHook;
+  const onClose = () => {
+    setEditionModals({ ...editionModals, workingExperience: false });
+  };
+  return (
+    <Modal isOpen={editionModals.workingExperience} onClose={onClose}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>Editar experiencia Laboral</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody></ModalBody>
+
+        <ModalFooter>
+          <Button colorScheme="blue" mr={3} onClick={onClose}>
+            Cancelar
+          </Button>
+          <Button variant="ghost">Actualizar</Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   );
 });
 export default Datos;

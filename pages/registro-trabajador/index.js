@@ -1,23 +1,22 @@
-import React from "react";
+import React, { useContext } from "react";
+import { MainContext } from "../_api/resources/MainContext";
+import apiRoute from "../_api/resources/apiRoute";
 import Link from "next/link";
+import Head from "next/head";
 import { useRouter } from "next/router";
+
 import { Formik, Form, Field } from "formik";
 import { Box, Text, Flex, useToast } from "@chakra-ui/react";
-import Head from "next/head";
 import * as Yup from "yup";
 import { EyeFilled, EyeInvisibleFilled } from "@ant-design/icons";
 import axios from "axios";
-import apiRoute from "../_api/resources/apiRoute";
-import { MainContext } from "../_api/resources/MainContext";
 // style
 import style from "./style.module.css";
-const RegistroTrabajador = React.memo(() => {
+export default function RegistroTrabajador() {
   const toast = useToast();
   const router = useRouter();
   // cointext
-  const { userInfoState, secondaryInfoState } = React.useContext(MainContext);
-  const [, setUserInfo] = userInfoState;
-  const [, setSecondaryInfo] = secondaryInfoState;
+  const { SetInfo } = useContext(MainContext);
   const validation = Yup.object().shape({
     NAMES: Yup.string().required("Campo requerido"),
     LAST_NAME: Yup.string().required("Campo requerido"),
@@ -66,21 +65,16 @@ const RegistroTrabajador = React.memo(() => {
               PASSWORD2: "",
               USER_TYPE: "trabajador",
             }}
-            onSubmit={(values, { setSubmitting }) => {
-              setSubmitting(true);
+            onSubmit={(values) => {
               axios
                 .post(`${apiRoute}/register.php`, values)
                 .then(({ data }) => {
-                  console.log(data);
                   switch (data.code) {
                     case 200:
-                      setUserInfo(data.userInfo);
-                      setSecondaryInfo(data.secondaryInfo);
+                      SetInfo(data);
                       router.push("/");
                       break;
                     case 400:
-                      setSubmitting(false);
-
                       toast({
                         title: `Error`,
                         description:
@@ -91,8 +85,6 @@ const RegistroTrabajador = React.memo(() => {
                       });
                       break;
                     case 600:
-                      setSubmitting(false);
-
                       toast({
                         title: `Error`,
                         description: "Este usuario ya está registrado",
@@ -102,8 +94,6 @@ const RegistroTrabajador = React.memo(() => {
                       });
                       break;
                     case 404:
-                      setSubmitting(false);
-
                       toast({
                         title: `Error`,
                         description: "Hay un error en la conexión al servidor",
@@ -119,7 +109,7 @@ const RegistroTrabajador = React.memo(() => {
                 .catch((error) => console.log(error));
             }}
           >
-            {({ handleChange, values, errors, isSubmitting }) => (
+            {({ values, errors, handleChange }) => (
               <Box
                 p={4}
                 borderRadius="10px"
@@ -149,7 +139,7 @@ const RegistroTrabajador = React.memo(() => {
                     </span>
                   </span>
                 </Flex>
-                <Form id="registroTrabajadorForm">
+                <Form>
                   <Flex justify="space-evenly" className={style.row1}>
                     <Field
                       type="text"
@@ -264,17 +254,12 @@ const RegistroTrabajador = React.memo(() => {
                     los cuales son accesibles a través de los respectivos links
                     en sus títulos
                   </div>
+                  <Flex mt={2} justify="center">
+                    <button className={style.registerButton} type="submit">
+                      REGÍSTRATE
+                    </button>
+                  </Flex>
                 </Form>
-                <Flex mt={2} justify="center">
-                  <button
-                    className={style.registerButton}
-                    type="submit"
-                    form="registroTrabajadorForm"
-                    disabled={isSubmitting}
-                  >
-                    REGÍSTRATE
-                  </button>
-                </Flex>
               </Box>
             )}
           </Formik>
@@ -282,5 +267,4 @@ const RegistroTrabajador = React.memo(() => {
       </div>
     </>
   );
-});
-export default RegistroTrabajador;
+}

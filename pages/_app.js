@@ -1,6 +1,5 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { MainContext } from "./_api/resources/MainContext.js";
-import useLocalStorage from "./_api/resources/useLocalStorage";
 import { ChakraProvider } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import apiRoute from "./_api/resources/apiRoute";
@@ -9,8 +8,8 @@ import axios from "axios";
 const App = React.memo(({ Component, pageProps }) => {
   const router = useRouter();
   // states
-  const [userInfo, setUserInfo] = React.useState({});
-  const [secondaryInfo, setSecondaryInfo] = React.useState({});
+  const [userInfo, setUserInfo] = useState({});
+  const [secondaryInfo, setSecondaryInfo] = useState({});
   // functions
   const ResetInfo = () => {
     localStorage.setItem("userInfo", JSON.stringify({}));
@@ -49,6 +48,9 @@ const App = React.memo(({ Component, pageProps }) => {
       }
     }
   }, []);
+  // useEffect(() => {
+  //   console.log(userInfo);
+  // }, [userInfo]);
   return (
     <MainContext.Provider
       value={{

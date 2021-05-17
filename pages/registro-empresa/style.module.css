@@ -55,6 +55,9 @@
   color: white;
   font-weight: bold;
 }
+.registerButton:disabled {
+  background-color: gray;
+}
 .fieldError {
   border: 2px solid red !important;
 }
