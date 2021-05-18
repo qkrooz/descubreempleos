@@ -177,7 +177,7 @@ export const CustomModal = React.memo(({ hook, content }) => {
         </Formik>
         <ModalFooter>
           <Button mr={2} type="submit" form="modalForm">
-            Actualizar
+            Agregar
           </Button>
           <Button variant="ghost" onClick={onClose}>
             Cancelar

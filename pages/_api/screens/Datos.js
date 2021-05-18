@@ -861,6 +861,16 @@ const ExperienciaLaboralEdition = React.memo(() => {
 });
 const GradoEducativoItem = React.memo(({ data }) => {
   const toast = useToast();
+  const gradosEducativos = [
+    { ID: 1, KEY: "secundaria", TITLE: "Secundaria" },
+    { ID: 2, KEY: "bachillerato", TITLE: "Bachillerato" },
+    { ID: 3, KEY: "tecnico", TITLE: "Técnico" },
+    { ID: 4, KEY: "licenciatura", TITLE: "Licenciatura" },
+    { ID: 5, KEY: "ingenieria", TITLE: "Ingeniería" },
+    { ID: 6, KEY: "diplomado", TITLE: "Diplomado" },
+    { ID: 7, KEY: "maestria", TITLE: "Maestría" },
+    { ID: 8, KEY: "doctorado", TITLE: "Doctorado" },
+  ];
   const { userInfoState, secondaryInfoState } = useContext(MainContext);
   const [userInfo] = userInfoState;
   const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
@@ -946,7 +956,7 @@ const GradoEducativoItem = React.memo(({ data }) => {
             </MenuList>
           </Menu>
         </Flex>
-        <Flex justify="space-between" mb={4}>
+        <Flex justify="space-between">
           <Text>{data.INSTITUCION}</Text>
           <Text fontSize="0.9em" color="gray">
             {data.STILL
@@ -954,6 +964,9 @@ const GradoEducativoItem = React.memo(({ data }) => {
               : `Desde ${data.FECHA_INICIO} hasta ${data.FECHA_FIN}`}
           </Text>
         </Flex>
+        <Text mb={4}>
+          {gradosEducativos.filter((item) => item.KEY === data.GRADO)[0].TITLE}
+        </Text>
       </Flex>
       <AlertDialog isOpen={alertDialogVis}>
         <AlertDialogOverlay />
