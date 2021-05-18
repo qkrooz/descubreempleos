@@ -1117,41 +1117,6 @@ const Content7 = () => {
 
   return <></>;
 };
-export const ConfirmDelete = ({ hook, workingItem, deleteFunction }) => {
-  const { dialogState } = hook;
-  const [confirmDelete, setConfirmDelete] = dialogState;
-  const onClose = () => {
-    setConfirmDelete(!confirmDelete);
-  };
-  return (
-    <AlertDialog isOpen={confirmDelete} onClose={onClose}>
-      <AlertDialogOverlay>
-        <AlertDialogContent>
-          <AlertDialogHeader fontSize="lg" fontWeight="bold">
-            Delete Customer
-          </AlertDialogHeader>
-
-          <AlertDialogBody>
-            Are you sure? You can't undo this action afterwards.
-          </AlertDialogBody>
-
-          <AlertDialogFooter>
-            <Button onClick={onClose}>Cancel</Button>
-            <Button
-              colorScheme="red"
-              onClick={() => {
-                deleteFunction(workingItem);
-              }}
-              ml={3}
-            >
-              Delete
-            </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialogOverlay>
-    </AlertDialog>
-  );
-};
 const ModalContentIndex = [
   {
     id: 0,

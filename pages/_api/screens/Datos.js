@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
   Box,
   Switch,
@@ -29,6 +29,8 @@ import {
   ModalBody,
   ModalCloseButton,
 } from "@chakra-ui/react";
+import { Formik, Field, Form } from "formik";
+import moment from "moment";
 import { Add, Delete, Edit, MoreVert, Person } from "@material-ui/icons";
 import { MainContext } from "../resources/MainContext";
 import axios from "axios";
@@ -42,6 +44,7 @@ import CVModalComponent from "../components/CVmodal";
 import { CustomModal } from "../components/Modals";
 // styles
 import style from "../../../styles/datos.module.css";
+const DatosContext = React.createContext();
 const Datos = React.memo(() => {
   const toast = useToast();
   // states
@@ -49,7 +52,7 @@ const Datos = React.memo(() => {
   const [modalContent, setModalContent] = useState(0);
   const [disponibleState, setDisponibleState] = useState();
   const [userImageError, setUserImageError] = useState(false);
-  const [workingOrder, setWrokingOrder] = useState({});
+  const [workingOrder, setWorkingOrder] = useState({});
   const [editionModals, setEditionModals] = useState({
     workingExperience: false,
   });
@@ -88,7 +91,12 @@ const Datos = React.memo(() => {
       .catch((error) => console.log(error));
   };
   return (
-    <>
+    <DatosContext.Provider
+      value={{
+        workingOrderState: [workingOrder, setWorkingOrder],
+        editionModalsState: [editionModals, setEditionModals],
+      }}
+    >
       <div className={style.container}>
         <div className={style.left}>
           <Card
@@ -316,14 +324,9 @@ const Datos = React.memo(() => {
         }}
         content={modalContent}
       />
-      <ExperienciaLaboralEdition
-        hook={{
-          workingOrderHook: [workingOrder, setWrokingOrder],
-          visibilityHook: [editionModals, setEditionModals],
-        }}
-      />
+      <ExperienciaLaboralEdition />
       <Footer />
-    </>
+    </DatosContext.Provider>
   );
 });
 const Card = React.memo(({ children, props, title, onClick }) => {
@@ -435,6 +438,9 @@ const ExperienciLaboralItem = React.memo(({ data }) => {
   const { userInfoState, secondaryInfoState } = useContext(MainContext);
   const [userInfo] = userInfoState;
   const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
+  const { workingOrderState, editionModalsState } = useContext(DatosContext);
+  const [, setWorkingOrder] = workingOrderState;
+  const [editionModals, setEditionModals] = editionModalsState;
   const [alertDialogVis, setAlertDialogVis] = useState(false);
   const DeleteFromExperienciaLaboral = (data) => {
     const experienciaLaboralCopy = [
@@ -494,7 +500,18 @@ const ExperienciLaboralItem = React.memo(({ data }) => {
               <MoreVert style={{ fontSize: "1.2em", color: "gray" }} />
             </MenuButton>
             <MenuList>
-              <MenuItem icon={<Edit />}>Editar</MenuItem>
+              <MenuItem
+                icon={<Edit />}
+                onClick={() => {
+                  setEditionModals({
+                    ...editionModals,
+                    workingExperience: true,
+                  });
+                  setWorkingOrder(data);
+                }}
+              >
+                Editar
+              </MenuItem>
               <MenuItem
                 icon={<Delete />}
                 onClick={() => {
@@ -549,26 +566,294 @@ const ExperienciLaboralItem = React.memo(({ data }) => {
     </>
   );
 });
-const ExperienciaLaboralEdition = React.memo(({ hook }) => {
-  const { workingOrderHook, visibilityHook } = hook;
-  const [workingOrder, setWorkingOrder] = workingOrderHook;
-  const [editionModals, setEditionModals] = visibilityHook;
+const ExperienciaLaboralEdition = React.memo(() => {
+  const toast = useToast();
+  const { secondaryInfoState, userInfoState } = useContext(MainContext);
+  const [userInfo] = userInfoState;
+  const [secondaryinfo, setSecondaryInfo] = secondaryInfoState;
+  const { editionModalsState, workingOrderState } = useContext(DatosContext);
+  const [workingOrder, setWorkingOrder] = workingOrderState;
+  const [editionModals, setEditionModals] = editionModalsState;
+  const [years, setYears] = useState([]);
+  const [from, setFrom] = useState({
+    month: "01",
+    year: moment(new Date()).format("YYYY"),
+  });
+  const [to, setTo] = useState({
+    month: "01",
+    year: moment(new Date()).format("YYYY"),
+  });
   const onClose = () => {
+    setWorkingOrder({});
     setEditionModals({ ...editionModals, workingExperience: false });
   };
+  useEffect(() => {
+    let years = [];
+    let limit = moment(new Date()).year() - 80;
+    for (let i = moment(new Date()).year(); i > limit; i--) {
+      years.push(i);
+    }
+    setYears(years);
+  }, []);
+  useEffect(() => {
+    if (Object.values(workingOrder).length !== 0) {
+      setFrom({
+        ...from,
+        month: workingOrder.FECHA_INICIO.split("/")[0],
+        year: workingOrder.FECHA_INICIO.split("/")[1],
+      });
+      if (!workingOrder.STILL) {
+        setTo({
+          ...to,
+          month: workingOrder.FECHA_FIN.split("/")[0],
+          year: workingOrder.FECHA_FIN.split("/")[1],
+        });
+      }
+    }
+  }, [workingOrder, editionModals.workingExperience]);
   return (
-    <Modal isOpen={editionModals.workingExperience} onClose={onClose}>
+    <Modal isOpen={editionModals.workingExperience} onClose={onClose} size="xl">
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Editar experiencia Laboral</ModalHeader>
+        <ModalHeader>Editar experiencia laboral</ModalHeader>
         <ModalCloseButton />
-        <ModalBody></ModalBody>
+        <ModalBody>
+          <Formik
+            initialValues={{
+              PUESTO: workingOrder.PUESTO,
+              EMPRESA: workingOrder.EMPRESA,
+              DESCRIPCION: workingOrder.DESCRIPCION,
+              STILL: workingOrder.STILL,
+              FECHA_INICIO: `${from.month}/${from.year}`,
+              FECHA_FIN: `${to.month}/${to.year}`,
+            }}
+            onSubmit={(values) => {
+              values.FECHA_INICIO = `${from.month}/${from.year}`;
+              if (values.STILL) {
+                delete values.FECHA_FIN;
+              } else {
+                values.FECHA_FIN = `${to.month}/${to.year}`;
+              }
+              values.ID = workingOrder.ID;
 
+              const workExperienceCompleteCopy = [
+                ...JSON.parse(secondaryinfo.EXPERIENCIA_LABORAL),
+              ];
+              const indexOfEditedElement = workExperienceCompleteCopy.findIndex(
+                (item) => item.ID === workingOrder.ID
+              );
+              workExperienceCompleteCopy[indexOfEditedElement] = values;
+              axios
+                .post(`${apiRoute}/updateExperienciaLaboral.php`, {
+                  ID: userInfo.ID,
+                  EXPERIENCIA_LABORAL: JSON.stringify(
+                    workExperienceCompleteCopy
+                  ),
+                })
+                .then(({ data }) => {
+                  console.log(data);
+                  if (data.code === 200) {
+                    setSecondaryInfo({
+                      ...secondaryinfo,
+                      EXPERIENCIA_LABORAL: JSON.stringify(
+                        workExperienceCompleteCopy
+                      ),
+                    });
+                    toast({
+                      title: "Información actualizada",
+                      status: "success",
+                      duration: 3000,
+                      isClosable: true,
+                    });
+                    setEditionModals({
+                      ...editionModals,
+                      workingExperience: false,
+                    });
+                  } else {
+                    toast({
+                      title: "No se pudo actualizar la información",
+                      status: "error",
+                      duration: 3000,
+                      isClosable: true,
+                    });
+                  }
+                })
+                .catch((error) => console.log(error));
+            }}
+          >
+            {({ values, handleChange, errors }) => (
+              <Form id="workingExperienceEditionForm">
+                <Flex mb="0.5em">
+                  <Flex direction="column" w="60%" justify="space-evenly">
+                    <Field
+                      value={values.PUESTO}
+                      name="PUESTO"
+                      onChange={handleChange}
+                      placeholder="Puesto desarrollado"
+                    />
+                    {errors.PUESTO ? (
+                      <Text color="red" fontSize="0.7em">
+                        Campo requerido*
+                      </Text>
+                    ) : null}
+                    <Field
+                      value={values.EMPRESA}
+                      name="EMPRESA"
+                      onChange={handleChange}
+                      placeholder="Empresa"
+                      style={{ marginTop: "0.5em" }}
+                    />
+                    {errors.EMPRESA ? (
+                      <Text color="red" fontSize="0.7em">
+                        Campo requerido*
+                      </Text>
+                    ) : null}
+                  </Flex>
+                  <Flex direction="column" grow={1}>
+                    <Flex align="center" justify="center" direction="column">
+                      <Flex align="center" mb={3}>
+                        <Text children="De" mr={3} flexGrow={1} />
+                        <Field
+                          value={from.month}
+                          as="select"
+                          style={{ marginRight: "0.5em", width: "5em" }}
+                          onChange={(e) =>
+                            setFrom({ ...from, month: e.target.value })
+                          }
+                          onBlur={null}
+                        >
+                          <option value="">Mes</option>
+                          <option value="01">Enero</option>
+                          <option value="02">Febrero</option>
+                          <option value="03">Marzo</option>
+                          <option value="04">Abril</option>
+                          <option value="05">Mayo</option>
+                          <option value="06">Junio</option>
+                          <option value="07">Julio</option>
+                          <option value="08">Agosto</option>
+                          <option value="09">Septiembre</option>
+                          <option value="10">Octubre</option>
+                          <option value="11">Noviembre</option>
+                          <option value="12">Diciembre</option>
+                        </Field>
+                        <Field
+                          onBlur={null}
+                          as="select"
+                          value={from.year}
+                          onChange={(e) =>
+                            setFrom({ ...from, year: e.target.value })
+                          }
+                        >
+                          <option value="">Año</option>
+                          {years.map((key) => (
+                            <option key={key} value={key}>
+                              {key}
+                            </option>
+                          ))}
+                        </Field>
+                      </Flex>
+                      {!values.STILL ? (
+                        <Flex align="center" mb={3}>
+                          <Text children="A" mr={3} flexGrow={1} w="1em" />
+                          <Field
+                            onBlur={null}
+                            value={to.month}
+                            as="select"
+                            style={{ marginRight: "0.5em", width: "5em" }}
+                            onChange={(e) =>
+                              setTo({ ...to, month: e.target.value })
+                            }
+                          >
+                            <option value="">Mes</option>
+                            <option value="01">Enero</option>
+                            <option value="02">Febrero</option>
+                            <option value="03">Marzo</option>
+                            <option value="04">Abril</option>
+                            <option value="05">Mayo</option>
+                            <option value="06">Junio</option>
+                            <option value="07">Julio</option>
+                            <option value="08">Agosto</option>
+                            <option value="09">Septiembre</option>
+                            <option value="10">Octubre</option>
+                            <option value="11">Noviembre</option>
+                            <option value="12">Diciembre</option>
+                          </Field>
+                          <Field
+                            onBlur={null}
+                            as="select"
+                            value={to.year}
+                            onChange={(e) =>
+                              setTo({ ...to, year: e.target.value })
+                            }
+                          >
+                            <option value="">Año</option>
+                            {years.map((key) => (
+                              <option key={key} value={key}>
+                                {key}
+                              </option>
+                            ))}
+                          </Field>
+                        </Flex>
+                      ) : null}
+                    </Flex>
+                    <Flex align="center" justify="center">
+                      <Text
+                        children="¿Aún en este puesto?"
+                        fontSize="0.9em"
+                        mr={3}
+                      />
+                      <input
+                        type="checkbox"
+                        name="STILL"
+                        checked={values.STILL}
+                        onChange={handleChange}
+                      />
+                    </Flex>
+                  </Flex>
+                </Flex>
+                <Flex direction="column">
+                  <Field
+                    maxrows={6}
+                    rows={4}
+                    as="textarea"
+                    name="DESCRIPCION"
+                    value={values.DESCRIPCION}
+                    onChange={handleChange}
+                    maxLength={400}
+                  />
+                  <Flex w="100%">
+                    {errors.DESCRIPCION ? (
+                      <Text color="red" fontSize="0.7em">
+                        Campo requerido*
+                      </Text>
+                    ) : null}
+                    <Text
+                      ml="auto"
+                      color="gray"
+                      fontSize="0.8em"
+                    >{`${values.DESCRIPCION.length}/400`}</Text>
+                  </Flex>
+                  {/* //     
+              //      
+              //      
+ */}
+                </Flex>
+              </Form>
+            )}
+          </Formik>
+        </ModalBody>
         <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={onClose}>
+          <Button
+            colorScheme="blue"
+            mr={3}
+            type="submit"
+            form="workingExperienceEditionForm"
+          >
+            Actualizar
+          </Button>
+          <Button variant="ghost" onClick={onClose}>
             Cancelar
           </Button>
-          <Button variant="ghost">Actualizar</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
