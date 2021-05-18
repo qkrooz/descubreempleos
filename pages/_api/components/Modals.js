@@ -19,12 +19,6 @@ import {
   Flex,
   Text,
   toast,
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
 } from "@chakra-ui/react";
 import { Close, Person } from "@material-ui/icons";
 import axios from "axios";
@@ -1109,8 +1103,236 @@ const Content5 = () => {
   );
 };
 const Content6 = () => {
-  const { onClose, values, handleChange, errors } = useContext(ThisContext);
-  return <></>;
+  const { values, handleChange, errors } = useContext(ThisContext);
+  const { secondaryInfoState } = useContext(MainContext);
+  const [secondaryInfo] = secondaryInfoState;
+  const [years, setYears] = useState([]);
+  const [from, setFrom] = useState({
+    month: "01",
+    year: moment(new Date()).format("YYYY"),
+  });
+  const [to, setTo] = useState({
+    month: "01",
+    year: moment(new Date()).format("YYYY"),
+  });
+  const gradosEducativos = [
+    { ID: 1, KEY: "secundaria", TITLE: "Secundaria" },
+    { ID: 2, KEY: "bachillerato", TITLE: "Bachillerato" },
+    { ID: 3, KEY: "tecnico", TITLE: "Técnico" },
+    { ID: 4, KEY: "licenciatura", TITLE: "Licenciatura" },
+    { ID: 5, KEY: "ingenieria", TITLE: "Ingeniería" },
+    { ID: 6, KEY: "diplomado", TITLE: "Diplomado" },
+    { ID: 7, KEY: "maestria", TITLE: "Maestría" },
+    { ID: 8, KEY: "doctorado", TITLE: "Doctorado" },
+  ];
+  useEffect(() => {
+    let years = [];
+    let limit = moment(new Date()).year() - 80;
+    for (let i = moment(new Date()).year(); i > limit; i--) {
+      years.push(i);
+    }
+    setYears(years);
+  }, []);
+  useEffect(() => {
+    let gradoEducativoCompleteCopy;
+    if (secondaryInfo.GRADO_EDUCATIVO) {
+      gradoEducativoCompleteCopy = [
+        ...JSON.parse(secondaryInfo.GRADO_EDUCATIVO),
+      ];
+    } else {
+      gradoEducativoCompleteCopy = [];
+    }
+    let currentItem;
+    if (gradoEducativoCompleteCopy.length === 0) {
+      currentItem = 0;
+    } else {
+      currentItem =
+        gradoEducativoCompleteCopy[gradoEducativoCompleteCopy.length - 1].ID +
+        1;
+    }
+    let newObj;
+    if (!values.STILL) {
+      newObj = {
+        ID: currentItem,
+        TITULO_ACADEMICO: values.TITULO_ACADEMICO,
+        INSTITUCION: values.INSTITUCION,
+        GRADO: values.GRADO,
+        FECHA_INICIO: values.FECHA_INICIO,
+        FECHA_FIN: values.FECHA_FIN,
+        STILL: values.STILL,
+      };
+    } else {
+      newObj = {
+        ID: currentItem,
+        TITULO_ACADEMICO: values.TITULO_ACADEMICO,
+        INSTITUCION: values.INSTITUCION,
+        GRADO: values.GRADO,
+        FECHA_INICIO: values.FECHA_INICIO,
+        STILL: values.STILL,
+      };
+    }
+    gradoEducativoCompleteCopy.push(newObj);
+    values.GRADO_EDUCATIVO = JSON.stringify(gradoEducativoCompleteCopy);
+  }, [values]);
+  useEffect(() => {
+    values.FECHA_INICIO = `${from.month}/${from.year}`;
+  }, [from]);
+  useEffect(() => {
+    values.FECHA_FIN = `${to.month}/${to.year}`;
+  }, [to]);
+  useEffect(() => {
+    if (values.STILL) {
+      delete values.FECHA_FIN;
+    } else {
+      values.FECHA_FIN = `${to.month}/${to.year}`;
+    }
+  }, [values.STILL]);
+  return (
+    <Flex>
+      <Flex
+        direction="column"
+        w="60%"
+        borderRightColor="#e2e2e2"
+        borderRightWidth="1px"
+        pr={3}
+        mr={1}
+      >
+        <Field
+          placeholder="Título"
+          name="TITULO_ACADEMICO"
+          value={values.TITULO_ACADEMICO}
+          onChange={handleChange}
+        />
+        {errors.TITULO_ACADEMICO ? (
+          <Text color="red" fontSize="0.7em">
+            Campo requerido*
+          </Text>
+        ) : null}
+        <Field
+          placeholder="Institución"
+          name="INSTITUCION"
+          value={values.INSTITUCION}
+          onChange={handleChange}
+          style={{ marginTop: "1em" }}
+        />
+        {errors.INSTITUCION ? (
+          <Text color="red" fontSize="0.7em">
+            Campo requerido*
+          </Text>
+        ) : null}
+        <Field
+          as="select"
+          name="GRADO"
+          value={values.GRADO}
+          onChange={handleChange}
+          style={{ marginTop: "1em" }}
+        >
+          <option value="" disabled>
+            Grado educativo
+          </option>
+          {gradosEducativos.map((key) => (
+            <option value={key.KEY} key={key.ID}>
+              {key.TITLE}
+            </option>
+          ))}
+        </Field>
+        {errors.GRADO ? (
+          <Text color="red" fontSize="0.7em">
+            Campo requerido*
+          </Text>
+        ) : null}
+      </Flex>
+      <Flex direction="column" grow={1}>
+        <Flex align="center" justify="center" direction="column">
+          <Flex align="center" mb={3}>
+            <Text children="De" mr={3} flexGrow={1} />
+            <Field
+              value={from.month}
+              as="select"
+              style={{ marginRight: "0.5em", width: "5em" }}
+              onChange={(e) => setFrom({ ...from, month: e.target.value })}
+              onBlur={null}
+            >
+              <option value="">Mes</option>
+              <option value="01">Enero</option>
+              <option value="02">Febrero</option>
+              <option value="03">Marzo</option>
+              <option value="04">Abril</option>
+              <option value="05">Mayo</option>
+              <option value="06">Junio</option>
+              <option value="07">Julio</option>
+              <option value="08">Agosto</option>
+              <option value="09">Septiembre</option>
+              <option value="10">Octubre</option>
+              <option value="11">Noviembre</option>
+              <option value="12">Diciembre</option>
+            </Field>
+            <Field
+              onBlur={null}
+              as="select"
+              value={from.year}
+              onChange={(e) => setFrom({ ...from, year: e.target.value })}
+            >
+              <option value="">Año</option>
+              {years.map((key) => (
+                <option key={key} value={key}>
+                  {key}
+                </option>
+              ))}
+            </Field>
+          </Flex>
+          {!values.STILL ? (
+            <Flex align="center" mb={3}>
+              <Text children="A" mr={3} flexGrow={1} w="1em" />
+              <Field
+                onBlur={null}
+                value={to.month}
+                as="select"
+                style={{ marginRight: "0.5em", width: "5em" }}
+                onChange={(e) => setTo({ ...to, month: e.target.value })}
+              >
+                <option value="">Mes</option>
+                <option value="01">Enero</option>
+                <option value="02">Febrero</option>
+                <option value="03">Marzo</option>
+                <option value="04">Abril</option>
+                <option value="05">Mayo</option>
+                <option value="06">Junio</option>
+                <option value="07">Julio</option>
+                <option value="08">Agosto</option>
+                <option value="09">Septiembre</option>
+                <option value="10">Octubre</option>
+                <option value="11">Noviembre</option>
+                <option value="12">Diciembre</option>
+              </Field>
+              <Field
+                onBlur={null}
+                as="select"
+                value={to.year}
+                onChange={(e) => setTo({ ...to, year: e.target.value })}
+              >
+                <option value="">Año</option>
+                {years.map((key) => (
+                  <option key={key} value={key}>
+                    {key}
+                  </option>
+                ))}
+              </Field>
+            </Flex>
+          ) : null}
+        </Flex>
+        <Flex align="center" justify="center">
+          <Text children="¿Sigues estudiando aquí?" fontSize="0.9em" mr={3} />
+          <input
+            type="checkbox"
+            name="STILL"
+            value={values.STILL}
+            onChange={handleChange}
+          />
+        </Flex>
+      </Flex>
+    </Flex>
+  );
 };
 const Content7 = () => {
   const { onClose, values, handleChange, errors } = useContext(ThisContext);
@@ -1210,1143 +1432,44 @@ const ModalContentIndex = [
   {
     id: 5,
     title: "Agregar información académica",
+    modalSize: "xl",
+    apiURL: `${apiRoute}/updateGradoEducativo.php`,
     form: () => <Content6 />,
-    validation: Yup.object().shape({}),
+    formInitialValues: {
+      TITULO_ACADEMICO: "",
+      INSTITUCION: "",
+      GRADO: "",
+      FECHA_INICIO: "",
+      FECHA_FIN: "",
+      STILL: false,
+    },
+    validation: Yup.object().shape({
+      TITULO_ACADEMICO: Yup.string().required(),
+      INSTITUCION: Yup.string().required(),
+      GRADO: Yup.string().required(),
+    }),
   },
   {
     id: 6,
     title: "Agregar cursos y certificaciones",
+    modalSize: "xl",
+    apiURL: `${apiRoute}/updateCursosCertificaciones.php`,
     form: () => <Content7 />,
     validation: Yup.object().shape({}),
+    formInitialValues: {
+      TITULO: "",
+      TIPO: "",
+      DESCRIPCION: "",
+      FECHA_INICIO: "",
+      STILL: false,
+    },
+    validation: Yup.object().shape({
+      TITULO: Yup.string().required(),
+      TIPO: Yup.string().required(),
+      DESCRIPCION: Yup.string().required(),
+    }),
   },
 ];
-
-// export const Modal5Edit = React.memo(
-//   ({
-//     modalVisibility,
-//     setModalVisibility,
-//     editingObjectExperienciaLaboral,
-//   }) => {
-//     const toast = useToast();
-//     // context
-//     const { userInfoState, secondaryInfoState } = useContext(MainContext);
-//     const [userInfo] = userInfoState;
-//     const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
-//     // states
-//     const [years, setYears] = useState([]);
-//     const [from, setFrom] = useState({
-//       month: "01",
-//       year: moment(new Date()).format("YYYY"),
-//     });
-//     const [to, setTo] = useState({
-//       month: "01",
-//       year: moment(new Date()).format("YYYY"),
-//     });
-//     // functions
-//     const deleteThisElement = (key) => {
-//       let prevArray = [...JSON.parse(secondaryInfo.EXPERIENCIA_LABORAL)];
-//       let newArray = prevArray.filter((item) => item.ID !== key.ID);
-//       axios
-//         .post(`${apiRoute}/updateExperienciaLaboral.php`, {
-//           EXPERIENCIA_LABORAL: newArray,
-//           ID: userInfo.ID,
-//         })
-//         .then(({ data }) => {
-//           if (data.code === 200) {
-//             setSecondaryInfo({
-//               ...secondaryInfo,
-//               EXPERIENCIA_LABORAL: JSON.stringify(newArray),
-//             });
-//             setModalVisibility({ modalVisibility, modal5: false });
-//             toast({
-//               title: "Información actualizada",
-//               description: "Cambios exitosos",
-//               status: "success",
-//               duration: 3000,
-//               isClosable: true,
-//             });
-//           } else {
-//             setModalVisibility({ modalVisibility, modal5: false });
-//             toast({
-//               title: "Ocurrio un error en la actualizacion",
-//               description: "CIntentar mas tarde",
-//               status: "error",
-//               duration: 3000,
-//               isClosable: true,
-//             });
-//           }
-//         })
-//         .catch((error) => console.log(error));
-//     };
-//     // effects
-//     useEffect(() => {
-//       let years = [];
-//       let limit = moment(new Date()).year() - 80;
-//       for (let i = moment(new Date()).year(); i > limit; i--) {
-//         years.push(i);
-//       }
-//       setYears(years);
-//     }, []);
-//     if (Object.values(editingObjectExperienciaLaboral).length !== 0) {
-//       return (
-//         <Formik
-//           initialValues={{
-//             EDITPUESTO: editingObjectExperienciaLaboral.PUESTO,
-//             EDITEMPRESA: editingObjectExperienciaLaboral.EMPRESA,
-//             EDITDESCRIPCION: editingObjectExperienciaLaboral.DESCRIPCION,
-//             EDITSTILLINTHIS: editingObjectExperienciaLaboral.STILLINTHIS,
-//           }}
-//           onSubmit={(values) => {
-//             values.PUESTO = values.EDITPUESTO;
-//             delete values.EDITPUESTO;
-//             values.EMPRESA = values.EDITEMPRESA;
-//             delete values.EDITEMPRESA;
-//             values.DESCRIPCION = values.EDITDESCRIPCION;
-//             delete values.EDITDESCRIPCION;
-//             values.STILLINTHIS = values.EDITSTILLINTHIS;
-//             delete values.EDITSTILLINTHIS;
-//             let oldExperienciaLaboral = [
-//               ...JSON.parse(secondaryInfo.EXPERIENCIA_LABORAL),
-//             ];
-//             values.ID = editingObjectExperienciaLaboral.ID;
-//             values.FROM = `${from.month}/${from.year}`;
-//             !values.STILLINTHIS
-//               ? (values.TO = `${to.month}/${to.year}`)
-//               : delete values.TO;
-//             const index = oldExperienciaLaboral.findIndex(
-//               (item) => item.ID === editingObjectExperienciaLaboral.ID
-//             );
-//             oldExperienciaLaboral[index] = values;
-//             axios
-//               .post(`${apiRoute}/updateExperienciaLaboral.php`, {
-//                 ID: userInfo.ID,
-//                 EXPERIENCIA_LABORAL: oldExperienciaLaboral,
-//               })
-//               .then(({ data }) => {
-//                 if (data.code === 200) {
-//                   setSecondaryInfo({
-//                     ...secondaryInfo,
-//                     EXPERIENCIA_LABORAL: JSON.stringify(oldExperienciaLaboral),
-//                   });
-//                   setModalVisibility({ modalVisibility, modal5Edit: false });
-//                   toast({
-//                     title: "Información actualizada",
-//                     description: "Cambios exitosos",
-//                     status: "success",
-//                     duration: 3000,
-//                     isClosable: true,
-//                   });
-//                 } else {
-//                   setModalVisibility({ modalVisibility, modal5Edit: false });
-//                   toast({
-//                     title: "Ocurrio un error en la actualizacion",
-//                     description: "CIntentar mas tarde",
-//                     status: "error",
-//                     duration: 3000,
-//                     isClosable: true,
-//                   });
-//                 }
-//               })
-//               .catch((error) => console.log(error));
-//           }}
-//         >
-//           {({ values, handleChange }) => (
-//             <Modal
-//               isOpen={modalVisibility.modal5Edit}
-//               onClose={() => {
-//                 setModalVisibility({ ...modalVisibility, modal5Edit: false });
-//               }}
-//               size="xl"
-//             >
-//               <ModalOverlay />
-//               <ModalCloseButton />
-//               <ModalContent>
-//                 <ModalHeader>Editar eperiencia laboral</ModalHeader>
-//                 <ModalBody>
-//                   <Form id="modal5EditForm">
-//                     <div style={{ display: "flex", marginBottom: "1em" }}>
-//                       <div
-//                         style={{
-//                           display: "flex",
-//                           flexDirection: "column",
-//                           flexGrow: 1,
-//                           marginRight: "1em",
-//                         }}
-//                       >
-//                         <Field
-//                           onChange={handleChange}
-//                           value={values.EDITPUESTO}
-//                           name="EDITPUESTO"
-//                           placeholder="Puesto desempeñado"
-//                           style={{ marginBottom: "1em" }}
-//                         />
-//                         <Field
-//                           onChange={handleChange}
-//                           value={values.EDITEMPRESA}
-//                           name="EDITEMPRESA"
-//                           placeholder="Nombre de la empresa"
-//                         />
-//                       </div>
-//                       <div style={{ width: "50%" }}>
-//                         <div
-//                           style={{ display: "flex", flexDirection: "column" }}
-//                         >
-//                           <span style={{ fontSize: "0.7em", color: "gray" }}>
-//                             Desde:
-//                           </span>
-//                           <div style={{ marginBottom: "0.5em" }}>
-//                             <select
-//                               style={{ marginRight: "1em" }}
-//                               onChange={(e) => {
-//                                 setFrom({ ...from, month: e.target.value });
-//                               }}
-//                               defaultValue={moment(
-//                                 editingObjectExperienciaLaboral.FROM,
-//                                 "MM/YYYY"
-//                               ).format("MM")}
-//                             >
-//                               <option value="01">Enero</option>
-//                               <option value="02">Febrero</option>
-//                               <option value="03">Marzo</option>
-//                               <option value="04">Abril</option>
-//                               <option value="05">Mayo</option>
-//                               <option value="06">Junio</option>
-//                               <option value="07">Julio</option>
-//                               <option value="08">Agosto</option>
-//                               <option value="09">Septiembre</option>
-//                               <option value="10">Octubre</option>
-//                               <option value="11">Noviembre</option>
-//                               <option value="12">Diciembre</option>
-//                             </select>
-//                             <select
-//                               style={{ marginRight: "1em" }}
-//                               onChange={(e) => {
-//                                 setFrom({ ...from, year: e.target.value });
-//                               }}
-//                               defaultValue={moment(
-//                                 editingObjectExperienciaLaboral.FROM,
-//                                 "MM/YYYY"
-//                               ).format("YYYY")}
-//                             >
-//                               {years.map((key) => (
-//                                 <option key={key} value={key}>
-//                                   {key}
-//                                 </option>
-//                               ))}
-//                             </select>
-//                           </div>
-//                         </div>
-//                         {values.EDITSTILLINTHIS ? null : (
-//                           <div
-//                             style={{
-//                               display: "flex",
-//                               flexDirection: "column",
-//                               marginBottom: "0.5em",
-//                             }}
-//                           >
-//                             <span style={{ fontSize: "0.7em", color: "gray" }}>
-//                               Hasta:
-//                             </span>
-//                             <div>
-//                               <select
-//                                 style={{ marginRight: "1em" }}
-//                                 onChange={(e) => {
-//                                   setTo({ ...to, month: e.target.value });
-//                                 }}
-//                                 defaultValue={moment(
-//                                   editingObjectExperienciaLaboral.TO,
-//                                   "MM/YYYY"
-//                                 ).format("MM")}
-//                               >
-//                                 <option value="01">Enero</option>
-//                                 <option value="02">Febrero</option>
-//                                 <option value="03">Marzo</option>
-//                                 <option value="04">Abril</option>
-//                                 <option value="05">Mayo</option>
-//                                 <option value="06">Junio</option>
-//                                 <option value="07">Julio</option>
-//                                 <option value="08">Agosto</option>
-//                                 <option value="09">Septiembre</option>
-//                                 <option value="10">Octubre</option>
-//                                 <option value="11">Noviembre</option>
-//                                 <option value="12">Diciembre</option>
-//                               </select>
-//                               <select
-//                                 onChange={(e) => {
-//                                   setTo({ ...to, year: e.target.value });
-//                                 }}
-//                                 defaultValue={moment(
-//                                   editingObjectExperienciaLaboral.TO,
-//                                   "MM/YYYY"
-//                                 ).format("YYYY")}
-//                               >
-//                                 {years.map((key) => (
-//                                   <option key={key} value={key}>
-//                                     {key}
-//                                   </option>
-//                                 ))}
-//                               </select>
-//                             </div>
-//                           </div>
-//                         )}
-//                         <div style={{ display: "flex", alignItems: "center" }}>
-//                           <span style={{ marginRight: "0.5em" }}>
-//                             ¿Aún sigues en este empleo?
-//                           </span>
-//                           <input
-//                             type="checkbox"
-//                             name="EDITSTILLINTHIS"
-//                             onChange={handleChange}
-//                             defaultChecked={
-//                               editingObjectExperienciaLaboral.STILLINTHIS
-//                             }
-//                           />
-//                         </div>
-//                       </div>
-//                     </div>
-//                     <div
-//                       style={{
-//                         width: "100%",
-//                         display: "flex",
-//                         flexDirection: "column",
-//                       }}
-//                     >
-//                       <Field
-//                         style={{ width: "100%" }}
-//                         as="textarea"
-//                         onChange={handleChange}
-//                         value={values.EDITDESCRIPCION}
-//                         name="EDITDESCRIPCION"
-//                         maxLength={400}
-//                         rows={4}
-//                         maxrows={6}
-//                         placeholder="Descríbenos en qué consistía tu trabajo"
-//                       />
-//                       <span
-//                         style={{
-//                           marginLeft: "auto",
-//                           fontWeight: "bold",
-//                           fontSize: "0.8em",
-//                           color: "gray",
-//                         }}
-//                       >
-//                         {values.DESCRIPCION
-//                           ? `${values.DESCRIPCION.length}/400`
-//                           : null}
-//                       </span>
-//                     </div>
-//                   </Form>
-//                 </ModalBody>
-//                 <ModalFooter>
-//                   <Button
-//                     style={{
-//                       backgroundColor: "#ff2400",
-//                       color: "white",
-//                       marginRight: "auto",
-//                     }}
-//                     onClick={() => {
-//                       deleteThisElement(editingObjectExperienciaLaboral);
-//                     }}
-//                   >
-//                     Eliminar
-//                   </Button>
-//                   <Button
-//                     variant="ghost"
-//                     onClick={() => {
-//                       setModalVisibility({
-//                         ...modalVisibility,
-//                         modal5Edit: false,
-//                       });
-//                     }}
-//                   >
-//                     Cancelar
-//                   </Button>
-//                   <Button
-//                     type="submit"
-//                     style={{ backgroundColor: "#ECB83C" }}
-//                     form="modal5EditForm"
-//                   >
-//                     Actualizar
-//                   </Button>
-//                 </ModalFooter>
-//               </ModalContent>
-//             </Modal>
-//           )}
-//         </Formik>
-//       );
-//     } else {
-//       return null;
-//     }
-//   }
-// );
-// export const Modal6 = React.memo(({ modalVisibility, setModalVisibility }) => {
-//   const educativeGrades = [
-//     {
-//       ID: 1,
-//       TITLE: "Secundaria",
-//       VALUE: "secundaria",
-//     },
-//     {
-//       ID: 2,
-//       TITLE: "Bachillerato",
-//       VALUE: "bachillerato",
-//     },
-//     {
-//       ID: 3,
-//       TITLE: "Técnico",
-//       VALUE: "tecnico",
-//     },
-//     {
-//       ID: 4,
-//       TITLE: "Licenciatura",
-//       VALUE: "licenciatura",
-//     },
-//     {
-//       ID: 5,
-//       TITLE: "Ingeniería",
-//       VALUE: "ingenieria",
-//     },
-//     {
-//       ID: 6,
-//       TITLE: "Diplomado",
-//       VALUE: "diplomado",
-//     },
-//     {
-//       ID: 7,
-//       TITLE: "Maestría",
-//       VALUE: "maestria",
-//     },
-//     {
-//       ID: 8,
-//       TITLE: "Doctorado",
-//       VALUE: "doctorado",
-//     },
-//   ];
-//   const toast = useToast();
-//   const validationSchema = Yup.object().shape({
-//     TITULO: Yup.string().required(),
-//     INSTITUCION: Yup.string().required(),
-//     GRADO: Yup.string().required(),
-//   });
-//   // context
-//   const { userInfoState, secondaryInfoState } = useContext(MainContext);
-//   const [userInfo] = userInfoState;
-//   const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
-//   // states
-//   const [years, setYears] = useState([]);
-//   const [from, setFrom] = useState({
-//     month: "01",
-//     year: moment(new Date()).format("YYYY"),
-//   });
-//   const [to, setTo] = useState({
-//     month: "01",
-//     year: moment(new Date()).format("YYYY"),
-//   });
-//   // effects
-//   useEffect(() => {
-//     let years = [];
-//     let limit = moment(new Date()).year() - 80;
-//     for (let i = moment(new Date()).year(); i > limit; i--) {
-//       years.push(i);
-//     }
-//     setYears(years);
-//   }, []);
-//   return (
-//     <Formik
-//       validationSchema={validationSchema}
-//       initialValues={{
-//         TITULO: "",
-//         INSTITUCION: "",
-//         GRADO: "",
-//         STILLINTHIS: false,
-//       }}
-//       onSubmit={(values, formikBag) => {
-//         let newGradoEducativo;
-//         let newgrado = JSON.parse(values.GRADO).VALUE;
-//         values.GRADO = newgrado;
-//         values.FROM = `${from.month}/${from.year}`;
-//         !values.STILLINTHIS
-//           ? (values.TO = `${to.month}/${to.year}`)
-//           : delete values.TO;
-//         if (secondaryInfo.GRADO_EDUCATIVO) {
-//           newGradoEducativo = JSON.parse(secondaryInfo.GRADO_EDUCATIVO);
-//           if (newGradoEducativo.length === 0) {
-//             values.ID = 1;
-//           } else {
-//             values.ID = newGradoEducativo.slice(-1).pop().ID + 1;
-//           }
-//           newGradoEducativo.push(values);
-//         } else {
-//           values.ID = 1;
-//           newGradoEducativo = [];
-//           newGradoEducativo.push(values);
-//         }
-//         axios
-//           .post(`${apiRoute}/updateGradoEducativo.php`, {
-//             ID: userInfo.ID,
-//             GRADO_EDUCATIVO: newGradoEducativo,
-//           })
-//           .then(({ data }) => {
-//             if (data.code === 200) {
-//               let arraysito;
-//               if (secondaryInfo.GRADO_EDUCATIVO) {
-//                 arraysito = JSON.parse(secondaryInfo.GRADO_EDUCATIVO);
-//                 arraysito.push(values);
-//                 setSecondaryInfo({
-//                   ...secondaryInfo,
-//                   GRADO_EDUCATIVO: JSON.stringify(arraysito),
-//                 });
-//               } else {
-//                 arraysito = [];
-//                 arraysito.push(values);
-//                 setSecondaryInfo({
-//                   ...secondaryInfo,
-//                   GRADO_EDUCATIVO: JSON.stringify(arraysito),
-//                 });
-//               }
-//               setModalVisibility({ modalVisibility, modal6: false });
-//               toast({
-//                 title: "Información actualizada",
-//                 description: "Cambios exitosos",
-//                 status: "success",
-//                 duration: 3000,
-//                 isClosable: true,
-//               });
-//               formikBag.resetForm({
-//                 PUESTO: "",
-//                 EMPRESA: "",
-//                 DESCRIPCION: "",
-//                 STILLINTHIS: false,
-//               });
-//             } else {
-//               setModalVisibility({ modalVisibility, modal6: false });
-//               toast({
-//                 title: "Ocurrio un error en la actualizacion",
-//                 description: "CIntentar mas tarde",
-//                 status: "error",
-//                 duration: 3000,
-//                 isClosable: true,
-//               });
-//             }
-//           })
-//           .catch((error) => console.log(error));
-//       }}
-//     >
-//       {({ values, handleChange, errors, resetForm }) => (
-//         <Modal
-//           isOpen={modalVisibility.modal6}
-//           onClose={() => {
-//             setModalVisibility({ ...modalVisibility, modal6: false });
-//             resetForm({
-//               TITULO: "",
-//               INSTITUCION: "",
-//               GRADO: "",
-//               STILLINTHIS: false,
-//             });
-//           }}
-//           size="xl"
-//         >
-//           <ModalOverlay />
-//           <ModalCloseButton />
-//           <ModalContent>
-//             <ModalHeader>Grado educativo</ModalHeader>
-//             <ModalBody>
-//               <Form id="modal6Form">
-//                 <div style={{ display: "flex", marginBottom: "1em" }}>
-//                   <div
-//                     style={{
-//                       display: "flex",
-//                       flexDirection: "column",
-//                       flexGrow: 1,
-//                       marginRight: "1em",
-//                     }}
-//                   >
-//                     {errors.TITULO ? (
-//                       <span style={{ color: "red" }}>*</span>
-//                     ) : null}
-//                     <Field
-//                       onChange={handleChange}
-//                       value={values.TITULO}
-//                       name="TITULO"
-//                       placeholder="Título"
-//                       style={{ marginBottom: "1em" }}
-//                     />
-//                     {errors.INSTITUCION ? (
-//                       <span style={{ color: "red" }}>*</span>
-//                     ) : null}
-//                     <Field
-//                       onChange={handleChange}
-//                       value={values.INSTITUCION}
-//                       name="INSTITUCION"
-//                       placeholder="Institución"
-//                     />
-//                   </div>
-//                   <div style={{ width: "50%" }}>
-//                     <div style={{ display: "flex", flexDirection: "column" }}>
-//                       <span style={{ fontSize: "0.7em", color: "gray" }}>
-//                         Desde:
-//                       </span>
-//                       <div style={{ marginBottom: "0.5em" }}>
-//                         <select
-//                           style={{ marginRight: "1em" }}
-//                           onChange={(e) => {
-//                             setFrom({ ...from, month: e.target.value });
-//                           }}
-//                         >
-//                           <option value="01">Enero</option>
-//                           <option value="02">Febrero</option>
-//                           <option value="03">Marzo</option>
-//                           <option value="04">Abril</option>
-//                           <option value="05">Mayo</option>
-//                           <option value="06">Junio</option>
-//                           <option value="07">Julio</option>
-//                           <option value="08">Agosto</option>
-//                           <option value="09">Septiembre</option>
-//                           <option value="10">Octubre</option>
-//                           <option value="11">Noviembre</option>
-//                           <option value="12">Diciembre</option>
-//                         </select>
-//                         <select
-//                           style={{ marginRight: "1em" }}
-//                           onChange={(e) => {
-//                             setFrom({ ...from, year: e.target.value });
-//                           }}
-//                         >
-//                           {years.map((key) => (
-//                             <option key={key} value={key}>
-//                               {key}
-//                             </option>
-//                           ))}
-//                         </select>
-//                       </div>
-//                     </div>
-//                     {values.STILLINTHIS ? null : (
-//                       <div
-//                         style={{
-//                           display: "flex",
-//                           flexDirection: "column",
-//                           marginBottom: "0.5em",
-//                         }}
-//                       >
-//                         <span style={{ fontSize: "0.7em", color: "gray" }}>
-//                           Hasta:
-//                         </span>
-//                         <div>
-//                           <select
-//                             style={{ marginRight: "1em" }}
-//                             onChange={(e) => {
-//                               setTo({ ...to, month: e.target.value });
-//                             }}
-//                           >
-//                             <option value="01">Enero</option>
-//                             <option value="02">Febrero</option>
-//                             <option value="03">Marzo</option>
-//                             <option value="04">Abril</option>
-//                             <option value="05">Mayo</option>
-//                             <option value="06">Junio</option>
-//                             <option value="07">Julio</option>
-//                             <option value="08">Agosto</option>
-//                             <option value="09">Septiembre</option>
-//                             <option value="10">Octubre</option>
-//                             <option value="11">Noviembre</option>
-//                             <option value="12">Diciembre</option>
-//                           </select>
-//                           <select
-//                             onChange={(e) => {
-//                               setTo({ ...to, year: e.target.value });
-//                             }}
-//                           >
-//                             {years.map((key) => (
-//                               <option key={key} value={key}>
-//                                 {key}
-//                               </option>
-//                             ))}
-//                           </select>
-//                         </div>
-//                       </div>
-//                     )}
-//                     <div style={{ display: "flex", alignItems: "center" }}>
-//                       <span style={{ marginRight: "0.5em" }}>
-//                         ¿Aún sigues estudiando aquí?
-//                       </span>
-//                       <input
-//                         type="checkbox"
-//                         name="STILLINTHIS"
-//                         onChange={handleChange}
-//                         value={values.STILLINTHIS}
-//                       />
-//                     </div>
-//                   </div>
-//                 </div>
-//                 <div
-//                   style={{
-//                     width: "100%",
-//                     display: "flex",
-//                     flexDirection: "column",
-//                   }}
-//                 >
-//                   {errors.GRADO ? (
-//                     <span style={{ color: "red" }}>*</span>
-//                   ) : null}
-//                   <select
-//                     style={{ width: "50%" }}
-//                     onChange={handleChange}
-//                     value={values.GRADO}
-//                     name="GRADO"
-//                     placeholder="Grado educativo"
-//                   >
-//                     <option value="" disabled>
-//                       Grado educativo
-//                     </option>
-//                     {educativeGrades.map((key) => (
-//                       <option key={key.ID} value={JSON.stringify(key)}>
-//                         {key.TITLE}
-//                       </option>
-//                     ))}
-//                   </select>
-//                 </div>
-//               </Form>
-//             </ModalBody>
-//             <ModalFooter>
-//               <Button
-//                 variant="ghost"
-//                 onClick={() => {
-//                   setModalVisibility({
-//                     ...modalVisibility,
-//                     modal6: false,
-//                   });
-//                 }}
-//               >
-//                 Cancelar
-//               </Button>
-//               <Button
-//                 type="submit"
-//                 style={{ backgroundColor: "#ECB83C" }}
-//                 form="modal6Form"
-//               >
-//                 Agregar
-//               </Button>
-//             </ModalFooter>
-//           </ModalContent>
-//         </Modal>
-//       )}
-//     </Formik>
-//   );
-// });
-// export const Modal6Edit = React.memo(
-//   ({ modalVisibility, setModalVisibility, editingObjectGradoEducativo }) => {
-//     const educativeGrades = [
-//       {
-//         ID: 1,
-//         TITLE: "Secundaria",
-//         VALUE: "secundaria",
-//       },
-//       {
-//         ID: 2,
-//         TITLE: "Bachillerato",
-//         VALUE: "bachillerato",
-//       },
-//       {
-//         ID: 3,
-//         TITLE: "Técnico",
-//         VALUE: "tecnico",
-//       },
-//       {
-//         ID: 4,
-//         TITLE: "Licenciatura",
-//         VALUE: "licenciatura",
-//       },
-//       {
-//         ID: 5,
-//         TITLE: "Ingeniería",
-//         VALUE: "ingenieria",
-//       },
-//       {
-//         ID: 6,
-//         TITLE: "Diplomado",
-//         VALUE: "diplomado",
-//       },
-//       {
-//         ID: 7,
-//         TITLE: "Maestría",
-//         VALUE: "maestria",
-//       },
-//       {
-//         ID: 8,
-//         TITLE: "Doctorado",
-//         VALUE: "doctorado",
-//       },
-//     ];
-//     const toast = useToast();
-//     const validationSchema = Yup.object().shape({
-//       EDITTITULO: Yup.string().required(),
-//       EDITINSTITUCION: Yup.string().required(),
-//       EDITGRADO: Yup.string().required(),
-//     });
-//     // context
-//     const { userInfoState, secondaryInfoState } = useContext(MainContext);
-//     const [userInfo] = userInfoState;
-//     const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
-//     // states
-//     const [years, setYears] = useState([]);
-//     const [from, setFrom] = useState({
-//       month: "01",
-//       year: moment(new Date()).format("YYYY"),
-//     });
-//     const [to, setTo] = useState({
-//       month: "01",
-//       year: moment(new Date()).format("YYYY"),
-//     });
-//     // functions
-//     const deleteThisElement = (key) => {
-//       let prevArray = [...JSON.parse(secondaryInfo.GRADO_EDUCATIVO)];
-//       let newArray = prevArray.filter((item) => item.ID !== key.ID);
-//       axios
-//         .post(`${apiRoute}/updateGradoEducativo.php`, {
-//           GRADO_EDUCATIVO: newArray,
-//           ID: userInfo.ID,
-//         })
-//         .then(({ data }) => {
-//           if (data.code === 200) {
-//             setSecondaryInfo({
-//               ...secondaryInfo,
-//               GRADO_EDUCATIVO: JSON.stringify(newArray),
-//             });
-//             setModalVisibility({ modalVisibility, modal6Edit: false });
-//             toast({
-//               title: "Información actualizada",
-//               description: "Cambios exitosos",
-//               status: "success",
-//               duration: 3000,
-//               isClosable: true,
-//             });
-//           } else {
-//             setModalVisibility({ modalVisibility, modal6Edit: false });
-//             toast({
-//               title: "Ocurrio un error en la actualizacion",
-//               description: "CIntentar mas tarde",
-//               status: "error",
-//               duration: 3000,
-//               isClosable: true,
-//             });
-//           }
-//         })
-//         .catch((error) => console.log(error));
-//     };
-//     // effects
-//     useEffect(() => {
-//       let years = [];
-//       let limit = moment(new Date()).year() - 80;
-//       for (let i = moment(new Date()).year(); i > limit; i--) {
-//         years.push(i);
-//       }
-//       setYears(years);
-//     }, []);
-//     if (Object.values(editingObjectGradoEducativo).length !== 0) {
-//       return (
-//         <Formik
-//           validationSchema={validationSchema}
-//           initialValues={{
-//             EDITTITULO: editingObjectGradoEducativo.TITULO,
-//             EDITINSTITUCION: editingObjectGradoEducativo.INSTITUCION,
-//             EDITGRADO: editingObjectGradoEducativo.GRADO,
-//             EDITSTILLINTHIS: editingObjectGradoEducativo.STILLINTHIS,
-//           }}
-//           onSubmit={(values) => {
-//             values.TITULO = values.EDITTITULO;
-//             delete values.EDITTITULO;
-//             values.INSTITUCION = values.EDITINSTITUCION;
-//             delete values.EDITINSTITUCION;
-//             values.GRADO = values.EDITGRADO;
-//             delete values.EDITGRADO;
-//             values.STILLINTHIS = values.EDITSTILLINTHIS;
-//             delete values.EDITSTILLINTHIS;
-//             if (editingObjectGradoEducativo.GRADO !== values.GRADO) {
-//               let newgrado = JSON.parse(values.GRADO).VALUE;
-//               values.GRADO = newgrado;
-//             }
-//             values.FROM = `${from.month}/${from.year}`;
-//             !values.STILLINTHIS
-//               ? (values.TO = `${to.month}/${to.year}`)
-//               : delete values.TO;
-//             let oldGradoEducativo = [
-//               ...JSON.parse(secondaryInfo.GRADO_EDUCATIVO),
-//             ];
-//             values.ID = editingObjectGradoEducativo.ID;
-//             const index = oldGradoEducativo.findIndex(
-//               (item) => item.ID === editingObjectGradoEducativo.ID
-//             );
-//             oldGradoEducativo[index] = values;
-//             axios
-//               .post(`${apiRoute}/updateGradoEducativo.php`, {
-//                 ID: userInfo.ID,
-//                 GRADO_EDUCATIVO: oldGradoEducativo,
-//               })
-//               .then(({ data }) => {
-//                 if (data.code === 200) {
-//                   setSecondaryInfo({
-//                     ...secondaryInfo,
-//                     GRADO_EDUCATIVO: JSON.stringify(oldGradoEducativo),
-//                   });
-//                   setModalVisibility({ modalVisibility, modal6Edit: false });
-//                   toast({
-//                     title: "Información actualizada",
-//                     description: "Cambios exitosos",
-//                     status: "success",
-//                     duration: 3000,
-//                     isClosable: true,
-//                   });
-//                 } else {
-//                   setModalVisibility({ modalVisibility, modal6Edit: false });
-//                   toast({
-//                     title: "Ocurrio un error en la actualizacion",
-//                     description: "CIntentar mas tarde",
-//                     status: "error",
-//                     duration: 3000,
-//                     isClosable: true,
-//                   });
-//                 }
-//               })
-//               .catch((error) => console.log(error));
-//           }}
-//         >
-//           {({ values, handleChange, errors, resetForm }) => (
-//             <Modal
-//               isOpen={modalVisibility.modal6Edit}
-//               onClose={() => {
-//                 setModalVisibility({ ...modalVisibility, modal6Edit: false });
-//                 resetForm({
-//                   EDITTITULO: "",
-//                   EDITINSTITUCION: "",
-//                   EDITGRADO: "",
-//                   EDITSTILLINTHIS: false,
-//                 });
-//               }}
-//               size="xl"
-//             >
-//               <ModalOverlay />
-//               <ModalCloseButton />
-//               <ModalContent>
-//                 <ModalHeader>Editar grado educativo</ModalHeader>
-//                 <ModalBody>
-//                   <Form id="modal6EditForm">
-//                     <div style={{ display: "flex", marginBottom: "1em" }}>
-//                       <div
-//                         style={{
-//                           display: "flex",
-//                           flexDirection: "column",
-//                           flexGrow: 1,
-//                           marginRight: "1em",
-//                         }}
-//                       >
-//                         {errors.EDITTITULO ? (
-//                           <span style={{ color: "red" }}>*</span>
-//                         ) : null}
-//                         <Field
-//                           onChange={handleChange}
-//                           value={values.EDITTITULO}
-//                           name="EDITTITULO"
-//                           placeholder="Título"
-//                           style={{ marginBottom: "1em" }}
-//                         />
-//                         {errors.EDITINSTITUCION ? (
-//                           <span style={{ color: "red" }}>*</span>
-//                         ) : null}
-//                         <Field
-//                           onChange={handleChange}
-//                           value={values.EDITINSTITUCION}
-//                           name="EDITINSTITUCION"
-//                           placeholder="Institución"
-//                         />
-//                       </div>
-//                       <div style={{ width: "50%" }}>
-//                         <div
-//                           style={{ display: "flex", flexDirection: "column" }}
-//                         >
-//                           <span style={{ fontSize: "0.7em", color: "gray" }}>
-//                             Desde:
-//                           </span>
-//                           <div style={{ marginBottom: "0.5em" }}>
-//                             <select
-//                               style={{ marginRight: "1em" }}
-//                               onChange={(e) => {
-//                                 setFrom({ ...from, month: e.target.value });
-//                               }}
-//                               defaultValue={moment(
-//                                 editingObjectGradoEducativo.FROM,
-//                                 "MM/YYYY"
-//                               ).format("MM")}
-//                             >
-//                               <option value="01">Enero</option>
-//                               <option value="02">Febrero</option>
-//                               <option value="03">Marzo</option>
-//                               <option value="04">Abril</option>
-//                               <option value="05">Mayo</option>
-//                               <option value="06">Junio</option>
-//                               <option value="07">Julio</option>
-//                               <option value="08">Agosto</option>
-//                               <option value="09">Septiembre</option>
-//                               <option value="10">Octubre</option>
-//                               <option value="11">Noviembre</option>
-//                               <option value="12">Diciembre</option>
-//                             </select>
-//                             <select
-//                               style={{ marginRight: "1em" }}
-//                               onChange={(e) => {
-//                                 setFrom({ ...from, year: e.target.value });
-//                               }}
-//                               defaultValue={moment(
-//                                 editingObjectGradoEducativo.FROM,
-//                                 "MM/YYYY"
-//                               ).format("YYYY")}
-//                             >
-//                               {years.map((key) => (
-//                                 <option key={key} value={key}>
-//                                   {key}
-//                                 </option>
-//                               ))}
-//                             </select>
-//                           </div>
-//                         </div>
-//                         {values.EDITSTILLINTHIS ? null : (
-//                           <div
-//                             style={{
-//                               display: "flex",
-//                               flexDirection: "column",
-//                               marginBottom: "0.5em",
-//                             }}
-//                           >
-//                             <span style={{ fontSize: "0.7em", color: "gray" }}>
-//                               Hasta:
-//                             </span>
-//                             <div>
-//                               <select
-//                                 style={{ marginRight: "1em" }}
-//                                 onChange={(e) => {
-//                                   setTo({ ...to, month: e.target.value });
-//                                 }}
-//                                 defaultValue={moment(
-//                                   editingObjectGradoEducativo.TO,
-//                                   "MM/YYYY"
-//                                 ).format("MM")}
-//                               >
-//                                 <option value="01">Enero</option>
-//                                 <option value="02">Febrero</option>
-//                                 <option value="03">Marzo</option>
-//                                 <option value="04">Abril</option>
-//                                 <option value="05">Mayo</option>
-//                                 <option value="06">Junio</option>
-//                                 <option value="07">Julio</option>
-//                                 <option value="08">Agosto</option>
-//                                 <option value="09">Septiembre</option>
-//                                 <option value="10">Octubre</option>
-//                                 <option value="11">Noviembre</option>
-//                                 <option value="12">Diciembre</option>
-//                               </select>
-//                               <select
-//                                 onChange={(e) => {
-//                                   setTo({ ...to, year: e.target.value });
-//                                 }}
-//                                 defaultValue={moment(
-//                                   editingObjectGradoEducativo.TO,
-//                                   "MM/YYYY"
-//                                 ).format("YYYY")}
-//                               >
-//                                 {years.map((key) => (
-//                                   <option key={key} value={key}>
-//                                     {key}
-//                                   </option>
-//                                 ))}
-//                               </select>
-//                             </div>
-//                           </div>
-//                         )}
-//                         <div style={{ display: "flex", alignItems: "center" }}>
-//                           <span style={{ marginRight: "0.5em" }}>
-//                             ¿Aún sigues estudiando aquí?
-//                           </span>
-//                           <input
-//                             type="checkbox"
-//                             name="EDITSTILLINTHIS"
-//                             onChange={handleChange}
-//                             defaultChecked={
-//                               editingObjectGradoEducativo.STILLINTHIS
-//                             }
-//                           />
-//                         </div>
-//                       </div>
-//                     </div>
-//                     <div
-//                       style={{
-//                         width: "100%",
-//                         display: "flex",
-//                         flexDirection: "column",
-//                       }}
-//                     >
-//                       {errors.EDITGRADO ? (
-//                         <span style={{ color: "red" }}>*</span>
-//                       ) : null}
-//                       <select
-//                         style={{ width: "50%" }}
-//                         onChange={handleChange}
-//                         value={values.EDITGRADO}
-//                         name="EDITGRADO"
-//                         placeholder="Grado educativo"
-//                       >
-//                         <option value="" disabled>
-//                           Grado educativo
-//                         </option>
-//                         {educativeGrades.map((key) => (
-//                           <option key={key.ID} value={JSON.stringify(key)}>
-//                             {key.TITLE}
-//                           </option>
-//                         ))}
-//                       </select>
-//                     </div>
-//                   </Form>
-//                 </ModalBody>
-//                 <ModalFooter>
-//                   <Button
-//                     style={{
-//                       backgroundColor: "#ff2400",
-//                       color: "white",
-//                       marginRight: "auto",
-//                     }}
-//                     onClick={() => {
-//                       deleteThisElement(editingObjectGradoEducativo);
-//                     }}
-//                   >
-//                     Eliminar
-//                   </Button>
-//                   <Button
-//                     variant="ghost"
-//                     onClick={() => {
-//                       setModalVisibility({
-//                         ...modalVisibility,
-//                         modal6Edit: false,
-//                       });
-//                     }}
-//                   >
-//                     Cancelar
-//                   </Button>
-//                   <Button
-//                     type="submit"
-//                     style={{ backgroundColor: "#ECB83C" }}
-//                     form="modal6EditForm"
-//                   >
-//                     Actualizar
-//                   </Button>
-//                 </ModalFooter>
-//               </ModalContent>
-//             </Modal>
-//           )}
-//         </Formik>
-//       );
-//     } else {
-//       return null;
-//     }
-//   }
-// );
 // export const Modal7 = React.memo(({ modalVisibility, setModalVisibility }) => {
 //   const toast = useToast();
 //   // context
@@ -2579,273 +1702,7 @@ const ModalContentIndex = [
 //     </Formik>
 //   );
 // });
-// export const Modal7Edit = React.memo(
-//   ({
-//     modalVisibility,
-//     setModalVisibility,
-//     editingObjectCursosCertificaciones,
-//   }) => {
-//     const toast = useToast();
-//     // context
-//     const { secondaryInfoState, userInfoState } = useContext(MainContext);
-//     const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
-//     const [userInfo] = userInfoState;
-//     const validationSchema = Yup.object().shape({
-//       EDITTITULO: Yup.string().required(),
-//       EDITTIPO: Yup.string().required(),
-//       EDITDESCRIPTION: Yup.string().required(),
-//     });
-//     // states
-//     const [years, setYears] = useState([]);
-//     // functions
-//     const deleteThisElement = (key) => {
-//       let prevArray = [...JSON.parse(secondaryInfo.CURSOS_CERTIFICACIONES)];
-//       let newArray = prevArray.filter((item) => item.ID !== key.ID);
-//       axios
-//         .post(`${apiRoute}/updateCursosCertificaciones.php`, {
-//           CURSOS_CERTIFICACIONES: newArray,
-//           ID: userInfo.ID,
-//         })
-//         .then(({ data }) => {
-//           if (data.code === 200) {
-//             setSecondaryInfo({
-//               ...secondaryInfo,
-//               CURSOS_CERTIFICACIONES: JSON.stringify(newArray),
-//             });
-//             setModalVisibility({ modalVisibility, modal7Edit: false });
-//             toast({
-//               title: "Información actualizada",
-//               description: "Cambios exitosos",
-//               status: "success",
-//               duration: 3000,
-//               isClosable: true,
-//             });
-//           } else {
-//             setModalVisibility({ modalVisibility, modal7Edit: false });
-//             toast({
-//               title: "Ocurrio un error en la actualizacion",
-//               description: "CIntentar mas tarde",
-//               status: "error",
-//               duration: 3000,
-//               isClosable: true,
-//             });
-//           }
-//         })
-//         .catch((error) => console.log(error));
-//     };
-//     // effects
-//     useEffect(() => {
-//       let years = [];
-//       let limit = moment(new Date()).year() - 80;
-//       for (let i = moment(new Date()).year(); i > limit; i--) {
-//         years.push(i);
-//       }
-//       setYears(years);
-//     }, []);
-//     if (Object.values(editingObjectCursosCertificaciones).length !== 0) {
-//       return (
-//         <Formik
-//           validationSchema={validationSchema}
-//           initialValues={{
-//             EDITTITULO: editingObjectCursosCertificaciones.TITULO,
-//             EDITTIPO: editingObjectCursosCertificaciones.TIPO,
-//             EDITYEAR: editingObjectCursosCertificaciones.YEAR,
-//             EDITNOTAQUIRED: editingObjectCursosCertificaciones.NOTAQUIRED,
-//             EDITDESCRIPTION: editingObjectCursosCertificaciones.DESCRIPTION,
-//           }}
-//           onSubmit={(values) => {
-//             let newObj = {
-//               TITULO: values.EDITTITULO,
-//               TIPO: values.EDITTIPO,
-//               YEAR: values.EDITYEAR,
-//               NOTAQUIRED: values.EDITNOTAQUIRED,
-//               DESCRIPTION: values.EDITDESCRIPTION,
-//             };
-//             // year resolution
-//             values.EDITNOTAQUIRED
-//               ? delete newObj.YEAR
-//               : (newObj.YEAR = values.EDITYEAR
-//                   ? values.EDITYEAR
-//                   : moment(new Date()).format("YYYY"));
-//             newObj.ID = editingObjectCursosCertificaciones.ID;
-//             let oldCursosCertificaciones = [
-//               ...JSON.parse(secondaryInfo.CURSOS_CERTIFICACIONES),
-//             ];
-//             const index = oldCursosCertificaciones.findIndex(
-//               (item) => item.ID === editingObjectCursosCertificaciones.ID
-//             );
-//             oldCursosCertificaciones[index] = newObj;
-//             axios
-//               .post(`${apiRoute}/updateCursosCertificaciones.php`, {
-//                 ID: userInfo.ID,
-//                 CURSOS_CERTIFICACIONES: oldCursosCertificaciones,
-//               })
-//               .then(({ data }) => {
-//                 if (data.code === 200) {
-//                   setSecondaryInfo({
-//                     ...secondaryInfo,
-//                     CURSOS_CERTIFICACIONES: JSON.stringify(
-//                       oldCursosCertificaciones
-//                     ),
-//                   });
-//                   setModalVisibility({ modalVisibility, modal7Edit: false });
-//                   toast({
-//                     title: "Información actualizada",
-//                     description: "Cambios exitosos",
-//                     status: "success",
-//                     duration: 3000,
-//                     isClosable: true,
-//                   });
-//                 } else {
-//                   setModalVisibility({ modalVisibility, modal7Edit: false });
-//                   toast({
-//                     title: "Ocurrio un error en la actualizacion",
-//                     description: "CIntentar mas tarde",
-//                     status: "error",
-//                     duration: 3000,
-//                     isClosable: true,
-//                   });
-//                 }
-//               })
-//               .catch((error) => console.log(error));
-//           }}
-//         >
-//           {({ values, handleChange, errors }) => (
-//             <Modal isOpen={modalVisibility.modal7Edit}>
-//               <ModalOverlay />
-//               <ModalCloseButton />
-//               <ModalContent>
-//                 <ModalHeader>Editar cursos y certificaciones</ModalHeader>
-//                 <ModalBody>
-//                   <Form id="modal7EditForm">
-//                     <div
-//                       style={{
-//                         display: "flex",
-//                         flexDirection: "column",
-//                         marginBottom: "1em",
-//                       }}
-//                     >
-//                       <div
-//                         style={{
-//                           display: "flex",
-//                           flexDirection: "column",
-//                           marginBottom: "1em",
-//                         }}
-//                       >
-//                         {errors.EDITTITULO ? (
-//                           <span style={{ color: "red" }}>*</span>
-//                         ) : null}
-//                         <Field
-//                           placeholder="Título"
-//                           name="EDITTITULO"
-//                           value={values.EDITTITULO}
-//                           onChange={handleChange}
-//                         />
-//                       </div>
-//                       <div style={{ display: "flex", flexDirection: "column" }}>
-//                         {errors.EDITTIPO ? (
-//                           <span style={{ color: "red" }}>*</span>
-//                         ) : null}
-//                         <Field
-//                           placeholder="Tipo de certificación"
-//                           name="EDITTIPO"
-//                           value={values.EDITTIPO}
-//                           onChange={handleChange}
-//                         />
-//                       </div>
-//                     </div>
-//                     <div style={{ display: "flex", alignItems: "center" }}>
-//                       {values.EDITNOTAQUIRED ? null : (
-//                         <div
-//                           style={{
-//                             display: "flex",
-//                             flexDirection: "column",
-//                             marginRight: "1em",
-//                           }}
-//                         >
-//                           <select
-//                             name="EDITYEAR"
-//                             onChange={handleChange}
-//                             value={values.EDITYEAR}
-//                           >
-//                             <option value="" disabled>
-//                               Año
-//                             </option>
-//                             {years.map((key) => (
-//                               <option key={key} value={key}>
-//                                 {key}
-//                               </option>
-//                             ))}
-//                           </select>
-//                         </div>
-//                       )}
-//                       <div style={{ display: "flex", alignItems: "center" }}>
-//                         <input
-//                           type="checkbox"
-//                           name="EDITNOTAQUIRED"
-//                           onChange={handleChange}
-//                           defaultChecked={
-//                             editingObjectCursosCertificaciones.NOTAQUIRED
-//                           }
-//                         />
-//                         <span style={{ marginLeft: "0.5em" }}>
-//                           ¿Aún no adquieres este certificado?
-//                         </span>
-//                       </div>
-//                     </div>
-//                     <Field
-//                       value={values.EDITDESCRIPTION}
-//                       name="EDITDESCRIPTION"
-//                       onChange={handleChange}
-//                       as="textarea"
-//                       rows={4}
-//                       maxrows={6}
-//                       style={{ width: "100%", marginTop: "1em" }}
-//                     />
-//                   </Form>
-//                 </ModalBody>
-//                 <ModalFooter>
-//                   <Button
-//                     style={{
-//                       backgroundColor: "#ff2400",
-//                       color: "white",
-//                       marginRight: "auto",
-//                     }}
-//                     onClick={() => {
-//                       deleteThisElement(editingObjectCursosCertificaciones);
-//                     }}
-//                   >
-//                     Eliminar
-//                   </Button>
-//                   <Button
-//                     variant="ghost"
-//                     onClick={() => {
-//                       setModalVisibility({
-//                         ...modalVisibility,
-//                         modal7Edit: false,
-//                       });
-//                     }}
-//                   >
-//                     Cancelar
-//                   </Button>
-//                   <Button
-//                     type="submit"
-//                     style={{ backgroundColor: "#ECB83C" }}
-//                     form="modal7EditForm"
-//                   >
-//                     Actualizar
-//                   </Button>
-//                 </ModalFooter>
-//               </ModalContent>
-//             </Modal>
-//           )}
-//         </Formik>
-//       );
-//     } else {
-//       return null;
-//     }
-//   }
-// );
+
 // export const CVModal = React.memo(({ modalVisibility, setModalVisibility }) => {
 //   const { secondaryInfoState, userInfoState } = useContext(MainContext);
 //   const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;

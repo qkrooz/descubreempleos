@@ -55,6 +55,8 @@ const Datos = React.memo(() => {
   const [workingOrder, setWorkingOrder] = useState({});
   const [editionModals, setEditionModals] = useState({
     workingExperience: false,
+    gradoEducativo: false,
+    cursosCertificaciones: false,
   });
   // context
   const { userInfoState, secondaryInfoState } = useContext(MainContext);
@@ -307,6 +309,7 @@ const Datos = React.memo(() => {
               setModalContent(5);
               setModal(!modal);
             }}
+            RenderItem={GradoEducativoItem}
           />
           <Card2
             title="Cursos y certificaciones"
@@ -325,6 +328,7 @@ const Datos = React.memo(() => {
         content={modalContent}
       />
       <ExperienciaLaboralEdition />
+      <GradoEducativoEdition />
       <Footer />
     </DatosContext.Provider>
   );
@@ -490,7 +494,7 @@ const ExperienciLaboralItem = React.memo(({ data }) => {
   };
   return (
     <>
-      <Flex direction="column" w="100%" borderBottom="1px solid black">
+      <Flex direction="column" w="100%" borderBottom="1px solid #e2e2e2">
         <Flex justify="space-between">
           <Text fontWeight="bold" mt={4}>
             {data.PUESTO}
@@ -570,7 +574,7 @@ const ExperienciaLaboralEdition = React.memo(() => {
   const toast = useToast();
   const { secondaryInfoState, userInfoState } = useContext(MainContext);
   const [userInfo] = userInfoState;
-  const [secondaryinfo, setSecondaryInfo] = secondaryInfoState;
+  const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
   const { editionModalsState, workingOrderState } = useContext(DatosContext);
   const [workingOrder, setWorkingOrder] = workingOrderState;
   const [editionModals, setEditionModals] = editionModalsState;
@@ -637,7 +641,7 @@ const ExperienciaLaboralEdition = React.memo(() => {
               values.ID = workingOrder.ID;
 
               const workExperienceCompleteCopy = [
-                ...JSON.parse(secondaryinfo.EXPERIENCIA_LABORAL),
+                ...JSON.parse(secondaryInfo.EXPERIENCIA_LABORAL),
               ];
               const indexOfEditedElement = workExperienceCompleteCopy.findIndex(
                 (item) => item.ID === workingOrder.ID
@@ -651,10 +655,9 @@ const ExperienciaLaboralEdition = React.memo(() => {
                   ),
                 })
                 .then(({ data }) => {
-                  console.log(data);
                   if (data.code === 200) {
                     setSecondaryInfo({
-                      ...secondaryinfo,
+                      ...secondaryInfo,
                       EXPERIENCIA_LABORAL: JSON.stringify(
                         workExperienceCompleteCopy
                       ),
@@ -669,6 +672,7 @@ const ExperienciaLaboralEdition = React.memo(() => {
                       ...editionModals,
                       workingExperience: false,
                     });
+                    onClose();
                   } else {
                     toast({
                       title: "No se pudo actualizar la información",
@@ -833,10 +837,6 @@ const ExperienciaLaboralEdition = React.memo(() => {
                       fontSize="0.8em"
                     >{`${values.DESCRIPCION.length}/400`}</Text>
                   </Flex>
-                  {/* //     
-              //      
-              //      
- */}
                 </Flex>
               </Form>
             )}
@@ -848,6 +848,433 @@ const ExperienciaLaboralEdition = React.memo(() => {
             mr={3}
             type="submit"
             form="workingExperienceEditionForm"
+          >
+            Actualizar
+          </Button>
+          <Button variant="ghost" onClick={onClose}>
+            Cancelar
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  );
+});
+const GradoEducativoItem = React.memo(({ data }) => {
+  const toast = useToast();
+  const { userInfoState, secondaryInfoState } = useContext(MainContext);
+  const [userInfo] = userInfoState;
+  const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
+  const { workingOrderState, editionModalsState } = useContext(DatosContext);
+  const [, setWorkingOrder] = workingOrderState;
+  const [editionModals, setEditionModals] = editionModalsState;
+  const [alertDialogVis, setAlertDialogVis] = useState(false);
+  const DeleteFromGradoEducativo = (data) => {
+    const gradoEducativoCopy = [...JSON.parse(secondaryInfo.GRADO_EDUCATIVO)];
+    const newArray = gradoEducativoCopy.filter((item) => item.ID !== data.ID);
+    axios
+      .post(`${apiRoute}/updateGradoEducativo.php`, {
+        ID: userInfo.ID,
+        GRADO_EDUCATIVO: JSON.stringify(newArray),
+      })
+      .then(({ data }) => {
+        if (data.code === 200) {
+          setSecondaryInfo({
+            ...secondaryInfo,
+            GRADO_EDUCATIVO: JSON.stringify(newArray),
+          });
+          toast({
+            title: "Información actualizada",
+            description: "Has actualizado tu grado educativo",
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+          });
+        } else {
+          toast({
+            title: "Ocurrió un error",
+            description: "Por favor intente más tarde",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+        }
+      })
+      .catch((error) => {
+        if (error)
+          toast({
+            title: "Ocurrió un error",
+            description: "Por favor intente más tarde",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+      });
+  };
+  return (
+    <>
+      <Flex direction="column" w="100%" borderBottom="1px solid #e2e2e2">
+        <Flex justify="space-between">
+          <Text fontWeight="bold" mt={4}>
+            {data.TITULO_ACADEMICO}
+          </Text>
+          <Menu>
+            <MenuButton as="button">
+              <MoreVert style={{ fontSize: "1.2em", color: "gray" }} />
+            </MenuButton>
+            <MenuList>
+              <MenuItem
+                icon={<Edit />}
+                onClick={() => {
+                  setEditionModals({
+                    ...editionModals,
+                    gradoEducativo: true,
+                  });
+                  setWorkingOrder(data);
+                }}
+              >
+                Editar
+              </MenuItem>
+              <MenuItem
+                icon={<Delete />}
+                onClick={() => {
+                  setAlertDialogVis(true);
+                }}
+                color="red"
+              >
+                Eliminar
+              </MenuItem>
+            </MenuList>
+          </Menu>
+        </Flex>
+        <Flex justify="space-between" mb={4}>
+          <Text>{data.INSTITUCION}</Text>
+          <Text fontSize="0.9em" color="gray">
+            {data.STILL
+              ? `Desde ${data.FECHA_INICIO}`
+              : `Desde ${data.FECHA_INICIO} hasta ${data.FECHA_FIN}`}
+          </Text>
+        </Flex>
+      </Flex>
+      <AlertDialog isOpen={alertDialogVis}>
+        <AlertDialogOverlay />
+        <AlertDialogContent>
+          <AlertDialogHeader fontSize="lg" fontWeight="bold">
+            ¿Eliminar este registro?
+          </AlertDialogHeader>
+          <AlertDialogBody>Esta acción no se puede deshacer</AlertDialogBody>
+          <AlertDialogFooter>
+            <Button
+              onClick={() => {
+                setAlertDialogVis(false);
+              }}
+            >
+              Cancelar
+            </Button>
+            <Button
+              colorScheme="red"
+              onClick={() => {
+                DeleteFromGradoEducativo(data);
+              }}
+              ml={3}
+            >
+              Eliminar
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  );
+});
+const GradoEducativoEdition = React.memo(() => {
+  const toast = useToast();
+  const { secondaryInfoState, userInfoState } = useContext(MainContext);
+  const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
+  const [userInfo] = userInfoState;
+  const gradosEducativos = [
+    { ID: 1, KEY: "secundaria", TITLE: "Secundaria" },
+    { ID: 2, KEY: "bachillerato", TITLE: "Bachillerato" },
+    { ID: 3, KEY: "tecnico", TITLE: "Técnico" },
+    { ID: 4, KEY: "licenciatura", TITLE: "Licenciatura" },
+    { ID: 5, KEY: "ingenieria", TITLE: "Ingeniería" },
+    { ID: 6, KEY: "diplomado", TITLE: "Diplomado" },
+    { ID: 7, KEY: "maestria", TITLE: "Maestría" },
+    { ID: 8, KEY: "doctorado", TITLE: "Doctorado" },
+  ];
+  const [years, setYears] = useState([]);
+  const [from, setFrom] = useState({
+    month: "01",
+    year: moment(new Date()).format("YYYY"),
+  });
+  const [to, setTo] = useState({
+    month: "01",
+    year: moment(new Date()).format("YYYY"),
+  });
+  const { editionModalsState, workingOrderState } = useContext(DatosContext);
+  const [editionModals, setEditionModals] = editionModalsState;
+  const [workingOrder, setWorkingOrder] = workingOrderState;
+  const onClose = () => {
+    setEditionModals({ ...editionModals, gradoEducativo: false });
+    setWorkingOrder({});
+  };
+  useEffect(() => {
+    let years = [];
+    let limit = moment(new Date()).year() - 80;
+    for (let i = moment(new Date()).year(); i > limit; i--) {
+      years.push(i);
+    }
+    setYears(years);
+  }, []);
+  useEffect(() => {
+    if (Object.values(workingOrder).length !== 0) {
+      setFrom({
+        ...from,
+        month: workingOrder.FECHA_INICIO.split("/")[0],
+        year: workingOrder.FECHA_INICIO.split("/")[1],
+      });
+      if (!workingOrder.STILL) {
+        setTo({
+          ...to,
+          month: workingOrder.FECHA_FIN.split("/")[0],
+          year: workingOrder.FECHA_FIN.split("/")[1],
+        });
+      }
+    }
+  }, [workingOrder, editionModals.gradoEducativo]);
+  return (
+    <Modal isOpen={editionModals.gradoEducativo} onClose={onClose} size="xl">
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>Editar grado educativo</ModalHeader>
+        <ModalBody>
+          <Formik
+            initialValues={{
+              TITULO_ACADEMICO: workingOrder.TITULO_ACADEMICO,
+              INSTITUCION: workingOrder.INSTITUCION,
+              GRADO: workingOrder.GRADO,
+              STILL: workingOrder.STILL,
+              FECHA_INICIO: `${from.month}/${from.year}`,
+              FECHA_FIN: `${to.month}/${to.year}`,
+            }}
+            onSubmit={(values) => {
+              values.FECHA_INICIO = `${from.month}/${from.year}`;
+              if (values.STILL) {
+                delete values.FECHA_FIN;
+              } else {
+                values.FECHA_FIN = `${to.month}/${to.year}`;
+              }
+              values.ID = workingOrder.ID;
+
+              const gradoEducativoCompleteCopy = [
+                ...JSON.parse(secondaryInfo.GRADO_EDUCATIVO),
+              ];
+              const indexOfEditedElement = gradoEducativoCompleteCopy.findIndex(
+                (item) => item.ID === workingOrder.ID
+              );
+              gradoEducativoCompleteCopy[indexOfEditedElement] = values;
+              axios
+                .post(`${apiRoute}/updateGradoEducativo.php`, {
+                  ID: userInfo.ID,
+                  GRADO_EDUCATIVO: JSON.stringify(gradoEducativoCompleteCopy),
+                })
+                .then(({ data }) => {
+                  if (data.code === 200) {
+                    setSecondaryInfo({
+                      ...secondaryInfo,
+                      GRADO_EDUCATIVO: JSON.stringify(
+                        gradoEducativoCompleteCopy
+                      ),
+                    });
+                    toast({
+                      title: "Información actualizada",
+                      status: "success",
+                      duration: 3000,
+                      isClosable: true,
+                    });
+                    setEditionModals({
+                      ...editionModals,
+                      workingExperience: false,
+                    });
+                    onClose();
+                  } else {
+                    toast({
+                      title: "No se pudo actualizar la información",
+                      status: "error",
+                      duration: 3000,
+                      isClosable: true,
+                    });
+                  }
+                })
+                .catch((error) => console.log(error));
+            }}
+          >
+            {({ values, handleChange, errors }) => (
+              <Form id="gradoEducativoEditForm">
+                <Flex>
+                  <Flex
+                    direction="column"
+                    w="60%"
+                    borderRightColor="#e2e2e2"
+                    borderRightWidth="1px"
+                    pr={3}
+                    mr={1}
+                  >
+                    <Field
+                      placeholder="Título"
+                      name="TITULO_ACADEMICO"
+                      value={values.TITULO_ACADEMICO}
+                      onChange={handleChange}
+                    />
+                    {errors.TITULO_ACADEMICO ? (
+                      <Text color="red" fontSize="0.7em">
+                        Campo requerido*
+                      </Text>
+                    ) : null}
+                    <Field
+                      placeholder="Institución"
+                      name="INSTITUCION"
+                      value={values.INSTITUCION}
+                      onChange={handleChange}
+                      style={{ marginTop: "1em" }}
+                    />
+                    {errors.INSTITUCION ? (
+                      <Text color="red" fontSize="0.7em">
+                        Campo requerido*
+                      </Text>
+                    ) : null}
+                    <Field
+                      as="select"
+                      name="GRADO"
+                      value={values.GRADO}
+                      onChange={handleChange}
+                      style={{ marginTop: "1em" }}
+                    >
+                      <option value="" disabled>
+                        Grado educativo
+                      </option>
+                      {gradosEducativos.map((key) => (
+                        <option value={key.KEY} key={key.ID}>
+                          {key.TITLE}
+                        </option>
+                      ))}
+                    </Field>
+                    {errors.GRADO ? (
+                      <Text color="red" fontSize="0.7em">
+                        Campo requerido*
+                      </Text>
+                    ) : null}
+                  </Flex>
+                  <Flex direction="column" grow={1}>
+                    <Flex align="center" justify="center" direction="column">
+                      <Flex align="center" mb={3}>
+                        <Text children="De" mr={3} flexGrow={1} />
+                        <Field
+                          value={from.month}
+                          as="select"
+                          style={{ marginRight: "0.5em", width: "5em" }}
+                          onChange={(e) =>
+                            setFrom({ ...from, month: e.target.value })
+                          }
+                          onBlur={null}
+                        >
+                          <option value="">Mes</option>
+                          <option value="01">Enero</option>
+                          <option value="02">Febrero</option>
+                          <option value="03">Marzo</option>
+                          <option value="04">Abril</option>
+                          <option value="05">Mayo</option>
+                          <option value="06">Junio</option>
+                          <option value="07">Julio</option>
+                          <option value="08">Agosto</option>
+                          <option value="09">Septiembre</option>
+                          <option value="10">Octubre</option>
+                          <option value="11">Noviembre</option>
+                          <option value="12">Diciembre</option>
+                        </Field>
+                        <Field
+                          onBlur={null}
+                          as="select"
+                          value={from.year}
+                          onChange={(e) =>
+                            setFrom({ ...from, year: e.target.value })
+                          }
+                        >
+                          <option value="">Año</option>
+                          {years.map((key) => (
+                            <option key={key} value={key}>
+                              {key}
+                            </option>
+                          ))}
+                        </Field>
+                      </Flex>
+                      {!values.STILL ? (
+                        <Flex align="center" mb={3}>
+                          <Text children="A" mr={3} flexGrow={1} w="1em" />
+                          <Field
+                            onBlur={null}
+                            value={to.month}
+                            as="select"
+                            style={{ marginRight: "0.5em", width: "5em" }}
+                            onChange={(e) =>
+                              setTo({ ...to, month: e.target.value })
+                            }
+                          >
+                            <option value="">Mes</option>
+                            <option value="01">Enero</option>
+                            <option value="02">Febrero</option>
+                            <option value="03">Marzo</option>
+                            <option value="04">Abril</option>
+                            <option value="05">Mayo</option>
+                            <option value="06">Junio</option>
+                            <option value="07">Julio</option>
+                            <option value="08">Agosto</option>
+                            <option value="09">Septiembre</option>
+                            <option value="10">Octubre</option>
+                            <option value="11">Noviembre</option>
+                            <option value="12">Diciembre</option>
+                          </Field>
+                          <Field
+                            onBlur={null}
+                            as="select"
+                            value={to.year}
+                            onChange={(e) =>
+                              setTo({ ...to, year: e.target.value })
+                            }
+                          >
+                            <option value="">Año</option>
+                            {years.map((key) => (
+                              <option key={key} value={key}>
+                                {key}
+                              </option>
+                            ))}
+                          </Field>
+                        </Flex>
+                      ) : null}
+                    </Flex>
+                    <Flex align="center" justify="center">
+                      <Text
+                        children="¿Sigues estudiando aquí?"
+                        fontSize="0.9em"
+                        mr={3}
+                      />
+                      <input
+                        type="checkbox"
+                        name="STILL"
+                        checked={values.STILL}
+                        onChange={handleChange}
+                      />
+                    </Flex>
+                  </Flex>
+                </Flex>
+              </Form>
+            )}
+          </Formik>
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            colorScheme="blue"
+            mr={3}
+            type="submit"
+            form="gradoEducativoEditForm"
           >
             Actualizar
           </Button>
