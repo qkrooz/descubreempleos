@@ -646,7 +646,7 @@ const ExperienciaLaboralEdition = React.memo(() => {
                 values.FECHA_FIN = `${to.month}/${to.year}`;
               }
               values.ID = workingOrder.ID;
-
+              values.DESCRIPCION = values.DESCRIPCION.trim();
               const workExperienceCompleteCopy = [
                 ...JSON.parse(secondaryInfo.EXPERIENCIA_LABORAL),
               ];
@@ -1480,6 +1480,7 @@ const CursosCertificacionesEdition = React.memo(() => {
             }}
             onSubmit={(values) => {
               values.ID = workingOrder.ID;
+              values.DESCRIPCION = values.DESCRIPCION.trim();
               const cursosCertificacionesCopy = [
                 ...JSON.parse(secondaryInfo.CURSOS_CERTIFICACIONES),
               ];

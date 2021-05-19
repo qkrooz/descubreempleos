@@ -114,11 +114,10 @@ export const CustomModal = React.memo(({ hook, content }) => {
           initialValues={formInitialValues}
           onSubmit={(values) => {
             values.ID = userInfo.ID;
-            // console.log(values);
             axios
               .post(ModalContentIndex[content].apiURL, values)
               .then(({ data }) => {
-                // console.log(data);
+                console.log(data);
                 switch (data.code) {
                   case 200:
                     setNewInfo(values);
@@ -943,7 +942,7 @@ const Content5 = () => {
         ID: currentItem,
         PUESTO: values.PUESTO,
         EMPRESA: values.EMPRESA,
-        DESCRIPCION: values.DESCRIPCION,
+        DESCRIPCION: values.DESCRIPCION.trim(),
         FECHA_INICIO: values.FECHA_INICIO,
         FECHA_FIN: values.FECHA_FIN,
         STILL: values.STILL,
@@ -953,7 +952,7 @@ const Content5 = () => {
         ID: currentItem,
         PUESTO: values.PUESTO,
         EMPRESA: values.EMPRESA,
-        DESCRIPCION: values.DESCRIPCION,
+        DESCRIPCION: values.DESCRIPCION.trim(),
         FECHA_INICIO: values.FECHA_INICIO,
         STILL: values.STILL,
       };
@@ -1371,7 +1370,7 @@ const Content7 = () => {
       ID: currentItem,
       TITULO_CURSO: values.TITULO_CURSO,
       TIPO: values.TIPO,
-      DESCRIPCION: values.DESCRIPCION,
+      DESCRIPCION: values.DESCRIPCION.trim(),
       FECHA_INICIO: values.FECHA_INICIO,
       STILL: values.STILL,
     };
