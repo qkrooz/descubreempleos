@@ -92,6 +92,9 @@ const Datos = React.memo(() => {
       })
       .catch((error) => console.log(error));
   };
+  useEffect(() => {
+    console.log(workingOrder);
+  }, [workingOrder]);
   return (
     <DatosContext.Provider
       value={{
@@ -603,20 +606,22 @@ const ExperienciaLaboralEdition = React.memo(() => {
   }, []);
   useEffect(() => {
     if (Object.values(workingOrder).length !== 0) {
-      setFrom({
-        ...from,
-        month: workingOrder.FECHA_INICIO.split("/")[0],
-        year: workingOrder.FECHA_INICIO.split("/")[1],
-      });
-      if (!workingOrder.STILL) {
-        setTo({
-          ...to,
-          month: workingOrder.FECHA_FIN.split("/")[0],
-          year: workingOrder.FECHA_FIN.split("/")[1],
+      if (workingOrder.FECHA_INICIO)
+        setFrom({
+          ...from,
+          month: workingOrder.FECHA_INICIO.split("/")[0],
+          year: workingOrder.FECHA_INICIO.split("/")[1],
         });
+      if (!workingOrder.STILL) {
+        if (workingOrder.FECHA_FIN)
+          setTo({
+            ...to,
+            month: workingOrder.FECHA_FIN.split("/")[0],
+            year: workingOrder.FECHA_FIN.split("/")[1],
+          });
       }
     }
-  }, [workingOrder, editionModals.workingExperience]);
+  }, [editionModals.workingExperience]);
   return (
     <Modal isOpen={editionModals.workingExperience} onClose={onClose} size="xl">
       <ModalOverlay />
@@ -1041,20 +1046,22 @@ const GradoEducativoEdition = React.memo(() => {
   }, []);
   useEffect(() => {
     if (Object.values(workingOrder).length !== 0) {
-      setFrom({
-        ...from,
-        month: workingOrder.FECHA_INICIO.split("/")[0],
-        year: workingOrder.FECHA_INICIO.split("/")[1],
-      });
-      if (!workingOrder.STILL) {
-        setTo({
-          ...to,
-          month: workingOrder.FECHA_FIN.split("/")[0],
-          year: workingOrder.FECHA_FIN.split("/")[1],
+      if (workingOrder.FECHA_INICIO)
+        setFrom({
+          ...from,
+          month: workingOrder.FECHA_INICIO.split("/")[0],
+          year: workingOrder.FECHA_INICIO.split("/")[1],
         });
+      if (!workingOrder.STILL) {
+        if (workingOrder.FECHA_FIN)
+          setTo({
+            ...to,
+            month: workingOrder.FECHA_FIN.split("/")[0],
+            year: workingOrder.FECHA_FIN.split("/")[1],
+          });
       }
     }
-  }, [workingOrder, editionModals.gradoEducativo]);
+  }, [editionModals.gradoEducativo]);
   return (
     <Modal isOpen={editionModals.gradoEducativo} onClose={onClose} size="xl">
       <ModalOverlay />
@@ -1442,8 +1449,8 @@ const CursosCertificacionesEdition = React.memo(() => {
   const [editionModals, setEditionModals] = editionModalsState;
   const [workingOrder, setWorkingOrder] = workingOrderState;
   const onClose = () => {
-    setEditionModals({ ...editionModals, cursosCertificaciones: false });
     setWorkingOrder({});
+    setEditionModals({ ...editionModals, cursosCertificaciones: false });
   };
   useEffect(() => {
     let years = [];
@@ -1462,7 +1469,7 @@ const CursosCertificacionesEdition = React.memo(() => {
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Editar cursos y certificaciones</ModalHeader>
-        <ModalFooter>
+        <ModalBody>
           <Formik
             initialValues={{
               TITULO_CURSO: workingOrder.TITULO_CURSO,
@@ -1471,7 +1478,52 @@ const CursosCertificacionesEdition = React.memo(() => {
               FECHA_INICIO: workingOrder.FECHA_INICIO,
               STILL: workingOrder.STILL,
             }}
-            onSubmit={(values) => console.log(values)}
+            onSubmit={(values) => {
+              values.ID = workingOrder.ID;
+              const cursosCertificacionesCopy = [
+                ...JSON.parse(secondaryInfo.CURSOS_CERTIFICACIONES),
+              ];
+              const indexOfEditedElement = cursosCertificacionesCopy.findIndex(
+                (item) => item.ID === workingOrder.ID
+              );
+              cursosCertificacionesCopy[indexOfEditedElement] = values;
+              axios
+                .post(`${apiRoute}/updateCursosCertificaciones.php`, {
+                  ID: userInfo.ID,
+                  CURSOS_CERTIFICACIONES: JSON.stringify(
+                    cursosCertificacionesCopy
+                  ),
+                })
+                .then(({ data }) => {
+                  if (data.code === 200) {
+                    setSecondaryInfo({
+                      ...secondaryInfo,
+                      CURSOS_CERTIFICACIONES: JSON.stringify(
+                        cursosCertificacionesCopy
+                      ),
+                    });
+                    toast({
+                      title: "Información actualizada",
+                      status: "success",
+                      duration: 3000,
+                      isClosable: true,
+                    });
+                    setEditionModals({
+                      ...editionModals,
+                      workingExperience: false,
+                    });
+                    onClose();
+                  } else {
+                    toast({
+                      title: "No se pudo actualizar la información",
+                      status: "error",
+                      duration: 3000,
+                      isClosable: true,
+                    });
+                  }
+                })
+                .catch((error) => console.log(error));
+            }}
           >
             {({ values, handleChange, errors }) => (
               <Form id="cursosCertificacionesEditForm">
@@ -1564,7 +1616,7 @@ const CursosCertificacionesEdition = React.memo(() => {
               </Form>
             )}
           </Formik>
-        </ModalFooter>
+        </ModalBody>
         <ModalFooter>
           <Button
             colorScheme="blue"
