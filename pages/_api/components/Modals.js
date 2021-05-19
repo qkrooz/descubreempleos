@@ -114,6 +114,7 @@ export const CustomModal = React.memo(({ hook, content }) => {
           initialValues={formInitialValues}
           onSubmit={(values) => {
             values.ID = userInfo.ID;
+            // console.log(values);
             axios
               .post(ModalContentIndex[content].apiURL, values)
               .then(({ data }) => {
@@ -1335,9 +1336,133 @@ const Content6 = () => {
   );
 };
 const Content7 = () => {
-  const { onClose, values, handleChange, errors } = useContext(ThisContext);
-
-  return <></>;
+  const { values, handleChange, errors } = useContext(ThisContext);
+  const [years, setYears] = useState([]);
+  const { secondaryInfoState } = useContext(MainContext);
+  const [secondaryInfo] = secondaryInfoState;
+  useEffect(() => {
+    let years = [];
+    let limit = moment(new Date()).year() - 80;
+    for (let i = moment(new Date()).year(); i > limit; i--) {
+      years.push(i);
+    }
+    setYears(years);
+    values.FECHA_INICIO = moment(new Date()).year();
+  }, []);
+  useEffect(() => {
+    let cursosCertificacionesCompleteCopy;
+    if (secondaryInfo.CURSOS_CERTIFICACIONES) {
+      cursosCertificacionesCompleteCopy = [
+        ...JSON.parse(secondaryInfo.CURSOS_CERTIFICACIONES),
+      ];
+    } else {
+      cursosCertificacionesCompleteCopy = [];
+    }
+    let currentItem;
+    if (cursosCertificacionesCompleteCopy.length === 0) {
+      currentItem = 0;
+    } else {
+      currentItem =
+        cursosCertificacionesCompleteCopy[
+          cursosCertificacionesCompleteCopy.length - 1
+        ].ID + 1;
+    }
+    let newObj = {
+      ID: currentItem,
+      TITULO_CURSO: values.TITULO_CURSO,
+      TIPO: values.TIPO,
+      DESCRIPCION: values.DESCRIPCION,
+      FECHA_INICIO: values.FECHA_INICIO,
+      STILL: values.STILL,
+    };
+    cursosCertificacionesCompleteCopy.push(newObj);
+    values.CURSOS_CERTIFICACIONES = JSON.stringify(
+      cursosCertificacionesCompleteCopy
+    );
+  }, [values]);
+  return (
+    <Flex w="100%" direction="column">
+      <Flex>
+        <Flex direction="column" w="60%" mr={3}>
+          <Field
+            placeholder="Título"
+            name="TITULO_CURSO"
+            value={values.TITULO_CURSO}
+            onChange={handleChange}
+          />
+          {errors.TITULO_CURSO ? (
+            <Text color="red" fontSize="0.7em">
+              Campo requerido*
+            </Text>
+          ) : null}
+          <Field
+            placeholder="Tipo de certificación"
+            name="TIPO"
+            value={values.TIPO}
+            onChange={handleChange}
+            style={{ marginTop: "1em" }}
+          />
+          {errors.TIPO ? (
+            <Text color="red" fontSize="0.7em">
+              Campo requerido*
+            </Text>
+          ) : null}
+        </Flex>
+        <Flex direction="column" grow={1}>
+          <Field
+            as="select"
+            name="FECHA_INICIO"
+            value={values.FECHA_INICIO}
+            onChange={handleChange}
+            style={{ width: "100%" }}
+          >
+            <option value="">Año</option>
+            {years.map((key) => (
+              <option key={key} value={key}>
+                {key}
+              </option>
+            ))}
+          </Field>
+          <Flex align="center" justify="center" alignItems="center" mt={3}>
+            <Text
+              children="¿Sigues en este certificado?"
+              fontSize="0.9em"
+              mr={3}
+            />
+            <input
+              type="checkbox"
+              name="STILL"
+              value={values.STILL}
+              onChange={handleChange}
+            />
+          </Flex>
+        </Flex>
+      </Flex>
+      <Field
+        style={{ marginTop: "1em" }}
+        maxrows={6}
+        rows={4}
+        as="textarea"
+        name="DESCRIPCION"
+        value={values.DESCRIPCION}
+        onChange={handleChange}
+        maxLength={400}
+        placeholder="Descripción"
+      />
+      <Flex w="100%">
+        {errors.DESCRIPCION ? (
+          <Text color="red" fontSize="0.7em">
+            Campo requerido*
+          </Text>
+        ) : null}
+        <Text
+          ml="auto"
+          color="gray"
+          fontSize="0.8em"
+        >{`${values.DESCRIPCION.length}/400`}</Text>
+      </Flex>
+    </Flex>
+  );
 };
 const ModalContentIndex = [
   {
@@ -1457,251 +1582,19 @@ const ModalContentIndex = [
     form: () => <Content7 />,
     validation: Yup.object().shape({}),
     formInitialValues: {
-      TITULO: "",
+      TITULO_CURSO: "",
       TIPO: "",
       DESCRIPCION: "",
       FECHA_INICIO: "",
       STILL: false,
     },
     validation: Yup.object().shape({
-      TITULO: Yup.string().required(),
+      TITULO_CURSO: Yup.string().required(),
       TIPO: Yup.string().required(),
       DESCRIPCION: Yup.string().required(),
     }),
   },
 ];
-// export const Modal7 = React.memo(({ modalVisibility, setModalVisibility }) => {
-//   const toast = useToast();
-//   // context
-//   const { secondaryInfoState, userInfoState } = useContext(MainContext);
-//   const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
-//   const [userInfo] = userInfoState;
-//   const validationSchema = Yup.object().shape({
-//     TITULO: Yup.string().required(),
-//     TIPO: Yup.string().required(),
-//     DESCRIPTION: Yup.string().required(),
-//   });
-//   // states
-//   const [years, setYears] = useState([]);
-//   // effects
-//   useEffect(() => {
-//     let years = [];
-//     let limit = moment(new Date()).year() - 80;
-//     for (let i = moment(new Date()).year(); i > limit; i--) {
-//       years.push(i);
-//     }
-//     setYears(years);
-//   }, []);
-//   return (
-//     <Formik
-//       initialValues={{
-//         TITULO: "",
-//         TIPO: "",
-//         YEAR: "",
-//         NOTAQUIRED: false,
-//         DESCRIPTION: "",
-//       }}
-//       validationSchema={validationSchema}
-//       onSubmit={(values, formikBag) => {
-//         let newCursosCertificaciones;
-//         // year resolution
-//         values.NOTAQUIRED
-//           ? delete values.YEAR
-//           : (values.YEAR = values.YEAR
-//               ? values.YEAR
-//               : moment(new Date()).format("YYYY"));
-//         // secondaryInfo.CURSOS_CERTIFICACIONS array logic
-//         if (secondaryInfo.CURSOS_CERTIFICACIONES) {
-//           newCursosCertificaciones = JSON.parse(
-//             secondaryInfo.CURSOS_CERTIFICACIONES
-//           );
-//           if (newCursosCertificaciones.length === 0) {
-//             values.ID = 1;
-//           } else {
-//             values.ID = newCursosCertificaciones.slice(-1).pop().ID + 1;
-//           }
-//           newCursosCertificaciones.push(values);
-//         } else {
-//           values.ID = 1;
-//           newCursosCertificaciones = [];
-//           newCursosCertificaciones.push(values);
-//         }
-//         axios
-//           .post(`${apiRoute}/updateCursosCertificaciones.php`, {
-//             ID: userInfo.ID,
-//             CURSOS_CERTIFICACIONES: newCursosCertificaciones,
-//           })
-//           .then(({ data }) => {
-//             if (data.code === 200) {
-//               let arraysito;
-//               if (secondaryInfo.CURSOS_CERTIFICACIONES) {
-//                 arraysito = JSON.parse(secondaryInfo.CURSOS_CERTIFICACIONES);
-//                 arraysito.push(values);
-//                 setSecondaryInfo({
-//                   ...secondaryInfo,
-//                   CURSOS_CERTIFICACIONES: JSON.stringify(arraysito),
-//                 });
-//               } else {
-//                 arraysito = [];
-//                 arraysito.push(values);
-//                 setSecondaryInfo({
-//                   ...secondaryInfo,
-//                   CURSOS_CERTIFICACIONES: JSON.stringify(arraysito),
-//                 });
-//               }
-//               setModalVisibility({ modalVisibility, modal7: false });
-//               toast({
-//                 title: "Información actualizada",
-//                 description: "Cambios exitosos",
-//                 status: "success",
-//                 duration: 3000,
-//                 isClosable: true,
-//               });
-//               formikBag.resetForm({
-//                 TITULO: "",
-//                 TIPO: "",
-//                 YEAR: "",
-//                 NOTAQUIRED: false,
-//                 DESCRIPTION: "",
-//               });
-//             } else {
-//               setModalVisibility({ modalVisibility, modal7: false });
-//               toast({
-//                 title: "Ocurrio un error en la actualizacion",
-//                 description: "CIntentar mas tarde",
-//                 status: "error",
-//                 duration: 3000,
-//                 isClosable: true,
-//               });
-//             }
-//           })
-//           .catch((error) => console.log(error));
-//         console.log(newCursosCertificaciones);
-//       }}
-//     >
-//       {({ values, handleChange, errors }) => (
-//         <Modal isOpen={modalVisibility.modal7} size="md">
-//           <ModalOverlay />
-//           <ModalCloseButton />
-//           <ModalContent>
-//             <ModalHeader>Cursos y certificaciones</ModalHeader>
-//             <ModalBody>
-//               <Form id="modal7Form">
-//                 <div
-//                   style={{
-//                     display: "flex",
-//                     flexDirection: "column",
-//                     marginBottom: "1em",
-//                   }}
-//                 >
-//                   <div
-//                     style={{
-//                       display: "flex",
-//                       flexDirection: "column",
-//                       marginBottom: "1em",
-//                     }}
-//                   >
-//                     {errors.TITULO ? (
-//                       <span style={{ color: "red" }}>*</span>
-//                     ) : null}
-//                     <Field
-//                       placeholder="Título"
-//                       name="TITULO"
-//                       value={values.TITULO}
-//                       onChange={handleChange}
-//                     />
-//                   </div>
-//                   <div style={{ display: "flex", flexDirection: "column" }}>
-//                     {errors.TIPO ? (
-//                       <span style={{ color: "red" }}>*</span>
-//                     ) : null}
-//                     <Field
-//                       placeholder="Tipo de certificación"
-//                       name="TIPO"
-//                       value={values.TIPO}
-//                       onChange={handleChange}
-//                     />
-//                   </div>
-//                 </div>
-//                 <div style={{ display: "flex", alignItems: "center" }}>
-//                   {values.NOTAQUIRED ? null : (
-//                     <div
-//                       style={{
-//                         display: "flex",
-//                         flexDirection: "column",
-//                         marginRight: "1em",
-//                       }}
-//                     >
-//                       {errors.YEAR ? (
-//                         <span style={{ color: "#ff2400" }}>*</span>
-//                       ) : null}
-//                       <select
-//                         name="YEAR"
-//                         onChange={handleChange}
-//                         value={values.YEAR}
-//                       >
-//                         <option value="" disabled>
-//                           Año
-//                         </option>
-//                         {years.map((key) => (
-//                           <option key={key} value={key}>
-//                             {key}
-//                           </option>
-//                         ))}
-//                       </select>
-//                     </div>
-//                   )}
-//                   <div style={{ display: "flex", alignItems: "center" }}>
-//                     <input
-//                       type="checkbox"
-//                       name="NOTAQUIRED"
-//                       onChange={handleChange}
-//                     />
-//                     <span style={{ marginLeft: "0.5em" }}>
-//                       ¿Aún no adquieres este certificado?
-//                     </span>
-//                   </div>
-//                 </div>
-//                 {errors.DESCRIPTION ? (
-//                   <span style={{ color: "#ff2400" }}>*</span>
-//                 ) : null}
-//                 <Field
-//                   value={values.DESCRIPTION}
-//                   name="DESCRIPTION"
-//                   onChange={handleChange}
-//                   as="textarea"
-//                   rows={4}
-//                   maxrows={6}
-//                   style={{ width: "100%", marginTop: "1em" }}
-//                 />
-//               </Form>
-//             </ModalBody>
-//             <ModalFooter>
-//               <Button
-//                 variant="ghost"
-//                 onClick={() => {
-//                   setModalVisibility({
-//                     ...modalVisibility,
-//                     modal7: false,
-//                   });
-//                 }}
-//               >
-//                 Cancelar
-//               </Button>
-//               <Button
-//                 type="submit"
-//                 style={{ backgroundColor: "#ECB83C" }}
-//                 form="modal7Form"
-//               >
-//                 Agregar
-//               </Button>
-//             </ModalFooter>
-//           </ModalContent>
-//         </Modal>
-//       )}
-//     </Formik>
-//   );
-// });
 
 // export const CVModal = React.memo(({ modalVisibility, setModalVisibility }) => {
 //   const { secondaryInfoState, userInfoState } = useContext(MainContext);

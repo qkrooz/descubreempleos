@@ -318,6 +318,7 @@ const Datos = React.memo(() => {
               setModalContent(6);
               setModal(!modal);
             }}
+            RenderItem={CursosCertificacionesItem}
           />
         </div>
       </div>
@@ -329,6 +330,7 @@ const Datos = React.memo(() => {
       />
       <ExperienciaLaboralEdition />
       <GradoEducativoEdition />
+      <CursosCertificacionesEdition />
       <Footer />
     </DatosContext.Provider>
   );
@@ -1288,6 +1290,287 @@ const GradoEducativoEdition = React.memo(() => {
             mr={3}
             type="submit"
             form="gradoEducativoEditForm"
+          >
+            Actualizar
+          </Button>
+          <Button variant="ghost" onClick={onClose}>
+            Cancelar
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  );
+});
+const CursosCertificacionesItem = React.memo(({ data }) => {
+  const toast = useToast();
+  const { userInfoState, secondaryInfoState } = useContext(MainContext);
+  const { workingOrderState, editionModalsState } = useContext(DatosContext);
+  const [userInfo] = userInfoState;
+  const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
+  const [, setWorkingOrder] = workingOrderState;
+  const [editionModals, setEditionModals] = editionModalsState;
+  const [alertDialogVis, setAlertDialogVis] = useState(false);
+  const DeleteFromCursosCertificaciones = (data) => {
+    const cursosCertificacionesCopy = [
+      ...JSON.parse(secondaryInfo.CURSOS_CERTIFICACIONES),
+    ];
+    const newArray = cursosCertificacionesCopy.filter(
+      (item) => item.ID !== data.ID
+    );
+    axios
+      .post(`${apiRoute}/updateCursosCertificaciones.php`, {
+        ID: userInfo.ID,
+        CURSOS_CERTIFICACIONES: JSON.stringify(newArray),
+      })
+      .then(({ data }) => {
+        if (data.code === 200) {
+          setSecondaryInfo({
+            ...secondaryInfo,
+            CURSOS_CERTIFICACIONES: JSON.stringify(newArray),
+          });
+          toast({
+            title: "Información actualizada",
+            description: "Has actualizado tu experiencia laboral",
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+          });
+        } else {
+          toast({
+            title: "Ocurrió un error",
+            description: "Por favor intente más tarde",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+        }
+      })
+      .catch((error) => {
+        if (error)
+          toast({
+            title: "Ocurrió un error",
+            description: "Por favor intente más tarde",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+      });
+  };
+  return (
+    <>
+      <Flex direction="column" w="100%" borderBottom="1px solid #e2e2e2">
+        <Flex justify="space-between">
+          <Text fontWeight="bold" mt={4}>
+            {data.TITULO_CURSO}
+          </Text>
+          <Menu>
+            <MenuButton as="button">
+              <MoreVert style={{ fontSize: "1.2em", color: "gray" }} />
+            </MenuButton>
+            <MenuList>
+              <MenuItem
+                icon={<Edit />}
+                onClick={() => {
+                  setEditionModals({
+                    ...editionModals,
+                    cursosCertificaciones: true,
+                  });
+                  setWorkingOrder(data);
+                }}
+              >
+                Editar
+              </MenuItem>
+              <MenuItem
+                icon={<Delete />}
+                onClick={() => {
+                  setAlertDialogVis(true);
+                }}
+                color="red"
+              >
+                Eliminar
+              </MenuItem>
+            </MenuList>
+          </Menu>
+        </Flex>
+        <Flex justify="space-between">
+          <Text>{data.TIPO}</Text>
+          <Text fontSize="0.9em" color="gray">
+            {data.STILL ? `Desde ${data.FECHA_INICIO}` : `${data.FECHA_INICIO}`}
+          </Text>
+        </Flex>
+        <Text fontSize="0.9em" mb={4}>
+          {data.DESCRIPCION}
+        </Text>
+      </Flex>
+      <AlertDialog isOpen={alertDialogVis}>
+        <AlertDialogOverlay />
+        <AlertDialogContent>
+          <AlertDialogHeader fontSize="lg" fontWeight="bold">
+            ¿Eliminar este registro?
+          </AlertDialogHeader>
+          <AlertDialogBody>Esta acción no se puede deshacer</AlertDialogBody>
+          <AlertDialogFooter>
+            <Button
+              onClick={() => {
+                setAlertDialogVis(false);
+              }}
+            >
+              Cancelar
+            </Button>
+            <Button
+              colorScheme="red"
+              onClick={() => {
+                DeleteFromCursosCertificaciones(data);
+              }}
+              ml={3}
+            >
+              Eliminar
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  );
+});
+const CursosCertificacionesEdition = React.memo(() => {
+  const toast = useToast();
+  const { secondaryInfoState, userInfoState } = useContext(MainContext);
+  const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
+  const [userInfo] = userInfoState;
+  const [years, setYears] = useState([]);
+  const { editionModalsState, workingOrderState } = useContext(DatosContext);
+  const [editionModals, setEditionModals] = editionModalsState;
+  const [workingOrder, setWorkingOrder] = workingOrderState;
+  const onClose = () => {
+    setEditionModals({ ...editionModals, cursosCertificaciones: false });
+    setWorkingOrder({});
+  };
+  useEffect(() => {
+    let years = [];
+    let limit = moment(new Date()).year() - 80;
+    for (let i = moment(new Date()).year(); i > limit; i--) {
+      years.push(i);
+    }
+    setYears(years);
+  }, []);
+  return (
+    <Modal
+      isOpen={editionModals.cursosCertificaciones}
+      onClose={onClose}
+      size="xl"
+    >
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>Editar cursos y certificaciones</ModalHeader>
+        <ModalFooter>
+          <Formik
+            initialValues={{
+              TITULO_CURSO: workingOrder.TITULO_CURSO,
+              TIPO: workingOrder.TIPO,
+              DESCRIPCION: workingOrder.DESCRIPCION,
+              FECHA_INICIO: workingOrder.FECHA_INICIO,
+              STILL: workingOrder.STILL,
+            }}
+            onSubmit={(values) => console.log(values)}
+          >
+            {({ values, handleChange, errors }) => (
+              <Form id="cursosCertificacionesEditForm">
+                <Flex w="100%" direction="column">
+                  <Flex>
+                    <Flex direction="column" w="60%" mr={3}>
+                      <Field
+                        placeholder="Título"
+                        name="TITULO_CURSO"
+                        value={values.TITULO_CURSO}
+                        onChange={handleChange}
+                      />
+                      {errors.TITULO_CURSO ? (
+                        <Text color="red" fontSize="0.7em">
+                          Campo requerido*
+                        </Text>
+                      ) : null}
+                      <Field
+                        placeholder="Tipo de certificación"
+                        name="TIPO"
+                        value={values.TIPO}
+                        onChange={handleChange}
+                        style={{ marginTop: "1em" }}
+                      />
+                      {errors.TIPO ? (
+                        <Text color="red" fontSize="0.7em">
+                          Campo requerido*
+                        </Text>
+                      ) : null}
+                    </Flex>
+                    <Flex direction="column" grow={1}>
+                      <Field
+                        as="select"
+                        name="FECHA_INICIO"
+                        value={values.FECHA_INICIO}
+                        onChange={handleChange}
+                        style={{ width: "100%" }}
+                      >
+                        <option value="">Año</option>
+                        {years.map((key) => (
+                          <option key={key} value={key}>
+                            {key}
+                          </option>
+                        ))}
+                      </Field>
+                      <Flex
+                        align="center"
+                        justify="center"
+                        alignItems="center"
+                        mt={3}
+                      >
+                        <Text
+                          children="¿Sigues en este certificado?"
+                          fontSize="0.9em"
+                          mr={3}
+                        />
+                        <input
+                          type="checkbox"
+                          name="STILL"
+                          value={values.STILL}
+                          onChange={handleChange}
+                        />
+                      </Flex>
+                    </Flex>
+                  </Flex>
+                  <Field
+                    style={{ marginTop: "1em" }}
+                    maxrows={6}
+                    rows={4}
+                    as="textarea"
+                    name="DESCRIPCION"
+                    value={values.DESCRIPCION}
+                    onChange={handleChange}
+                    maxLength={400}
+                    placeholder="Descripción"
+                  />
+                  <Flex w="100%">
+                    {errors.DESCRIPCION ? (
+                      <Text color="red" fontSize="0.7em">
+                        Campo requerido*
+                      </Text>
+                    ) : null}
+                    <Text
+                      ml="auto"
+                      color="gray"
+                      fontSize="0.8em"
+                    >{`${values.DESCRIPCION.length}/400`}</Text>
+                  </Flex>
+                </Flex>
+              </Form>
+            )}
+          </Formik>
+        </ModalFooter>
+        <ModalFooter>
+          <Button
+            colorScheme="blue"
+            mr={3}
+            type="submit"
+            form="cursosCertificacionesEditForm"
           >
             Actualizar
           </Button>
