@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { MainContext } from "./_api/resources/MainContext.js";
 import { ChakraProvider } from "@chakra-ui/react";
-import { useRouter } from "next/router";
-import apiRoute from "./_api/resources/apiRoute";
-import "../styles/generalstyles.css";
+import React, { useEffect, useState } from "react";
+import Router from "next/router";
 import axios from "axios";
+import { MainContext } from "../_api/resources/MainContext.js";
+import apiRoute from "../_api/resources/apiRoute";
+import "../styles/generalstyles.css";
 const App = React.memo(({ Component, pageProps }) => {
-  const router = useRouter();
   // states
   const [userInfo, setUserInfo] = useState({});
   const [secondaryInfo, setSecondaryInfo] = useState({});
@@ -44,7 +43,7 @@ const App = React.memo(({ Component, pageProps }) => {
           .catch((error) => console.log(error));
       } else {
         ResetInfo();
-        router.push("/entra");
+        Router.push("/entra");
       }
     }
   }, []);

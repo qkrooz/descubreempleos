@@ -1,6 +1,6 @@
 import React from "react";
 import { Facebook, Twitter, YouTube } from "@material-ui/icons";
-import footer from "../../../styles/footer.module.css";
+import footer from "../../styles/footer.module.css";
 const Footer = React.memo(() => {
   return (
     <footer className={footer.container}>

@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
-import { MainContext } from "../_api/resources/MainContext";
-import apiRoute from "../_api/resources/apiRoute";
+import { MainContext } from "../../_api/resources/MainContext";
+import apiRoute from "../../_api/resources/apiRoute";
 import Link from "next/link";
 import Head from "next/head";
 import { useRouter } from "next/router";

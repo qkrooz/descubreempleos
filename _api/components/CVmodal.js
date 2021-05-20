@@ -1,6 +1,6 @@
 import React from "react";
 import apiRoute from "../resources/apiRoute";
-import style from "../../../styles/pdfcv.module.css";
+import style from "../../styles/pdfcv.module.css";
 
 const CVmodal = React.memo(({ userInfo, secondaryInfo }) => {
   return (

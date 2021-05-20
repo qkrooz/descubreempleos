@@ -7,7 +7,7 @@ import { Flex, Box, Badge, Table, Tbody, Td, Tr, Text } from "@chakra-ui/react";
 // components
 import Footer from "../components/Footer";
 // style
-import style from "../../../styles/enterprisedata.module.css";
+import style from "../../styles/enterprisedata.module.css";
 import { Edit, Lock, Person } from "@material-ui/icons";
 const EnterpriseData = React.memo(() => {
   // context

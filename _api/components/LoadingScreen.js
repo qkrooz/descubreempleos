@@ -1,6 +1,6 @@
 import React from "react";
 // style
-import style from "../../../styles/loadingscreen.module.css";
+import style from "../../styles/loadingscreen.module.css";
 export default function LoadingScreen({ visible }) {
   if (visible) {
     return (

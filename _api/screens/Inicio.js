@@ -1,5 +1,5 @@
 import React from "react";
-import style from "../../../styles/inicio.module.css";
+import style from "../../styles/inicio.module.css";
 // components
 import Footer from "../components/Footer";
 // import { HomeUserCard } from "../components/UserCard";

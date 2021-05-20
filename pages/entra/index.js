@@ -2,18 +2,17 @@ import React from "react";
 import Link from "next/link";
 import Head from "next/head";
 import { useToast } from "@chakra-ui/react";
-import { useRouter } from "next/router";
-import apiRoute from "../_api/resources/apiRoute";
-import { MainContext } from "../_api/resources/MainContext";
+import Router from "next/router";
+import apiRoute from "../../_api/resources/apiRoute";
+import { MainContext } from "../../_api/resources/MainContext";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import { EyeFilled, EyeInvisibleFilled } from "@ant-design/icons";
-import LoadingScreen from "../_api/components/LoadingScreen";
+import LoadingScreen from "../../_api/components/LoadingScreen";
 import style from "./style.module.css";
 const Login = React.memo(() => {
   const toast = useToast();
-  const router = useRouter();
   // context
   const { ResetInfo, SetInfo } = React.useContext(MainContext);
   const loginValidation = Yup.object().shape({
@@ -27,7 +26,7 @@ const Login = React.memo(() => {
     if (typeof window !== "undefined") {
       if (localStorage.getItem("userInfo") === null) {
         ResetInfo();
-        router.push("/entra");
+        Router.push("/entra");
         setLoading(false);
       } else {
         if (
@@ -36,10 +35,10 @@ const Login = React.memo(() => {
           Object.values(JSON.parse(localStorage.getItem("secondaryInfo")))
             .length !== 0
         ) {
-          router.push("/");
+          Router.push("/");
         } else {
           ResetInfo();
-          router.push("/entra");
+          Router.push("/entra");
           setLoading(false);
         }
       }
@@ -74,7 +73,7 @@ const Login = React.memo(() => {
                 console.log(data);
                 if (data.code === 200) {
                   SetInfo(data);
-                  router.push("/");
+                  Router.push("/");
                 } else if (data.code === 404) {
                   ResetInfo();
                   toast({

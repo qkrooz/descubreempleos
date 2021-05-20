@@ -2,8 +2,8 @@ import React, { useContext } from "react";
 import { MainContext } from "../resources/MainContext";
 import { Link } from "react-router-dom";
 // styles
-import header from "../../../styles/header.module.css";
-import { useRouter } from "next/router";
+import header from "../../styles/header.module.css";
+import Router from "next/router";
 import {
   ChatBubble,
   Home,
@@ -26,7 +26,6 @@ import {
 } from "@chakra-ui/react";
 
 const Header = React.memo(() => {
-  const router = useRouter();
   // context
   const { ResetInfo } = useContext(MainContext);
   return (
@@ -74,7 +73,7 @@ const Header = React.memo(() => {
               icon={<PowerSettingsNew />}
               onClick={() => {
                 ResetInfo();
-                router.push("/entra");
+                Router.push("/entra");
               }}
             >
               Cerrar sesión
@@ -86,7 +85,6 @@ const Header = React.memo(() => {
   );
 });
 export const EnterpriseHeader = React.memo(() => {
-  const router = useRouter();
   // context
   const { ResetInfo } = useContext(MainContext);
   return (
@@ -134,7 +132,7 @@ export const EnterpriseHeader = React.memo(() => {
               icon={<PowerSettingsNew />}
               onClick={() => {
                 ResetInfo();
-                router.push("/entra");
+                Router.push("/entra");
               }}
             >
               Cerrar sesión

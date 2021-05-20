@@ -23,9 +23,9 @@ import {
 import { Close, Person } from "@material-ui/icons";
 import axios from "axios";
 import moment from "moment";
-import style from "../../../styles/modals.module.css";
+import style from "../../styles/modals.module.css";
 const ThisContext = React.createContext();
-export const CustomModal = React.memo(({ hook, content }) => {
+const CustomModal = React.memo(({ hook, content }) => {
   const router = useRouter();
   const toast = useToast();
   const { userInfoState, secondaryInfoState, ResetInfo } =
@@ -1594,7 +1594,7 @@ const ModalContentIndex = [
     }),
   },
 ];
-
+export default CustomModal;
 // export const CVModal = React.memo(({ modalVisibility, setModalVisibility }) => {
 //   const { secondaryInfoState, userInfoState } = useContext(MainContext);
 //   const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;

@@ -1,16 +1,16 @@
 import React, { useContext } from "react";
-import { MainContext } from "./_api/resources/MainContext";
+import { MainContext } from "../_api/resources/MainContext";
 import Head from "next/head";
 import { MemoryRouter as Router, Switch, Route } from "react-router-dom";
 // screens
-import InicioComponent from "./_api/screens/Inicio";
-import BusquedaComponent from "./_api/screens/Explore";
-import DatoComponent from "./_api/screens/Datos";
-import EnterpriseData from "./_api/screens/EnterpriseData";
-import EnterprisePublish from "./_api/screens/EnterprisePublish";
-import EnterpriseStatistics from "./_api/screens/EnterpriseStatistics";
+import InicioComponent from "../_api/screens/Inicio";
+import BusquedaComponent from "../_api/screens/Explore";
+import DatoComponent from "../_api/screens/Datos";
+import EnterpriseData from "../_api/screens/EnterpriseData";
+import EnterprisePublish from "../_api/screens/EnterprisePublish";
+import EnterpriseStatistics from "../_api/screens/EnterpriseStatistics";
 // components
-import Header, { EnterpriseHeader } from "./_api/components/Header";
+import Header, { EnterpriseHeader } from "../_api/components/Header";
 const Home = React.memo(() => {
   const { userInfoState } = useContext(MainContext);
   const [userInfo] = userInfoState;

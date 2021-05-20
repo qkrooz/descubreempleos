@@ -41,9 +41,9 @@ import Footer from "../components/Footer";
 import CVpdf from "../components/CVpdf";
 import CVModalComponent from "../components/CVmodal";
 // modals
-import { CustomModal } from "../components/Modals";
+import CustomModal from "../components/Modals";
 // styles
-import style from "../../../styles/datos.module.css";
+import style from "../../styles/datos.module.css";
 const DatosContext = React.createContext();
 const Datos = React.memo(() => {
   const toast = useToast();
