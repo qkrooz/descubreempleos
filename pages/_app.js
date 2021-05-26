@@ -47,9 +47,6 @@ const App = React.memo(({ Component, pageProps }) => {
       }
     }
   }, []);
-  // useEffect(() => {
-  //   console.log(userInfo);
-  // }, [userInfo]);
   return (
     <MainContext.Provider
       value={{

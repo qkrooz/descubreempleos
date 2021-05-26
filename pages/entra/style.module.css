@@ -5,13 +5,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 5em;
+  justify-content: space-between;
+  padding: 2em 0;
 }
 .logoContainer {
   margin-top: bottom;
   width: 45%;
   max-width: 30em;
-  margin-bottom: 5%;
 }
 .logoContainer > img {
   width: 100%;
@@ -123,11 +123,9 @@
   margin-right: 1em;
 }
 @media screen and (max-width: 568px) {
-  .container {
-    padding-top: 1em;
-  }
   .logoContainer {
     width: 90%;
+    margin-bottom: 5em;
   }
   .formContainer {
     padding: 0.5em;

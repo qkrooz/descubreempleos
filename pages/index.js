@@ -7,7 +7,6 @@ import InicioComponent from "../_api/screens/Inicio";
 import BusquedaComponent from "../_api/screens/Explore";
 import DatoComponent from "../_api/screens/Datos";
 import EnterpriseData from "../_api/screens/EnterpriseData";
-import EnterprisePublish from "../_api/screens/EnterprisePublish";
 import EnterpriseStatistics from "../_api/screens/EnterpriseStatistics";
 // components
 import Header, { EnterpriseHeader } from "../_api/components/Header";
@@ -29,13 +28,12 @@ const Home = React.memo(() => {
         {userInfo.USER_TYPE === "trabajador" ? (
           <>
             <Route exact path="/" component={InicioComponent} />
-            <Route path="/search" component={BusquedaComponent}></Route>
+            <Route path="/search" component={BusquedaComponent} />
             <Route path="/data" component={DatoComponent} />
           </>
         ) : (
           <>
             <Route exact path="/" component={EnterpriseStatistics} />
-            <Route exact path="/publish" component={EnterprisePublish} />
             <Route exact path="/data" component={EnterpriseData} />
           </>
         )}
