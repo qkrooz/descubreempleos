@@ -47,7 +47,11 @@ const Login = React.memo(() => {
   return (
     <>
       <Head>
-        <link rel="shortcut icon" href="./favicon.png" type="image/x-icon" />
+        <link
+          rel="shortcut icon"
+          href="https://descubrempleos.com/webServices/img/favicon.png"
+          type="image/x-icon"
+        />
         <title>Descubre | Entra</title>
       </Head>
       <LoadingScreen visible={loading} />
