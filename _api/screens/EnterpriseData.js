@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import apiRoute from "../resources/apiRoute";
 import Link from "next/link";
 import { MainContext } from "../resources/MainContext";
@@ -6,21 +6,30 @@ import { Formik, Form, Field } from "formik";
 import { Flex, Box, Badge, Table, Tbody, Td, Tr, Text } from "@chakra-ui/react";
 // components
 import Footer from "../components/Footer";
+import EnterpriseCustomModal from "../components//EnterpriseModals";
 // style
 import style from "../../styles/enterprisedata.module.css";
 import { Edit, Lock, Person } from "@material-ui/icons";
 const EnterpriseData = React.memo(() => {
+  var pattern = /^((http|https|ftp):\/\/)/;
   // context
   const { userInfoState, secondaryInfoState } = useContext(MainContext);
   const [userInfo] = userInfoState;
   const [secondaryInfo] = secondaryInfoState;
   // states
   const [userImageError, setUserImageError] = React.useState(false);
+  const [editModal, setEditModal] = useState(false);
+  const [content, setContent] = useState(0);
   return (
     <>
       <Flex w="100%">
         <Flex w="25%" pl="1em" pt="1em" direction="column">
-          <BoxComponent>
+          <BoxComponent
+            onClick={() => {
+              setContent(0);
+              setEditModal(true);
+            }}
+          >
             <Flex align="center" direction="column">
               {userImageError ? (
                 <div className={style.userImageErrorIcon}>
@@ -38,18 +47,26 @@ const EnterpriseData = React.memo(() => {
               )}
               <span className={style.companyName}>{userInfo.COMPANY_NAME}</span>
               <div className={style.companyDescription}>
-                {secondaryInfo.DESCRIPTION ? (
-                  secondaryInfo.DESCRIPTION
+                {userInfo.COMPANY_DESCRIPTION ? (
+                  userInfo.COMPANY_DESCRIPTION
                 ) : (
                   <Badge>no disponible</Badge>
                 )}
               </div>
               <div style={{ marginTop: "1em" }}>
-                {secondaryInfo.WEBSITE ? (
+                {userInfo.WEBSITE ? (
                   <Text color="Highlight" textDecoration="underline">
-                    <Link href={secondaryInfo.WEBSITE}>
-                      {secondaryInfo.WEBSITE}
-                    </Link>
+                    <a
+                      href={
+                        !pattern.test(userInfo.WEBSITE)
+                          ? "http://" + userInfo.WEBSITE
+                          : userInfo.WEBSITE
+                      }
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {userInfo.WEBSITE}
+                    </a>
                   </Text>
                 ) : (
                   <Badge>no disponible</Badge>
@@ -57,7 +74,13 @@ const EnterpriseData = React.memo(() => {
               </div>
             </Flex>
           </BoxComponent>
-          <BoxComponent title="Seguridad">
+          <BoxComponent
+            title="Seguridad"
+            onClick={() => {
+              setContent(1);
+              setEditModal(true);
+            }}
+          >
             <Table>
               <Tbody>
                 <Tr>
@@ -81,7 +104,13 @@ const EnterpriseData = React.memo(() => {
               </Tbody>
             </Table>
           </BoxComponent>
-          <BoxComponent title="Datos de cobro"></BoxComponent>
+          <BoxComponent
+            title="Datos de cobro"
+            onClick={() => {
+              setContent(2);
+              setEditModal(true);
+            }}
+          ></BoxComponent>
         </Flex>
         <Flex grow={1} direction="column" pl="1em" pt="1em" pr="1em">
           <Box
@@ -252,6 +281,10 @@ const EnterpriseData = React.memo(() => {
         </Flex>
       </Flex>
       <Footer />
+      <EnterpriseCustomModal
+        vis={[editModal, setEditModal]}
+        content={content}
+      />
     </>
   );
 });

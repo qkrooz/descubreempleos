@@ -98,14 +98,14 @@ export const EnterpriseHeader = React.memo(() => {
         </Link>
       </div>
       <nav className={header.linkContainer}>
-        <Link className={header.link} to="/search">
+        <Link className={header.link} to="/statistics">
           <Equalizer size={30} style={{ marginRight: "0.5em" }} />
           Estadísticas
         </Link>
-        <Link className={header.link} to="/">
+        <button className={header.link}>
           <PostAdd size={30} style={{ marginRight: "0.5em" }} />
           Publicar
-        </Link>
+        </button>
         <Link className={header.link} to="/data">
           <Business size={30} style={{ marginRight: "0.5em" }} />
           Datos

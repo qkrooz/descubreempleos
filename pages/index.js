@@ -33,8 +33,8 @@ const Home = React.memo(() => {
           </>
         ) : (
           <>
-            <Route exact path="/" component={EnterpriseStatistics} />
-            <Route exact path="/data" component={EnterpriseData} />
+            <Route path="/statistics" component={EnterpriseStatistics} />
+            <Route path="/data" component={EnterpriseData} />
           </>
         )}
       </Switch>

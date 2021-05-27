@@ -18,7 +18,6 @@ import {
   useToast,
   Flex,
   Text,
-  toast,
 } from "@chakra-ui/react";
 import { Close, Person } from "@material-ui/icons";
 import axios from "axios";

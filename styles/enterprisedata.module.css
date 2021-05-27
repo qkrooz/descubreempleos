@@ -20,6 +20,9 @@
   font-weight: bold;
   font-size: 1.1em;
 }
+.companyDescription {
+  text-align: center;
+}
 .dataRow {
   display: flex;
   padding: 2em 4em;
