@@ -25,25 +25,31 @@ const App = React.memo(({ Component, pageProps }) => {
   // effects
   useEffect(() => {
     if (typeof window !== "undefined") {
-      if (
-        Object.values(JSON.parse(localStorage.getItem("userInfo"))).length !== 0
-      ) {
-        axios
-          .post(`${apiRoute}/login.php`, {
-            EMAIL: JSON.parse(localStorage.getItem("userInfo")).EMAIL,
-            PASSWORD: JSON.parse(localStorage.getItem("userInfo")).PASSWORD,
-          })
-          .then(({ data }) => {
-            if (data.code === 200) {
-              SetInfo(data);
-            } else {
-              ResetInfo();
-            }
-          })
-          .catch((error) => console.log(error));
-      } else {
+      if (localStorage.getItem("userInfo") === null) {
         ResetInfo();
         Router.push("/entra");
+      } else {
+        if (
+          Object.values(JSON.parse(localStorage.getItem("userInfo"))).length !==
+          0
+        ) {
+          axios
+            .post(`${apiRoute}/login.php`, {
+              EMAIL: JSON.parse(localStorage.getItem("userInfo")).EMAIL,
+              PASSWORD: JSON.parse(localStorage.getItem("userInfo")).PASSWORD,
+            })
+            .then(({ data }) => {
+              if (data.code === 200) {
+                SetInfo(data);
+              } else {
+                ResetInfo();
+              }
+            })
+            .catch((error) => console.log(error));
+        } else {
+          ResetInfo();
+          Router.push("/entra");
+        }
       }
     }
   }, []);
