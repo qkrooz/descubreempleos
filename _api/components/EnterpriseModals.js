@@ -43,8 +43,10 @@ export default function EnterpriseCustomModal(props) {
     "RAZON_SOCIAL",
     "RFC",
     "TEL_NUMBER",
+    "STATE",
+    "CITY",
   ];
-  const secondaryKeys = ["COMPANY_DESCRIPTION", "WEBSITE"];
+  const secondaryKeys = ["COMPANY_DESCRIPTION", "WEBSITE", "FUNDATION_DATE"];
   const [formInitialValues, setFormInitialValues] = useState();
   const setNewInfo = (values) => {
     let userInfoCopy = { ...userInfo };
@@ -409,20 +411,144 @@ const Content1 = () => {
   );
 };
 const Content2 = () => {
+  const [years, setYears] = useState([]);
+  const [days, setDays] = useState();
+  const [selectedYear, setSelectedYear] = useState(moment(new Date()).year());
+  const [selectedMonth, setSelectedMonth] = useState("01");
+  const [selectedDay, setSelectedDay] = useState("01");
+  const [stateID, setStateID] = useState();
+  const [cityID, setCityID] = useState();
   const { values, handleChange, errors } = useContext(ThisContext);
+  const { userInfoState } = useContext(MainContext);
+  const [userInfo, setUserInfo] = userInfoState;
+  useEffect(() => {
+    let years = [];
+    let limit = moment(new Date()).year() - 80;
+    for (let i = moment(new Date()).year(); i > limit; i--) {
+      years.push(i);
+    }
+    setYears(years);
+    // --------------------
+    // STATE & CITY
+    // --------------------
+    if (userInfo.STATE) {
+      setStateID(
+        States.states.filter(
+          (item) => item.name.toLowerCase() === userInfo.STATE
+        )[0].id
+      );
+    } else {
+      setStateID("0");
+    }
+    if (userInfo.CITY) {
+      setCityID(
+        Cities.cities.filter(
+          (item) => item.name.toLowerCase() === userInfo.CITY
+        )[0].id
+      );
+    } else {
+      setCityID("0");
+    }
+  }, []);
+  useEffect(() => {
+    setDays(
+      moment(`${selectedYear},${selectedMonth}`, "YYYY-MM").daysInMonth()
+    );
+    values.FUNDATION_DATE = `${selectedYear}-${selectedMonth}-${selectedDay}`;
+  }, [selectedYear, selectedMonth, selectedDay]);
+  useEffect(() => {
+    if (stateID) {
+      const state = States.states
+        .filter((item) => item.id === stateID)[0]
+        .name.toLowerCase();
+      values.STATE = state;
+    }
+  }, [stateID]);
+  useEffect(() => {
+    if (cityID) {
+      const city = Cities.cities
+        .filter((item) => item.id === cityID)[0]
+        .name.toLowerCase();
+      values.CITY = city;
+    }
+  }, [cityID]);
   return (
     <Flex direction="column" w="100%">
       <Flex w="100%" direction="column" mb="1em">
         <Flex w="100%">
           <Field
             as="select"
-            style={{ flexGrow: 1, marginRight: "1em" }}
-          ></Field>
+            onChange={(e) => {
+              setSelectedDay(e.target.value);
+            }}
+            value={selectedDay}
+            name="AGE"
+            className={errors.AGE ? style.errorField : null}
+            style={{
+              textTransform: "capitalize",
+              flexGrow: 1,
+              marginRight: "0.5em",
+            }}
+          >
+            {Array(days)
+              .fill(0)
+              .map((_, i) => (
+                <option
+                  key={(i + 1).toLocaleString("en-US", {
+                    minimumIntegerDigits: 2,
+                    useGrouping: false,
+                  })}
+                  value={(i + 1).toLocaleString("en-US", {
+                    minimumIntegerDigits: 2,
+                    useGrouping: false,
+                  })}
+                >
+                  {(i + 1).toLocaleString("en-US", {
+                    minimumIntegerDigits: 2,
+                    useGrouping: false,
+                  })}
+                </option>
+              ))}
+          </Field>
           <Field
             as="select"
-            style={{ flexGrow: 1, marginRight: "1em" }}
-          ></Field>
-          <Field as="select" style={{ flexGrow: 1 }}></Field>
+            onChange={(e) => setSelectedMonth(e.target.value)}
+            value={selectedMonth}
+            className={errors.AGE ? style.errorField : null}
+            style={{
+              textTransform: "capitalize",
+              flexGrow: 1,
+              marginRight: "0.5em",
+            }}
+            onBlur={null}
+          >
+            <option value="01">Enero</option>
+            <option value="02">Febrero</option>
+            <option value="03">Marzo</option>
+            <option value="04">Abril</option>
+            <option value="05">Mayo</option>
+            <option value="06">Junio</option>
+            <option value="07">Julio</option>
+            <option value="08">Agosto</option>
+            <option value="09">Septiembre</option>
+            <option value="10">Octubre</option>
+            <option value="11">Noviembre</option>
+            <option value="12">Diciembre</option>
+          </Field>
+          <Field
+            onChange={(e) => setSelectedYear(e.target.value)}
+            value={selectedYear}
+            as="select"
+            name="AGE"
+            className={errors.AGE ? style.errorField : null}
+            style={{ textTransform: "capitalize", flexGrow: 1 }}
+          >
+            {years.map((key) => (
+              <option key={key} value={key}>
+                {key}
+              </option>
+            ))}
+          </Field>
         </Flex>
         <Text fontWeight="bold" color="gray" fontSize="0.8em">
           Fecha de fundación
@@ -497,7 +623,7 @@ const Content2 = () => {
         ) : null}
         <Field name="RFC" value={values.RFC} onChange={handleChange} />
         <Text fontWeight="bold" color="gray" fontSize="0.8em">
-          Razón social
+          RFC
         </Text>
       </Flex>
       <Flex w="100%" direction="column" mb="1em">
@@ -512,16 +638,43 @@ const Content2 = () => {
           onChange={handleChange}
         />
         <Text fontWeight="bold" color="gray" fontSize="0.8em">
-          Razón social
+          Número telefónico
         </Text>
       </Flex>
       <Flex w="100%" direction="column" mb="1em">
         <Flex>
           <Field
             as="select"
-            style={{ flexGrow: 1, marginRight: "1em" }}
-          ></Field>
-          <Field as="select" style={{ flexGrow: 1 }}></Field>
+            style={{ flexGrow: 1, marginRight: "0.5em", width: 0 }}
+            value={stateID}
+            onChange={(e) => setStateID(e.target.value)}
+            onBlur={null}
+          >
+            {States.states.map((key) => {
+              return (
+                <option key={key.id} value={key.id}>
+                  {key.name}
+                </option>
+              );
+            })}
+          </Field>
+          <Field
+            as="select"
+            style={{ flexGrow: 1, width: 0 }}
+            value={cityID}
+            onChange={(e) => setCityID(e.target.value)}
+            disabled={stateID !== "0" ? false : true}
+            onBlur={null}
+          >
+            <option value="">Estado</option>
+            {Cities.cities
+              .filter((item) => item.state_id === stateID)
+              .map((key) => (
+                <option key={key.id} value={key.id}>
+                  {key.name}
+                </option>
+              ))}
+          </Field>
         </Flex>
         <Text fontWeight="bold" color="gray" fontSize="0.8em">
           Ubicación
@@ -586,6 +739,8 @@ const EnterpriseModalContentIndex = [
       RAZON_SOCIAL: "",
       RFC: "",
       TEL_NUMBER: "",
+      STATE: "",
+      CITY: "",
     },
     validation: Yup.object().shape({
       NAMES: Yup.string().required("Campo requerido"),

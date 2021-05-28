@@ -10,6 +10,7 @@ import EnterpriseCustomModal from "../components//EnterpriseModals";
 // style
 import style from "../../styles/enterprisedata.module.css";
 import { Edit, Lock, Person } from "@material-ui/icons";
+import moment from "moment";
 const EnterpriseData = React.memo(() => {
   var pattern = /^((http|https|ftp):\/\/)/;
   // context
@@ -155,7 +156,7 @@ const EnterpriseData = React.memo(() => {
                 <span>Fundación</span>
                 <span>
                   {secondaryInfo.FUNDATION_DATE ? (
-                    secondaryInfo.FUNDATION_DATE
+                    moment(secondaryInfo.FUNDATION_DATE).format("DD/MM/YYYY")
                   ) : (
                     <Badge>no disponible</Badge>
                   )}
@@ -186,7 +187,7 @@ const EnterpriseData = React.memo(() => {
               </div>
               <div>
                 <span>RFC</span>
-                <span>
+                <span style={{ textTransform: "uppercase" }}>
                   {userInfo.RFC ? userInfo.RFC : <Badge>no disponible</Badge>}
                 </span>
               </div>
@@ -202,12 +203,14 @@ const EnterpriseData = React.memo(() => {
                   )}
                 </span>
               </div>
-              <div>
+              <div style={{ display: "flex", alignItems: "flex-end" }}>
                 <span>Ubicacion</span>
-                <span>
-                  {" "}
+                <span style={{ textTransform: "capitalize" }}>
                   {userInfo.STATE && userInfo.CITY ? (
-                    `${userInfo.CITY}, ${userInfo.STATE}`
+                    <div>
+                      <span>{`${userInfo.STATE}, `}</span>
+                      <span>{` ${userInfo.CITY}`}</span>
+                    </div>
                   ) : (
                     <Badge>no disponible</Badge>
                   )}
