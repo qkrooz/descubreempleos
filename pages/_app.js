@@ -53,6 +53,9 @@ const App = React.memo(({ Component, pageProps }) => {
       }
     }
   }, []);
+  useEffect(() => {
+    console.log(secondaryInfo);
+  }, [secondaryInfo]);
   return (
     <MainContext.Provider
       value={{

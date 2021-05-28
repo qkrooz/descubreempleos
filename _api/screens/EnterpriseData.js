@@ -47,25 +47,25 @@ const EnterpriseData = React.memo(() => {
               )}
               <span className={style.companyName}>{userInfo.COMPANY_NAME}</span>
               <div className={style.companyDescription}>
-                {userInfo.COMPANY_DESCRIPTION ? (
-                  userInfo.COMPANY_DESCRIPTION
+                {secondaryInfo.COMPANY_DESCRIPTION ? (
+                  secondaryInfo.COMPANY_DESCRIPTION
                 ) : (
                   <Badge>no disponible</Badge>
                 )}
               </div>
               <div style={{ marginTop: "1em" }}>
-                {userInfo.WEBSITE ? (
+                {secondaryInfo.WEBSITE ? (
                   <Text color="Highlight" textDecoration="underline">
                     <a
                       href={
-                        !pattern.test(userInfo.WEBSITE)
-                          ? "http://" + userInfo.WEBSITE
-                          : userInfo.WEBSITE
+                        !pattern.test(secondaryInfo.WEBSITE)
+                          ? "http://" + secondaryInfo.WEBSITE
+                          : secondaryInfo.WEBSITE
                       }
                       target="_blank"
                       rel="noreferrer"
                     >
-                      {userInfo.WEBSITE}
+                      {secondaryInfo.WEBSITE}
                     </a>
                   </Text>
                 ) : (
@@ -141,7 +141,12 @@ const EnterpriseData = React.memo(() => {
               >
                 Datos personales
               </div>
-              <button onClick={() => {}}>
+              <button
+                onClick={() => {
+                  setContent(2);
+                  setEditModal(true);
+                }}
+              >
                 <Edit />
               </button>
             </div>

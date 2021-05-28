@@ -19,12 +19,13 @@ import {
   Flex,
   Text,
 } from "@chakra-ui/react";
-import { Close, Person } from "@material-ui/icons";
+import { Person } from "@material-ui/icons";
 import axios from "axios";
 import moment from "moment";
 import style from "../../styles/modals.module.css";
 const ThisContext = React.createContext();
 export default function EnterpriseCustomModal(props) {
+  const router = useRouter();
   const toast = useToast();
   const { vis, content } = props;
   const [modalVis, setModalVis] = vis;
@@ -32,8 +33,8 @@ export default function EnterpriseCustomModal(props) {
     useContext(MainContext);
   const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
   const [userInfo, setUserInfo] = userInfoState;
-  const primaryKeys = ["COMPANY_NAME", "COMPANY_DESCRIPTION", "WEBSITE"];
-  const secondaryKeys = [];
+  const primaryKeys = ["EMAIL", "PASSWORD", "COMPANY_NAME"];
+  const secondaryKeys = ["COMPANY_DESCRIPTION", "WEBSITE"];
   const [formInitialValues, setFormInitialValues] = useState();
   const setNewInfo = (values) => {
     let userInfoCopy = { ...userInfo };
@@ -333,6 +334,101 @@ const Content0 = () => {
     </Flex>
   );
 };
+const Content1 = () => {
+  const { values, handleChange, errors } = useContext(ThisContext);
+  return (
+    <Flex direction="column">
+      <Flex mb={3} justify="space-between" align="center">
+        <div children="Correo electrónico:" style={{ marginRight: "1em" }} />
+        <Field value={values.EMAIL} readOnly style={{ width: "50%" }} />
+      </Flex>
+      {errors.OLDPASSWORD ? (
+        <Flex justify="flex-end">
+          <Text color="red" fontWeight="bold" fontSize="0.6em">
+            La contraseña es incorrecta*
+          </Text>
+        </Flex>
+      ) : null}
+      <Flex mb={3} justify="space-between" align="center">
+        <div children="Contraseña anterior:" style={{ marginRight: "1em" }} />
+        <Field
+          name="OLDPASSWORD"
+          onChange={handleChange}
+          value={values.OLDPASSWROD}
+          style={{ width: "50%" }}
+        />
+      </Flex>
+      {errors.PASSWORD1 ? (
+        <Flex justify="flex-end">
+          <Text color="red" fontWeight="bold" fontSize="0.6em">
+            Este campo es requerido*
+          </Text>
+        </Flex>
+      ) : null}
+      <Flex mb={3} justify="space-between" align="center">
+        <div children="Nueva contraseña:" style={{ marginRight: "1em" }} />
+        <Field
+          name="PASSWORD1"
+          onChange={handleChange}
+          value={values.PASSWORD1}
+          style={{ width: "50%" }}
+        />
+      </Flex>
+      {errors.PASSWORD2 ? (
+        <Flex justify="flex-end">
+          <Text color="red" fontWeight="bold" fontSize="0.6em">
+            Las contraseñas no son iguales*
+          </Text>
+        </Flex>
+      ) : null}
+      <Flex mb={3} justify="space-between" align="center">
+        <div children="Confirmar contraseña:" style={{ marginRight: "1em" }} />
+        <Field
+          name="PASSWORD2"
+          onChange={handleChange}
+          value={values.PASSWORD2}
+          style={{ width: "50%" }}
+        />
+      </Flex>
+      <Text fontSize="0.8em" textAlign="center">
+        Al actualizar tu contraseña, cerraremos la sesión, revisa que tus nuevas
+        contraseñas coincidas y no las olvides.
+      </Text>
+    </Flex>
+  );
+};
+const Content2 = () => {
+  return (
+    <Flex direction="column" w="100%">
+      <Flex w="100%" direction="column" mb="1em">
+        <Flex w="100%">
+          <Field
+            as="select"
+            style={{ flexGrow: 1, marginRight: "1em" }}
+          ></Field>
+          <Field
+            as="select"
+            style={{ flexGrow: 1, marginRight: "1em" }}
+          ></Field>
+          <Field as="select" style={{ flexGrow: 1 }}></Field>
+        </Flex>
+        <Text fontWeight="bold" color="gray" fontSize="0.8em">
+          Fecha de fundación
+        </Text>
+      </Flex>
+      <Flex w="100%" direction="column">
+        <Field style={{ marginBottom: "0.5em" }} />
+        <Flex w="100%">
+          <Field style={{ flexGrow: 1 }} />
+          <Field style={{ flexGrow: 1, marginLeft: "1em" }} />
+        </Flex>
+        <Text fontWeight="bold" color="gray" fontSize="0.8em">
+          Nombre de la cuenta
+        </Text>
+      </Flex>
+    </Flex>
+  );
+};
 const EnterpriseModalContentIndex = [
   {
     id: 0,
@@ -349,6 +445,52 @@ const EnterpriseModalContentIndex = [
       COMPANY_NAME: Yup.string().required("Este campo es requerido"),
       COMPANY_DESCRIPTION: Yup.string().required("Este campo es requerido"),
       WEBSITE: Yup.string().required("Este campo es requerido"),
+    }),
+  },
+  {
+    id: 1,
+    modalSize: "sm",
+    title: "Actualizar datos de seguridad",
+    form: () => <Content1 />,
+    apiURL: `${apiRoute}/updatePassword.php`,
+    formInitialValues: {
+      PASSWORD1: "",
+      PASSWORD2: "",
+      EMAIL: "",
+      PASSWORD: "",
+      OLDPASSWORD: "",
+    },
+    validation: Yup.object().shape({
+      OLDPASSWORD: Yup.string()
+        .required("Campo requerido")
+        .oneOf([Yup.ref("PASSWORD"), null], "Las contraseña no es correcta"),
+      PASSWORD1: Yup.string().required("Campo requerido"),
+      PASSWORD2: Yup.string()
+        .required("Campo requerido")
+        .oneOf([Yup.ref("PASSWORD1"), null], "Las contraseñas no son iguales"),
+    }),
+  },
+  {
+    id: 2,
+    modalSize: "md",
+    title: "Actualizar datos personales",
+    form: () => <Content2 />,
+    apiURL: `${apiRoute}/updatePassword.php`,
+    formInitialValues: {
+      PASSWORD1: "",
+      PASSWORD2: "",
+      EMAIL: "",
+      PASSWORD: "",
+      OLDPASSWORD: "",
+    },
+    validation: Yup.object().shape({
+      OLDPASSWORD: Yup.string()
+        .required("Campo requerido")
+        .oneOf([Yup.ref("PASSWORD"), null], "Las contraseña no es correcta"),
+      PASSWORD1: Yup.string().required("Campo requerido"),
+      PASSWORD2: Yup.string()
+        .required("Campo requerido")
+        .oneOf([Yup.ref("PASSWORD1"), null], "Las contraseñas no son iguales"),
     }),
   },
 ];
