@@ -33,7 +33,17 @@ export default function EnterpriseCustomModal(props) {
     useContext(MainContext);
   const [secondaryInfo, setSecondaryInfo] = secondaryInfoState;
   const [userInfo, setUserInfo] = userInfoState;
-  const primaryKeys = ["EMAIL", "PASSWORD", "COMPANY_NAME"];
+  const primaryKeys = [
+    "NAMES",
+    "MOTHERS_LAST_NAME",
+    "LAST_NAME",
+    "EMAIL",
+    "PASSWORD",
+    "COMPANY_NAME",
+    "RAZON_SOCIAL",
+    "RFC",
+    "TEL_NUMBER",
+  ];
   const secondaryKeys = ["COMPANY_DESCRIPTION", "WEBSITE"];
   const [formInitialValues, setFormInitialValues] = useState();
   const setNewInfo = (values) => {
@@ -58,6 +68,7 @@ export default function EnterpriseCustomModal(props) {
   useEffect(() => {
     let formInitialValues;
     formInitialValues = EnterpriseModalContentIndex[content].formInitialValues;
+    console.log(formInitialValues);
     Object.entries(formInitialValues).forEach((key) => {
       if (primaryKeys.includes(key[0])) {
         userInfo[key[0]]
@@ -398,6 +409,7 @@ const Content1 = () => {
   );
 };
 const Content2 = () => {
+  const { values, handleChange, errors } = useContext(ThisContext);
   return (
     <Flex direction="column" w="100%">
       <Flex w="100%" direction="column" mb="1em">
@@ -416,19 +428,109 @@ const Content2 = () => {
           Fecha de fundación
         </Text>
       </Flex>
-      <Flex w="100%" direction="column">
-        <Field style={{ marginBottom: "0.5em" }} />
+      <Flex w="100%" direction="column" mb="1em">
+        <Flex direction="column">
+          {errors.NAMES ? (
+            <Text color="red" fontSize="0.7em" ml="auto">
+              Campo requerido*
+            </Text>
+          ) : null}
+          <Field
+            style={{ marginBottom: "0.5em" }}
+            name="NAMES"
+            value={values.NAMES}
+            onChange={handleChange}
+          />
+        </Flex>
         <Flex w="100%">
-          <Field style={{ flexGrow: 1 }} />
-          <Field style={{ flexGrow: 1, marginLeft: "1em" }} />
+          <Flex direction="column">
+            {errors.MOTHERS_LAST_NAME ? (
+              <Text color="red" fontSize="0.7em" ml="auto">
+                Campo requerido*
+              </Text>
+            ) : null}
+            <Field
+              style={{ flexGrow: 1 }}
+              name="MOTHERS_LAST_NAME"
+              value={values.MOTHERS_LAST_NAME}
+              onChange={handleChange}
+            />
+          </Flex>
+          <Flex direction="column">
+            {errors.LAST_NAME ? (
+              <Text color="red" fontSize="0.7em" ml="auto">
+                Campo requerido*
+              </Text>
+            ) : null}
+            <Field
+              style={{ flexGrow: 1, marginLeft: "1em" }}
+              name="LAST_NAME"
+              value={values.LAST_NAME}
+              onChange={handleChange}
+            />
+          </Flex>
         </Flex>
         <Text fontWeight="bold" color="gray" fontSize="0.8em">
           Nombre de la cuenta
         </Text>
       </Flex>
+      <Flex w="100%" direction="column" mb="1em">
+        {errors.RAZON_SOCIAL ? (
+          <Text color="red" fontSize="0.7em" ml="auto">
+            Campo requerido*
+          </Text>
+        ) : null}
+        <Field
+          name="RAZON_SOCIAL"
+          value={values.RAZON_SOCIAL}
+          onChange={handleChange}
+        />
+        <Text fontWeight="bold" color="gray" fontSize="0.8em">
+          Razón social
+        </Text>
+      </Flex>
+      <Flex w="100%" direction="column" mb="1em">
+        {errors.RFC ? (
+          <Text color="red" fontSize="0.7em" ml="auto">
+            Campo requerido*
+          </Text>
+        ) : null}
+        <Field name="RFC" value={values.RFC} onChange={handleChange} />
+        <Text fontWeight="bold" color="gray" fontSize="0.8em">
+          Razón social
+        </Text>
+      </Flex>
+      <Flex w="100%" direction="column" mb="1em">
+        {errors.TEL_NUMBER ? (
+          <Text color="red" fontSize="0.7em" ml="auto">
+            Campo requerido*
+          </Text>
+        ) : null}
+        <Field
+          name="TEL_NUMBER"
+          value={values.TEL_NUMBER}
+          onChange={handleChange}
+        />
+        <Text fontWeight="bold" color="gray" fontSize="0.8em">
+          Razón social
+        </Text>
+      </Flex>
+      <Flex w="100%" direction="column" mb="1em">
+        <Flex>
+          <Field
+            as="select"
+            style={{ flexGrow: 1, marginRight: "1em" }}
+          ></Field>
+          <Field as="select" style={{ flexGrow: 1 }}></Field>
+        </Flex>
+        <Text fontWeight="bold" color="gray" fontSize="0.8em">
+          Ubicación
+        </Text>
+      </Flex>
     </Flex>
   );
 };
+
 const EnterpriseModalContentIndex = [
   {
     id: 0,
@@ -440,6 +542,7 @@ const EnterpriseModalContentIndex = [
       COMPANY_NAME: "",
       COMPANY_DESCRIPTION: "",
       WEBSITE: "",
+      RAZON_SOCIAL: "",
     },
     validation: Yup.object().shape({
       COMPANY_NAME: Yup.string().required("Este campo es requerido"),
@@ -475,22 +578,19 @@ const EnterpriseModalContentIndex = [
     modalSize: "md",
     title: "Actualizar datos personales",
     form: () => <Content2 />,
-    apiURL: `${apiRoute}/updatePassword.php`,
+    apiURL: `${apiRoute}/updateCompanySecondaryInfo.php`,
     formInitialValues: {
-      PASSWORD1: "",
-      PASSWORD2: "",
-      EMAIL: "",
-      PASSWORD: "",
-      OLDPASSWORD: "",
+      NAMES: "",
+      MOTHERS_LAST_NAME: "",
+      LAST_NAME: "",
+      RAZON_SOCIAL: "",
+      RFC: "",
+      TEL_NUMBER: "",
     },
     validation: Yup.object().shape({
-      OLDPASSWORD: Yup.string()
-        .required("Campo requerido")
-        .oneOf([Yup.ref("PASSWORD"), null], "Las contraseña no es correcta"),
-      PASSWORD1: Yup.string().required("Campo requerido"),
-      PASSWORD2: Yup.string()
-        .required("Campo requerido")
-        .oneOf([Yup.ref("PASSWORD1"), null], "Las contraseñas no son iguales"),
+      NAMES: Yup.string().required("Campo requerido"),
+      MOTHERS_LAST_NAME: Yup.string().required("Campo requerido"),
+      LAST_NAME: Yup.string().required("Campo requerido"),
     }),
   },
 ];
