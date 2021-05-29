@@ -16,6 +16,7 @@ import {
   PowerSettingsNew,
   Flare,
   FormatBold,
+  HomeOutlined,
 } from "@material-ui/icons";
 import {
   Menu,
@@ -61,10 +62,22 @@ const Header = React.memo(() => {
             <MenuIcon style={{ fontSize: "2em" }} />
           </MenuButton>
           <MenuList>
-            <MenuItem color="black" icon={<FormatBold />}>
+            <MenuItem
+              color="black"
+              icon={<FormatBold />}
+              onClick={() => {
+                Router.push("/blog");
+              }}
+            >
               Blog
             </MenuItem>
-            <MenuItem color="black" icon={<Flare />}>
+            <MenuItem
+              color="black"
+              icon={<Flare />}
+              onClick={() => {
+                Router.push("/salud");
+              }}
+            >
               Salud
             </MenuItem>
             <MenuDivider />
@@ -125,6 +138,64 @@ export const EnterpriseHeader = React.memo(() => {
             </MenuItem>
             <MenuItem color="black" icon={<Flare />}>
               Salud
+            </MenuItem>
+            <MenuDivider />
+            <MenuItem
+              color="red"
+              icon={<PowerSettingsNew />}
+              onClick={() => {
+                ResetInfo();
+                Router.push("/entra");
+              }}
+            >
+              Cerrar sesión
+            </MenuItem>
+          </MenuList>
+        </Menu>
+      </div>
+    </header>
+  );
+});
+export const SaludHeader = React.memo(() => {
+  // context
+  const { ResetInfo } = useContext(MainContext);
+  return (
+    <header
+      className={header.container}
+      style={{ backgroundColor: "#004A5B", zIndex: 3 }}
+    >
+      <div className={header.logoContainer}>
+        <a href="/">
+          <img
+            src="https://descubrempleos.com/webServices/img/logo2.png"
+            alt="logo2"
+          />
+        </a>
+      </div>
+
+      <div className={header.navButtonsContainer}>
+        <Menu>
+          <MenuButton>
+            <MenuIcon style={{ fontSize: "2em" }} />
+          </MenuButton>
+          <MenuList>
+            <MenuItem
+              color="black"
+              icon={<FormatBold />}
+              onClick={() => {
+                Router.push("/blog");
+              }}
+            >
+              Blog
+            </MenuItem>
+            <MenuItem
+              color="black"
+              icon={<HomeOutlined />}
+              onClick={() => {
+                Router.push("/");
+              }}
+            >
+              Volver a inicio
             </MenuItem>
             <MenuDivider />
             <MenuItem
