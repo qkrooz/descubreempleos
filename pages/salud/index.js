@@ -1,6 +1,7 @@
 import { SaludHeader } from "../../_api/components/Header";
 import { SaludFooter } from "../../_api/components/Footer";
 import { Formik, Form, Field } from "formik";
+import Head from "next/head";
 import * as Yup from "yup";
 import { Text, Flex } from "@chakra-ui/react";
 import styled from "styled-components";
@@ -10,6 +11,14 @@ export default function Salud() {
   });
   return (
     <>
+      <Head>
+        <link
+          rel="shortcut icon"
+          href="https://descubrempleos.com/webServices/img/favicon.png"
+          type="image/x-icon"
+        />
+        <title>Descubre | Salud</title>
+      </Head>
       <SaludHeader />
       <MainContainer>
         <div>
@@ -176,7 +185,7 @@ const MainContainer = styled.section`
     display: flex;
     justify-content: flex-end;
     background-color: #0c0c0c70;
-    z-index: 4;
+    z-index: 2;
   }
 `;
 const Decorator = styled.div`

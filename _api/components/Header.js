@@ -115,7 +115,14 @@ export const EnterpriseHeader = React.memo(() => {
           <Equalizer size={30} style={{ marginRight: "0.5em" }} />
           Estadísticas
         </Link>
-        <button className={header.link}>
+        <button
+          className={header.link}
+          style={{
+            fontWeight: "bold",
+            fontSize: "1.2em",
+            marginRight: "1.5em",
+          }}
+        >
           <PostAdd size={30} style={{ marginRight: "0.5em" }} />
           Publicar
         </button>
@@ -136,7 +143,13 @@ export const EnterpriseHeader = React.memo(() => {
             <MenuItem color="black" icon={<FormatBold />}>
               Blog
             </MenuItem>
-            <MenuItem color="black" icon={<Flare />}>
+            <MenuItem
+              color="black"
+              icon={<Flare />}
+              onClick={() => {
+                Router.push("/salud");
+              }}
+            >
               Salud
             </MenuItem>
             <MenuDivider />
