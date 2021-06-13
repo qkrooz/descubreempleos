@@ -35,11 +35,8 @@ import { Add, Delete, Edit, MoreVert, Person } from "@material-ui/icons";
 import { MainContext } from "../resources/MainContext";
 import axios from "axios";
 import apiRoute from "../resources/apiRoute";
-import { PDFViewer } from "@react-pdf/renderer";
 // components
 import Footer from "../components/Footer";
-import CVpdf from "../components/CVpdf";
-import CVModalComponent from "../components/CVmodal";
 // modals
 import CustomModal from "../components/Modals";
 // styles
@@ -58,6 +55,7 @@ const Datos = React.memo(() => {
     gradoEducativo: false,
     cursosCertificaciones: false,
   });
+  const [modal_cv_vis, set_modal_cv_vis] = useState(false);
   // context
   const { userInfoState, secondaryInfoState } = useContext(MainContext);
   const [userInfo] = userInfoState;
@@ -93,8 +91,8 @@ const Datos = React.memo(() => {
       .catch((error) => console.log(error));
   };
   useEffect(() => {
-    console.log(workingOrder);
-  }, [workingOrder]);
+      setUserImageError(false);
+  }, [userInfo.IMAGE_URL]);
   return (
     <DatosContext.Provider
       value={{
@@ -119,7 +117,7 @@ const Datos = React.memo(() => {
             ) : (
               <div className={style.userImage}>
                 <img
-                  src={`${userInfo.IMAGE_URL}?v=${Date.now()}`}
+                  src={`${userInfo.IMAGE_URL}?${Date.now()}`}
                   style={{
                     borderRadius: "50%",
                     width: "100%",
@@ -133,25 +131,14 @@ const Datos = React.memo(() => {
                 />
               </div>
             )}
-            <span
-              className={style.personalLabel}
-            >{`${userInfo.NAMES} ${userInfo.LAST_NAME} ${userInfo.MOTHERS_LAST_NAME}`}</span>
-            <span className={style.userTitle}>
-              {secondaryInfo.TITULO ? (
-                secondaryInfo.TITULO
-              ) : (
-                <Badge>titulo no disponible</Badge>
-              )}
-            </span>
-            <button className={style.CVButton}>Generar CV</button>
+            <span className={style.personalLabel}>{`${userInfo.NAMES} ${userInfo.LAST_NAME} ${userInfo.MOTHERS_LAST_NAME}`}</span>
+            <span className={style.userTitle}>{secondaryInfo.TITULO ? secondaryInfo.TITULO : <Badge>titulo no disponible</Badge>}</span>
+            <button className={style.CVButton} onClick={() => set_modal_cv_vis((modal_cv_vis) => !modal_cv_vis)}>
+              Generar CV
+            </button>
             <div className={style.disponibleContainer}>
               <span>Disponible para trabajar</span>
-              <Switch
-                size="md"
-                mt={2}
-                defaultChecked={Boolean(parseInt(secondaryInfo.DISPONIBLE))}
-                onChange={ChangeAvailability}
-              />
+              <Switch size="md" mt={2} defaultChecked={Boolean(parseInt(secondaryInfo.DISPONIBLE))} onChange={ChangeAvailability} />
             </div>
           </Card>
           <Card
@@ -165,53 +152,23 @@ const Datos = React.memo(() => {
               <Tbody>
                 <Tr>
                   <Td style={{ fontWeight: "bold" }}>Edad</Td>
-                  <Td>
-                    {parseInt(userInfo.AGE) ? (
-                      userInfo.AGE + " años"
-                    ) : (
-                      <Badge>no disponible</Badge>
-                    )}
-                  </Td>
+                  <Td>{parseInt(userInfo.AGE) ? userInfo.AGE + " años" : <Badge>no disponible</Badge>}</Td>
                 </Tr>
                 <Tr>
                   <Td style={{ fontWeight: "bold" }}>Género</Td>
-                  <Td style={{ textTransform: "capitalize" }}>
-                    {userInfo.GENRE ? (
-                      userInfo.GENRE
-                    ) : (
-                      <Badge>no disponible</Badge>
-                    )}
-                  </Td>
+                  <Td style={{ textTransform: "capitalize" }}>{userInfo.GENRE ? userInfo.GENRE : <Badge>no disponible</Badge>}</Td>
                 </Tr>
                 <Tr>
                   <Td style={{ fontWeight: "bold" }}>Teléfono</Td>
-                  <Td style={{ textTransform: "capitalize" }}>
-                    {parseInt(userInfo.TEL_NUMBER) ? (
-                      userInfo.TEL_NUMBER
-                    ) : (
-                      <Badge>no disponible</Badge>
-                    )}
-                  </Td>
+                  <Td style={{ textTransform: "capitalize" }}>{parseInt(userInfo.TEL_NUMBER) ? userInfo.TEL_NUMBER : <Badge>no disponible</Badge>}</Td>
                 </Tr>
                 <Tr>
                   <Td style={{ fontWeight: "bold" }}>Estado</Td>
-                  <Td style={{ textTransform: "capitalize" }}>
-                    {userInfo.STATE ? (
-                      userInfo.STATE
-                    ) : (
-                      <Badge>no disponible</Badge>
-                    )}
-                  </Td>
+                  <Td style={{ textTransform: "capitalize" }}>{userInfo.STATE ? userInfo.STATE : <Badge>no disponible</Badge>}</Td>
                 </Tr>
                 <Tr>
                   <Td style={{ fontWeight: "bold" }}>Ciudad</Td>
-                  <Td style={{ textTransform: "capitalize" }}>
-                    {userInfo.CITY ? (
-                      userInfo.CITY
-                    ) : (
-                      <Badge>no disponible</Badge>
-                    )}
-                  </Td>
+                  <Td style={{ textTransform: "capitalize" }}>{userInfo.CITY ? userInfo.CITY : <Badge>no disponible</Badge>}</Td>
                 </Tr>
                 <Tr>
                   <Td style={{ fontWeight: "bold" }}>Idiomas</Td>
@@ -225,14 +182,7 @@ const Datos = React.memo(() => {
                     {secondaryInfo.IDIOMAS ? (
                       JSON.parse(secondaryInfo.IDIOMAS).length !== 0 ? (
                         JSON.parse(secondaryInfo.IDIOMAS).map((key) => (
-                          <Badge
-                            key={key.ID}
-                            mb={
-                              JSON.parse(secondaryInfo.IDIOMAS).length > 2
-                                ? 2
-                                : 0
-                            }
-                          >
+                          <Badge key={key.ID} mb={JSON.parse(secondaryInfo.IDIOMAS).length > 2 ? 2 : 0}>
                             {key.TITLE}
                           </Badge>
                         ))
@@ -281,11 +231,7 @@ const Datos = React.memo(() => {
               <Tbody>
                 <Tr>
                   <Td style={{ fontWeight: "bold" }}>Email</Td>
-                  <Td style={{ fontSize: "0.85em" }}>
-                    {userInfo.EMAIL.substring(0, 1) +
-                      "****@" +
-                      userInfo.EMAIL.split("@")[1]}
-                  </Td>
+                  <Td style={{ fontSize: "0.85em" }}>{userInfo.EMAIL.substring(0, 1) + "****@" + userInfo.EMAIL.split("@")[1]}</Td>
                 </Tr>
                 <Tr>
                   <Td style={{ fontWeight: "bold" }}>Contraseña</Td>
@@ -340,17 +286,7 @@ const Datos = React.memo(() => {
 });
 const Card = React.memo(({ children, props, title, onClick }) => {
   return (
-    <Box
-      {...props}
-      boxShadow="md"
-      p={2}
-      rounded="md"
-      bg="white"
-      w="100%"
-      mb={4}
-      border="1px"
-      borderColor="#ebebeb"
-    >
+    <Box {...props} boxShadow="md" p={2} rounded="md" bg="white" w="100%" mb={4} border="1px" borderColor="#ebebeb">
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         {title ? (
           <span
@@ -381,17 +317,7 @@ const Card = React.memo(({ children, props, title, onClick }) => {
 });
 const Card2 = React.memo(({ props, title, data, onClick, RenderItem }) => {
   return (
-    <Box
-      {...props}
-      boxShadow="md"
-      p={2}
-      rounded="md"
-      bg="white"
-      w="100%"
-      mb={4}
-      border="1px"
-      borderColor="#ebebeb"
-    >
+    <Box {...props} boxShadow="md" p={2} rounded="md" bg="white" w="100%" mb={4} border="1px" borderColor="#ebebeb">
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         {title ? (
           <span
@@ -417,25 +343,17 @@ const Card2 = React.memo(({ props, title, data, onClick, RenderItem }) => {
       >
         {data ? (
           JSON.parse(data).length !== 0 ? (
-            JSON.parse(data).map((key) => (
-              <RenderItem key={key.ID} data={key} />
-            ))
+            JSON.parse(data).map((key) => <RenderItem key={key.ID} data={key} />)
           ) : (
             <div className={style.noData}>
               <span>Aún no has agregado ningún campo.</span>
-              <span>
-                Aumenta tus posibilidades de éxito agregando experiencia en este
-                campo.
-              </span>
+              <span>Aumenta tus posibilidades de éxito agregando experiencia en este campo.</span>
             </div>
           )
         ) : (
           <div className={style.noData}>
             <span>Aún no has agregado ningún campo.</span>
-            <span>
-              Aumenta tus posibilidades de éxito agregando experiencia en este
-              campo.
-            </span>
+            <span>Aumenta tus posibilidades de éxito agregando experiencia en este campo.</span>
           </div>
         )}
       </div>
@@ -452,12 +370,8 @@ const ExperienciLaboralItem = React.memo(({ data }) => {
   const [editionModals, setEditionModals] = editionModalsState;
   const [alertDialogVis, setAlertDialogVis] = useState(false);
   const DeleteFromExperienciaLaboral = (data) => {
-    const experienciaLaboralCopy = [
-      ...JSON.parse(secondaryInfo.EXPERIENCIA_LABORAL),
-    ];
-    const newArray = experienciaLaboralCopy.filter(
-      (item) => item.ID !== data.ID
-    );
+    const experienciaLaboralCopy = [...JSON.parse(secondaryInfo.EXPERIENCIA_LABORAL)];
+    const newArray = experienciaLaboralCopy.filter((item) => item.ID !== data.ID);
     axios
       .post(`${apiRoute}/updateExperienciaLaboral.php`, {
         ID: userInfo.ID,
@@ -536,9 +450,7 @@ const ExperienciLaboralItem = React.memo(({ data }) => {
         <Flex justify="space-between">
           <Text>{data.EMPRESA}</Text>
           <Text fontSize="0.9em" color="gray">
-            {data.STILL
-              ? `Desde ${data.FECHA_INICIO}`
-              : `Desde ${data.FECHA_INICIO} hasta ${data.FECHA_FIN}`}
+            {data.STILL ? `Desde ${data.FECHA_INICIO}` : `Desde ${data.FECHA_INICIO} hasta ${data.FECHA_FIN}`}
           </Text>
         </Flex>
         <Text fontSize="0.9em" mb={4}>
@@ -647,27 +559,19 @@ const ExperienciaLaboralEdition = React.memo(() => {
               }
               values.ID = workingOrder.ID;
               values.DESCRIPCION = values.DESCRIPCION.trim();
-              const workExperienceCompleteCopy = [
-                ...JSON.parse(secondaryInfo.EXPERIENCIA_LABORAL),
-              ];
-              const indexOfEditedElement = workExperienceCompleteCopy.findIndex(
-                (item) => item.ID === workingOrder.ID
-              );
+              const workExperienceCompleteCopy = [...JSON.parse(secondaryInfo.EXPERIENCIA_LABORAL)];
+              const indexOfEditedElement = workExperienceCompleteCopy.findIndex((item) => item.ID === workingOrder.ID);
               workExperienceCompleteCopy[indexOfEditedElement] = values;
               axios
                 .post(`${apiRoute}/updateExperienciaLaboral.php`, {
                   ID: userInfo.ID,
-                  EXPERIENCIA_LABORAL: JSON.stringify(
-                    workExperienceCompleteCopy
-                  ),
+                  EXPERIENCIA_LABORAL: JSON.stringify(workExperienceCompleteCopy),
                 })
                 .then(({ data }) => {
                   if (data.code === 200) {
                     setSecondaryInfo({
                       ...secondaryInfo,
-                      EXPERIENCIA_LABORAL: JSON.stringify(
-                        workExperienceCompleteCopy
-                      ),
+                      EXPERIENCIA_LABORAL: JSON.stringify(workExperienceCompleteCopy),
                     });
                     toast({
                       title: "Información actualizada",
@@ -696,24 +600,13 @@ const ExperienciaLaboralEdition = React.memo(() => {
               <Form id="workingExperienceEditionForm">
                 <Flex mb="0.5em">
                   <Flex direction="column" w="60%" justify="space-evenly">
-                    <Field
-                      value={values.PUESTO}
-                      name="PUESTO"
-                      onChange={handleChange}
-                      placeholder="Puesto desarrollado"
-                    />
+                    <Field value={values.PUESTO} name="PUESTO" onChange={handleChange} placeholder="Puesto desarrollado" />
                     {errors.PUESTO ? (
                       <Text color="red" fontSize="0.7em">
                         Campo requerido*
                       </Text>
                     ) : null}
-                    <Field
-                      value={values.EMPRESA}
-                      name="EMPRESA"
-                      onChange={handleChange}
-                      placeholder="Empresa"
-                      style={{ marginTop: "0.5em" }}
-                    />
+                    <Field value={values.EMPRESA} name="EMPRESA" onChange={handleChange} placeholder="Empresa" style={{ marginTop: "0.5em" }} />
                     {errors.EMPRESA ? (
                       <Text color="red" fontSize="0.7em">
                         Campo requerido*
@@ -724,15 +617,7 @@ const ExperienciaLaboralEdition = React.memo(() => {
                     <Flex align="center" justify="center" direction="column">
                       <Flex align="center" mb={3}>
                         <Text children="De" mr={3} flexGrow={1} />
-                        <Field
-                          value={from.month}
-                          as="select"
-                          style={{ marginRight: "0.5em", width: "5em" }}
-                          onChange={(e) =>
-                            setFrom({ ...from, month: e.target.value })
-                          }
-                          onBlur={null}
-                        >
+                        <Field value={from.month} as="select" style={{ marginRight: "0.5em", width: "5em" }} onChange={(e) => setFrom({ ...from, month: e.target.value })} onBlur={null}>
                           <option value="">Mes</option>
                           <option value="01">Enero</option>
                           <option value="02">Febrero</option>
@@ -747,14 +632,7 @@ const ExperienciaLaboralEdition = React.memo(() => {
                           <option value="11">Noviembre</option>
                           <option value="12">Diciembre</option>
                         </Field>
-                        <Field
-                          onBlur={null}
-                          as="select"
-                          value={from.year}
-                          onChange={(e) =>
-                            setFrom({ ...from, year: e.target.value })
-                          }
-                        >
+                        <Field onBlur={null} as="select" value={from.year} onChange={(e) => setFrom({ ...from, year: e.target.value })}>
                           <option value="">Año</option>
                           {years.map((key) => (
                             <option key={key} value={key}>
@@ -766,15 +644,7 @@ const ExperienciaLaboralEdition = React.memo(() => {
                       {!values.STILL ? (
                         <Flex align="center" mb={3}>
                           <Text children="A" mr={3} flexGrow={1} w="1em" />
-                          <Field
-                            onBlur={null}
-                            value={to.month}
-                            as="select"
-                            style={{ marginRight: "0.5em", width: "5em" }}
-                            onChange={(e) =>
-                              setTo({ ...to, month: e.target.value })
-                            }
-                          >
+                          <Field onBlur={null} value={to.month} as="select" style={{ marginRight: "0.5em", width: "5em" }} onChange={(e) => setTo({ ...to, month: e.target.value })}>
                             <option value="">Mes</option>
                             <option value="01">Enero</option>
                             <option value="02">Febrero</option>
@@ -789,14 +659,7 @@ const ExperienciaLaboralEdition = React.memo(() => {
                             <option value="11">Noviembre</option>
                             <option value="12">Diciembre</option>
                           </Field>
-                          <Field
-                            onBlur={null}
-                            as="select"
-                            value={to.year}
-                            onChange={(e) =>
-                              setTo({ ...to, year: e.target.value })
-                            }
-                          >
+                          <Field onBlur={null} as="select" value={to.year} onChange={(e) => setTo({ ...to, year: e.target.value })}>
                             <option value="">Año</option>
                             {years.map((key) => (
                               <option key={key} value={key}>
@@ -808,41 +671,20 @@ const ExperienciaLaboralEdition = React.memo(() => {
                       ) : null}
                     </Flex>
                     <Flex align="center" justify="center">
-                      <Text
-                        children="¿Aún en este puesto?"
-                        fontSize="0.9em"
-                        mr={3}
-                      />
-                      <input
-                        type="checkbox"
-                        name="STILL"
-                        checked={values.STILL}
-                        onChange={handleChange}
-                      />
+                      <Text children="¿Aún en este puesto?" fontSize="0.9em" mr={3} />
+                      <input type="checkbox" name="STILL" checked={values.STILL} onChange={handleChange} />
                     </Flex>
                   </Flex>
                 </Flex>
                 <Flex direction="column">
-                  <Field
-                    maxrows={6}
-                    rows={4}
-                    as="textarea"
-                    name="DESCRIPCION"
-                    value={values.DESCRIPCION}
-                    onChange={handleChange}
-                    maxLength={400}
-                  />
+                  <Field maxrows={6} rows={4} as="textarea" name="DESCRIPCION" value={values.DESCRIPCION} onChange={handleChange} maxLength={400} />
                   <Flex w="100%">
                     {errors.DESCRIPCION ? (
                       <Text color="red" fontSize="0.7em">
                         Campo requerido*
                       </Text>
                     ) : null}
-                    <Text
-                      ml="auto"
-                      color="gray"
-                      fontSize="0.8em"
-                    >{`${values.DESCRIPCION.length}/400`}</Text>
+                    <Text ml="auto" color="gray" fontSize="0.8em">{`${values.DESCRIPCION.length}/400`}</Text>
                   </Flex>
                 </Flex>
               </Form>
@@ -850,12 +692,7 @@ const ExperienciaLaboralEdition = React.memo(() => {
           </Formik>
         </ModalBody>
         <ModalFooter>
-          <Button
-            colorScheme="blue"
-            mr={3}
-            type="submit"
-            form="workingExperienceEditionForm"
-          >
+          <Button colorScheme="blue" mr={3} type="submit" form="workingExperienceEditionForm">
             Actualizar
           </Button>
           <Button variant="ghost" onClick={onClose}>
@@ -966,14 +803,10 @@ const GradoEducativoItem = React.memo(({ data }) => {
         <Flex justify="space-between">
           <Text>{data.INSTITUCION}</Text>
           <Text fontSize="0.9em" color="gray">
-            {data.STILL
-              ? `Desde ${data.FECHA_INICIO}`
-              : `Desde ${data.FECHA_INICIO} hasta ${data.FECHA_FIN}`}
+            {data.STILL ? `Desde ${data.FECHA_INICIO}` : `Desde ${data.FECHA_INICIO} hasta ${data.FECHA_FIN}`}
           </Text>
         </Flex>
-        <Text mb={4}>
-          {gradosEducativos.filter((item) => item.KEY === data.GRADO)[0].TITLE}
-        </Text>
+        <Text mb={4}>{gradosEducativos.filter((item) => item.KEY === data.GRADO)[0].TITLE}</Text>
       </Flex>
       <AlertDialog isOpen={alertDialogVis}>
         <AlertDialogOverlay />
@@ -1086,12 +919,8 @@ const GradoEducativoEdition = React.memo(() => {
               }
               values.ID = workingOrder.ID;
 
-              const gradoEducativoCompleteCopy = [
-                ...JSON.parse(secondaryInfo.GRADO_EDUCATIVO),
-              ];
-              const indexOfEditedElement = gradoEducativoCompleteCopy.findIndex(
-                (item) => item.ID === workingOrder.ID
-              );
+              const gradoEducativoCompleteCopy = [...JSON.parse(secondaryInfo.GRADO_EDUCATIVO)];
+              const indexOfEditedElement = gradoEducativoCompleteCopy.findIndex((item) => item.ID === workingOrder.ID);
               gradoEducativoCompleteCopy[indexOfEditedElement] = values;
               axios
                 .post(`${apiRoute}/updateGradoEducativo.php`, {
@@ -1102,9 +931,7 @@ const GradoEducativoEdition = React.memo(() => {
                   if (data.code === 200) {
                     setSecondaryInfo({
                       ...secondaryInfo,
-                      GRADO_EDUCATIVO: JSON.stringify(
-                        gradoEducativoCompleteCopy
-                      ),
+                      GRADO_EDUCATIVO: JSON.stringify(gradoEducativoCompleteCopy),
                     });
                     toast({
                       title: "Información actualizada",
@@ -1132,44 +959,20 @@ const GradoEducativoEdition = React.memo(() => {
             {({ values, handleChange, errors }) => (
               <Form id="gradoEducativoEditForm">
                 <Flex>
-                  <Flex
-                    direction="column"
-                    w="60%"
-                    borderRightColor="#e2e2e2"
-                    borderRightWidth="1px"
-                    pr={3}
-                    mr={1}
-                  >
-                    <Field
-                      placeholder="Título"
-                      name="TITULO_ACADEMICO"
-                      value={values.TITULO_ACADEMICO}
-                      onChange={handleChange}
-                    />
+                  <Flex direction="column" w="60%" borderRightColor="#e2e2e2" borderRightWidth="1px" pr={3} mr={1}>
+                    <Field placeholder="Título" name="TITULO_ACADEMICO" value={values.TITULO_ACADEMICO} onChange={handleChange} />
                     {errors.TITULO_ACADEMICO ? (
                       <Text color="red" fontSize="0.7em">
                         Campo requerido*
                       </Text>
                     ) : null}
-                    <Field
-                      placeholder="Institución"
-                      name="INSTITUCION"
-                      value={values.INSTITUCION}
-                      onChange={handleChange}
-                      style={{ marginTop: "1em" }}
-                    />
+                    <Field placeholder="Institución" name="INSTITUCION" value={values.INSTITUCION} onChange={handleChange} style={{ marginTop: "1em" }} />
                     {errors.INSTITUCION ? (
                       <Text color="red" fontSize="0.7em">
                         Campo requerido*
                       </Text>
                     ) : null}
-                    <Field
-                      as="select"
-                      name="GRADO"
-                      value={values.GRADO}
-                      onChange={handleChange}
-                      style={{ marginTop: "1em" }}
-                    >
+                    <Field as="select" name="GRADO" value={values.GRADO} onChange={handleChange} style={{ marginTop: "1em" }}>
                       <option value="" disabled>
                         Grado educativo
                       </option>
@@ -1189,15 +992,7 @@ const GradoEducativoEdition = React.memo(() => {
                     <Flex align="center" justify="center" direction="column">
                       <Flex align="center" mb={3}>
                         <Text children="De" mr={3} flexGrow={1} />
-                        <Field
-                          value={from.month}
-                          as="select"
-                          style={{ marginRight: "0.5em", width: "5em" }}
-                          onChange={(e) =>
-                            setFrom({ ...from, month: e.target.value })
-                          }
-                          onBlur={null}
-                        >
+                        <Field value={from.month} as="select" style={{ marginRight: "0.5em", width: "5em" }} onChange={(e) => setFrom({ ...from, month: e.target.value })} onBlur={null}>
                           <option value="">Mes</option>
                           <option value="01">Enero</option>
                           <option value="02">Febrero</option>
@@ -1212,14 +1007,7 @@ const GradoEducativoEdition = React.memo(() => {
                           <option value="11">Noviembre</option>
                           <option value="12">Diciembre</option>
                         </Field>
-                        <Field
-                          onBlur={null}
-                          as="select"
-                          value={from.year}
-                          onChange={(e) =>
-                            setFrom({ ...from, year: e.target.value })
-                          }
-                        >
+                        <Field onBlur={null} as="select" value={from.year} onChange={(e) => setFrom({ ...from, year: e.target.value })}>
                           <option value="">Año</option>
                           {years.map((key) => (
                             <option key={key} value={key}>
@@ -1231,15 +1019,7 @@ const GradoEducativoEdition = React.memo(() => {
                       {!values.STILL ? (
                         <Flex align="center" mb={3}>
                           <Text children="A" mr={3} flexGrow={1} w="1em" />
-                          <Field
-                            onBlur={null}
-                            value={to.month}
-                            as="select"
-                            style={{ marginRight: "0.5em", width: "5em" }}
-                            onChange={(e) =>
-                              setTo({ ...to, month: e.target.value })
-                            }
-                          >
+                          <Field onBlur={null} value={to.month} as="select" style={{ marginRight: "0.5em", width: "5em" }} onChange={(e) => setTo({ ...to, month: e.target.value })}>
                             <option value="">Mes</option>
                             <option value="01">Enero</option>
                             <option value="02">Febrero</option>
@@ -1254,14 +1034,7 @@ const GradoEducativoEdition = React.memo(() => {
                             <option value="11">Noviembre</option>
                             <option value="12">Diciembre</option>
                           </Field>
-                          <Field
-                            onBlur={null}
-                            as="select"
-                            value={to.year}
-                            onChange={(e) =>
-                              setTo({ ...to, year: e.target.value })
-                            }
-                          >
+                          <Field onBlur={null} as="select" value={to.year} onChange={(e) => setTo({ ...to, year: e.target.value })}>
                             <option value="">Año</option>
                             {years.map((key) => (
                               <option key={key} value={key}>
@@ -1273,17 +1046,8 @@ const GradoEducativoEdition = React.memo(() => {
                       ) : null}
                     </Flex>
                     <Flex align="center" justify="center">
-                      <Text
-                        children="¿Sigues estudiando aquí?"
-                        fontSize="0.9em"
-                        mr={3}
-                      />
-                      <input
-                        type="checkbox"
-                        name="STILL"
-                        checked={values.STILL}
-                        onChange={handleChange}
-                      />
+                      <Text children="¿Sigues estudiando aquí?" fontSize="0.9em" mr={3} />
+                      <input type="checkbox" name="STILL" checked={values.STILL} onChange={handleChange} />
                     </Flex>
                   </Flex>
                 </Flex>
@@ -1292,12 +1056,7 @@ const GradoEducativoEdition = React.memo(() => {
           </Formik>
         </ModalBody>
         <ModalFooter>
-          <Button
-            colorScheme="blue"
-            mr={3}
-            type="submit"
-            form="gradoEducativoEditForm"
-          >
+          <Button colorScheme="blue" mr={3} type="submit" form="gradoEducativoEditForm">
             Actualizar
           </Button>
           <Button variant="ghost" onClick={onClose}>
@@ -1318,12 +1077,8 @@ const CursosCertificacionesItem = React.memo(({ data }) => {
   const [editionModals, setEditionModals] = editionModalsState;
   const [alertDialogVis, setAlertDialogVis] = useState(false);
   const DeleteFromCursosCertificaciones = (data) => {
-    const cursosCertificacionesCopy = [
-      ...JSON.parse(secondaryInfo.CURSOS_CERTIFICACIONES),
-    ];
-    const newArray = cursosCertificacionesCopy.filter(
-      (item) => item.ID !== data.ID
-    );
+    const cursosCertificacionesCopy = [...JSON.parse(secondaryInfo.CURSOS_CERTIFICACIONES)];
+    const newArray = cursosCertificacionesCopy.filter((item) => item.ID !== data.ID);
     axios
       .post(`${apiRoute}/updateCursosCertificaciones.php`, {
         ID: userInfo.ID,
@@ -1461,11 +1216,7 @@ const CursosCertificacionesEdition = React.memo(() => {
     setYears(years);
   }, []);
   return (
-    <Modal
-      isOpen={editionModals.cursosCertificaciones}
-      onClose={onClose}
-      size="xl"
-    >
+    <Modal isOpen={editionModals.cursosCertificaciones} onClose={onClose} size="xl">
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Editar cursos y certificaciones</ModalHeader>
@@ -1481,27 +1232,19 @@ const CursosCertificacionesEdition = React.memo(() => {
             onSubmit={(values) => {
               values.ID = workingOrder.ID;
               values.DESCRIPCION = values.DESCRIPCION.trim();
-              const cursosCertificacionesCopy = [
-                ...JSON.parse(secondaryInfo.CURSOS_CERTIFICACIONES),
-              ];
-              const indexOfEditedElement = cursosCertificacionesCopy.findIndex(
-                (item) => item.ID === workingOrder.ID
-              );
+              const cursosCertificacionesCopy = [...JSON.parse(secondaryInfo.CURSOS_CERTIFICACIONES)];
+              const indexOfEditedElement = cursosCertificacionesCopy.findIndex((item) => item.ID === workingOrder.ID);
               cursosCertificacionesCopy[indexOfEditedElement] = values;
               axios
                 .post(`${apiRoute}/updateCursosCertificaciones.php`, {
                   ID: userInfo.ID,
-                  CURSOS_CERTIFICACIONES: JSON.stringify(
-                    cursosCertificacionesCopy
-                  ),
+                  CURSOS_CERTIFICACIONES: JSON.stringify(cursosCertificacionesCopy),
                 })
                 .then(({ data }) => {
                   if (data.code === 200) {
                     setSecondaryInfo({
                       ...secondaryInfo,
-                      CURSOS_CERTIFICACIONES: JSON.stringify(
-                        cursosCertificacionesCopy
-                      ),
+                      CURSOS_CERTIFICACIONES: JSON.stringify(cursosCertificacionesCopy),
                     });
                     toast({
                       title: "Información actualizada",
@@ -1531,24 +1274,13 @@ const CursosCertificacionesEdition = React.memo(() => {
                 <Flex w="100%" direction="column">
                   <Flex>
                     <Flex direction="column" w="60%" mr={3}>
-                      <Field
-                        placeholder="Título"
-                        name="TITULO_CURSO"
-                        value={values.TITULO_CURSO}
-                        onChange={handleChange}
-                      />
+                      <Field placeholder="Título" name="TITULO_CURSO" value={values.TITULO_CURSO} onChange={handleChange} />
                       {errors.TITULO_CURSO ? (
                         <Text color="red" fontSize="0.7em">
                           Campo requerido*
                         </Text>
                       ) : null}
-                      <Field
-                        placeholder="Tipo de certificación"
-                        name="TIPO"
-                        value={values.TIPO}
-                        onChange={handleChange}
-                        style={{ marginTop: "1em" }}
-                      />
+                      <Field placeholder="Tipo de certificación" name="TIPO" value={values.TIPO} onChange={handleChange} style={{ marginTop: "1em" }} />
                       {errors.TIPO ? (
                         <Text color="red" fontSize="0.7em">
                           Campo requerido*
@@ -1556,13 +1288,7 @@ const CursosCertificacionesEdition = React.memo(() => {
                       ) : null}
                     </Flex>
                     <Flex direction="column" grow={1}>
-                      <Field
-                        as="select"
-                        name="FECHA_INICIO"
-                        value={values.FECHA_INICIO}
-                        onChange={handleChange}
-                        style={{ width: "100%" }}
-                      >
+                      <Field as="select" name="FECHA_INICIO" value={values.FECHA_INICIO} onChange={handleChange} style={{ width: "100%" }}>
                         <option value="">Año</option>
                         {years.map((key) => (
                           <option key={key} value={key}>
@@ -1570,23 +1296,9 @@ const CursosCertificacionesEdition = React.memo(() => {
                           </option>
                         ))}
                       </Field>
-                      <Flex
-                        align="center"
-                        justify="center"
-                        alignItems="center"
-                        mt={3}
-                      >
-                        <Text
-                          children="¿Sigues en este certificado?"
-                          fontSize="0.9em"
-                          mr={3}
-                        />
-                        <input
-                          type="checkbox"
-                          name="STILL"
-                          value={values.STILL}
-                          onChange={handleChange}
-                        />
+                      <Flex align="center" justify="center" alignItems="center" mt={3}>
+                        <Text children="¿Sigues en este certificado?" fontSize="0.9em" mr={3} />
+                        <input type="checkbox" name="STILL" value={values.STILL} onChange={handleChange} />
                       </Flex>
                     </Flex>
                   </Flex>
@@ -1607,11 +1319,7 @@ const CursosCertificacionesEdition = React.memo(() => {
                         Campo requerido*
                       </Text>
                     ) : null}
-                    <Text
-                      ml="auto"
-                      color="gray"
-                      fontSize="0.8em"
-                    >{`${values.DESCRIPCION.length}/400`}</Text>
+                    <Text ml="auto" color="gray" fontSize="0.8em">{`${values.DESCRIPCION.length}/400`}</Text>
                   </Flex>
                 </Flex>
               </Form>
@@ -1619,12 +1327,7 @@ const CursosCertificacionesEdition = React.memo(() => {
           </Formik>
         </ModalBody>
         <ModalFooter>
-          <Button
-            colorScheme="blue"
-            mr={3}
-            type="submit"
-            form="cursosCertificacionesEditForm"
-          >
+          <Button colorScheme="blue" mr={3} type="submit" form="cursosCertificacionesEditForm">
             Actualizar
           </Button>
           <Button variant="ghost" onClick={onClose}>

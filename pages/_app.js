@@ -1,5 +1,5 @@
-import { ChakraProvider } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
+import { ChakraProvider } from "@chakra-ui/react";
 import Router from "next/router";
 import axios from "axios";
 import { MainContext } from "../_api/resources/MainContext.js";
@@ -9,8 +9,10 @@ const App = React.memo(({ Component, pageProps }) => {
   // states
   const [userInfo, setUserInfo] = useState({});
   const [secondaryInfo, setSecondaryInfo] = useState({});
+  const [index_loadingScreen, set_index_loadingScreen] = useState(false);
   // functions
   const ResetInfo = () => {
+    set_index_loadingScreen(true);
     localStorage.setItem("userInfo", JSON.stringify({}));
     localStorage.setItem("secondaryInfo", JSON.stringify({}));
     setUserInfo({});
@@ -21,6 +23,7 @@ const App = React.memo(({ Component, pageProps }) => {
     localStorage.setItem("secondaryInfo", JSON.stringify(data.secondaryInfo));
     setUserInfo(data.userInfo);
     setSecondaryInfo(data.secondaryInfo);
+    set_index_loadingScreen(false);
   };
   // effects
   useEffect(() => {
@@ -29,10 +32,7 @@ const App = React.memo(({ Component, pageProps }) => {
         ResetInfo();
         Router.push("/entra");
       } else {
-        if (
-          Object.values(JSON.parse(localStorage.getItem("userInfo"))).length !==
-          0
-        ) {
+        if (Object.values(JSON.parse(localStorage.getItem("userInfo"))).length !== 0) {
           axios
             .post(`${apiRoute}/login.php`, {
               EMAIL: JSON.parse(localStorage.getItem("userInfo")).EMAIL,
@@ -53,14 +53,12 @@ const App = React.memo(({ Component, pageProps }) => {
       }
     }
   }, []);
-  useEffect(() => {
-    console.log(secondaryInfo);
-  }, [secondaryInfo]);
   return (
     <MainContext.Provider
       value={{
         userInfoState: [userInfo, setUserInfo],
         secondaryInfoState: [secondaryInfo, setSecondaryInfo],
+        index_loadingScreenState: [index_loadingScreen, set_index_loadingScreen],
         // functions
         ResetInfo: ResetInfo,
         SetInfo: SetInfo,

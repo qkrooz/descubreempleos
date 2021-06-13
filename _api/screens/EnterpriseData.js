@@ -47,25 +47,11 @@ const EnterpriseData = React.memo(() => {
                 />
               )}
               <span className={style.companyName}>{userInfo.COMPANY_NAME}</span>
-              <div className={style.companyDescription}>
-                {secondaryInfo.COMPANY_DESCRIPTION ? (
-                  secondaryInfo.COMPANY_DESCRIPTION
-                ) : (
-                  <Badge>no disponible</Badge>
-                )}
-              </div>
+              <div className={style.companyDescription}>{secondaryInfo.COMPANY_DESCRIPTION ? secondaryInfo.COMPANY_DESCRIPTION : <Badge>no disponible</Badge>}</div>
               <div style={{ marginTop: "1em" }}>
                 {secondaryInfo.WEBSITE ? (
                   <Text color="Highlight" textDecoration="underline">
-                    <a
-                      href={
-                        !pattern.test(secondaryInfo.WEBSITE)
-                          ? "http://" + secondaryInfo.WEBSITE
-                          : secondaryInfo.WEBSITE
-                      }
-                      target="_blank"
-                      rel="noreferrer"
-                    >
+                    <a href={!pattern.test(secondaryInfo.WEBSITE) ? "http://" + secondaryInfo.WEBSITE : secondaryInfo.WEBSITE} target="_blank" rel="noreferrer">
                       {secondaryInfo.WEBSITE}
                     </a>
                   </Text>
@@ -86,44 +72,25 @@ const EnterpriseData = React.memo(() => {
               <Tbody>
                 <Tr>
                   <Td style={{ fontWeight: "bold" }}>Email</Td>
-                  <Td style={{ fontSize: "0.85em" }}>
-                    {userInfo.EMAIL
-                      ? userInfo.EMAIL.substring(0, 1) +
-                        "****@" +
-                        userInfo.EMAIL.split("@")[1]
-                      : null}
-                  </Td>
+                  <Td style={{ fontSize: "0.85em" }}>{userInfo.EMAIL ? userInfo.EMAIL.substring(0, 1) + "****@" + userInfo.EMAIL.split("@")[1] : null}</Td>
                 </Tr>
                 <Tr>
                   <Td style={{ fontWeight: "bold" }}>Contraseña</Td>
-                  <Td>
-                    {userInfo.PASSWORD
-                      ? userInfo.PASSWORD.replace(/./g, "*")
-                      : null}
-                  </Td>
+                  <Td>{userInfo.PASSWORD ? userInfo.PASSWORD.replace(/./g, "*") : null}</Td>
                 </Tr>
               </Tbody>
             </Table>
           </BoxComponent>
-          <BoxComponent
+          {/* <BoxComponent
             title="Datos de cobro"
             onClick={() => {
               setContent(2);
               setEditModal(true);
             }}
-          ></BoxComponent>
+          ></BoxComponent> */}
         </Flex>
         <Flex grow={1} direction="column" pl="1em" pt="1em" pr="1em">
-          <Box
-            boxShadow="md"
-            p={2}
-            rounded="md"
-            bg="white"
-            w="100%"
-            mb={4}
-            border="1px"
-            borderColor="#ebebeb"
-          >
+          <Box boxShadow="md" p={2} rounded="md" bg="white" w="100%" mb={4} border="1px" borderColor="#ebebeb">
             <div
               style={{
                 display: "flex",
@@ -154,54 +121,29 @@ const EnterpriseData = React.memo(() => {
             <div className={style.dataRow}>
               <div>
                 <span>Fundación</span>
-                <span>
-                  {secondaryInfo.FUNDATION_DATE ? (
-                    moment(secondaryInfo.FUNDATION_DATE).format("DD/MM/YYYY")
-                  ) : (
-                    <Badge>no disponible</Badge>
-                  )}
-                </span>
+                <span>{secondaryInfo.FUNDATION_DATE ? moment(secondaryInfo.FUNDATION_DATE).format("DD/MM/YYYY") : <Badge>no disponible</Badge>}</span>
               </div>
               <div>
                 <span>Nombre</span>
                 <span>
-                  {userInfo.NAMES &&
-                  (userInfo.LAST_NAME || userInfo.MOTHERS_LAST_NAME) ? (
-                    `${userInfo.NAMES} ${userInfo.LAST_NAME} ${userInfo.MOTHERS_LAST_NAME}`
-                  ) : (
-                    <Badge>no disponible</Badge>
-                  )}
+                  {userInfo.NAMES && (userInfo.LAST_NAME || userInfo.MOTHERS_LAST_NAME) ? `${userInfo.NAMES} ${userInfo.LAST_NAME} ${userInfo.MOTHERS_LAST_NAME}` : <Badge>no disponible</Badge>}
                 </span>
               </div>
             </div>
             <div className={style.dataRow}>
               <div>
                 <span>Razon social</span>
-                <span>
-                  {userInfo.RAZON_SOCIAL ? (
-                    userInfo.RAZON_SOCIAL
-                  ) : (
-                    <Badge>no disponible</Badge>
-                  )}
-                </span>
+                <span>{userInfo.RAZON_SOCIAL ? userInfo.RAZON_SOCIAL : <Badge>no disponible</Badge>}</span>
               </div>
               <div>
                 <span>RFC</span>
-                <span style={{ textTransform: "uppercase" }}>
-                  {userInfo.RFC ? userInfo.RFC : <Badge>no disponible</Badge>}
-                </span>
+                <span style={{ textTransform: "uppercase" }}>{userInfo.RFC ? userInfo.RFC : <Badge>no disponible</Badge>}</span>
               </div>
             </div>
             <div className={style.dataRow}>
               <div>
                 <span>Telefono</span>
-                <span>
-                  {userInfo.TEL_NUMBER ? (
-                    userInfo.TEL_NUMBER
-                  ) : (
-                    <Badge>no disponible</Badge>
-                  )}
-                </span>
+                <span>{userInfo.TEL_NUMBER ? userInfo.TEL_NUMBER : <Badge>no disponible</Badge>}</span>
               </div>
               <div style={{ display: "flex", alignItems: "flex-end" }}>
                 <span>Ubicacion</span>
@@ -218,21 +160,11 @@ const EnterpriseData = React.memo(() => {
               </div>
             </div>
             <div className={style.disclaimer}>
-              Estos datos personales son privados y sólo son para tener un mejor
-              control de usuarios, para poder tener un mejor conocimiento de tu
-              empresa y para poder generar los datos de facturación.
+              Estos datos personales son privados y sólo son para tener un mejor control de usuarios, para poder tener un mejor conocimiento de tu empresa y para poder generar los datos de
+              facturación.
             </div>
           </Box>
-          <Box
-            boxShadow="md"
-            p={2}
-            rounded="md"
-            bg="white"
-            w="100%"
-            mb={4}
-            border="1px"
-            borderColor="#ebebeb"
-          >
+          {/* <Box boxShadow="md" p={2} rounded="md" bg="white" w="100%" mb={4} border="1px" borderColor="#ebebeb">
             <Flex direction="column" p={4}>
               <div
                 style={{
@@ -250,20 +182,11 @@ const EnterpriseData = React.memo(() => {
                   <Form>
                     <Flex></Flex>
                     <Flex pr={4} pl={4} pb={7} pt={7}>
-                      <Field
-                        placeholder="Titular"
-                        style={{ flexGrow: 1, marginRight: "1em" }}
-                      />
-                      <Field
-                        placeholder="Número de tarjeta"
-                        style={{ flexGrow: 1 }}
-                      />
+                      <Field placeholder="Titular" style={{ flexGrow: 1, marginRight: "1em" }} />
+                      <Field placeholder="Número de tarjeta" style={{ flexGrow: 1 }} />
                     </Flex>
                     <Flex pr={4} pl={4} pb={1} pt={1}>
-                      <Field
-                        placeholder="Vencimiento"
-                        style={{ marginRight: "1em" }}
-                      />
+                      <Field placeholder="Vencimiento" style={{ marginRight: "1em" }} />
                       <Field placeholder="CVV" />
                     </Flex>
                     <Flex className={style.buttonsRow} justify="flex-end">
@@ -279,36 +202,22 @@ const EnterpriseData = React.memo(() => {
                 </div>
                 <div>
                   <Text fontSize="1.5em">Este es un sitio seguro</Text>
-                  <Text>
-                    Utilizamos conexiones seguras para proteger tu informacion
-                  </Text>
+                  <Text>Utilizamos conexiones seguras para proteger tu informacion</Text>
                 </div>
               </Flex>
             </Flex>
           </Box>
+         */}
         </Flex>
       </Flex>
       <Footer />
-      <EnterpriseCustomModal
-        vis={[editModal, setEditModal]}
-        content={content}
-      />
+      <EnterpriseCustomModal vis={[editModal, setEditModal]} content={content} />
     </>
   );
 });
 const BoxComponent = React.memo(({ children, title, onClick, props }) => {
   return (
-    <Box
-      {...props}
-      boxShadow="md"
-      p={2}
-      rounded="md"
-      bg="white"
-      w="100%"
-      mb={4}
-      border="1px"
-      borderColor="#ebebeb"
-    >
+    <Box {...props} boxShadow="md" p={2} rounded="md" bg="white" w="100%" mb={4} border="1px" borderColor="#ebebeb">
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         {title ? (
           <span

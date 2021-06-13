@@ -4,27 +4,8 @@ import { Link } from "react-router-dom";
 // styles
 import header from "../../styles/header.module.css";
 import Router from "next/router";
-import {
-  ChatBubble,
-  Home,
-  Person,
-  Search,
-  Menu as MenuIcon,
-  Business,
-  PostAdd,
-  Equalizer,
-  PowerSettingsNew,
-  Flare,
-  FormatBold,
-  HomeOutlined,
-} from "@material-ui/icons";
-import {
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  MenuDivider,
-} from "@chakra-ui/react";
+import { ChatBubble, Home, Person, Search, Menu as MenuIcon, Business, PostAdd, Equalizer, PowerSettingsNew, Flare, FormatBold, HomeOutlined } from "@material-ui/icons";
+import { Menu, MenuButton, MenuList, MenuItem, MenuDivider } from "@chakra-ui/react";
 
 const Header = React.memo(() => {
   // context
@@ -33,10 +14,7 @@ const Header = React.memo(() => {
     <header className={header.container}>
       <div className={header.logoContainer}>
         <Link to="/">
-          <img
-            src="https://descubrempleos.com/webServices/img/logo2.png"
-            alt="logo2"
-          />
+          <img src="https://descubrempleos.com/webServices/img/logo2.png" alt="logo2" />
         </Link>
       </div>
       <nav className={header.linkContainer}>
@@ -104,10 +82,7 @@ export const EnterpriseHeader = React.memo(() => {
     <header className={header.container}>
       <div className={header.logoContainer}>
         <Link to="/">
-          <img
-            src="https://descubrempleos.com/webServices/img/logo2.png"
-            alt="logo2"
-          />
+          <img src="https://descubrempleos.com/webServices/img/logo2.png" alt="logo2" />
         </Link>
       </div>
       <nav className={header.linkContainer}>
@@ -173,16 +148,10 @@ export const SaludHeader = React.memo(() => {
   // context
   const { ResetInfo } = useContext(MainContext);
   return (
-    <header
-      className={header.container}
-      style={{ backgroundColor: "#004A5B", zIndex: 3 }}
-    >
+    <header className={header.container} style={{ backgroundColor: "#004A5B", zIndex: 3 }}>
       <div className={header.logoContainer}>
         <a href="/">
-          <img
-            src="https://descubrempleos.com/webServices/img/logo2.png"
-            alt="logo2"
-          />
+          <img src="https://descubrempleos.com/webServices/img/logo2.png" alt="logo2" />
         </a>
       </div>
 
