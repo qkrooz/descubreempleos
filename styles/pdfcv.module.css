@@ -1,4 +1,7 @@
 /* header */
+.container {
+  position: relative;
+}
 .header {
   background-color: #c40033;
   border-top-right-radius: 5px;
@@ -33,6 +36,7 @@
   margin-right: 3em;
 }
 .userPrimaryInfo {
+  min-width: 40%;
   margin-right: 0;
 }
 .userPrimaryInfo > span:first-child {
@@ -68,22 +72,15 @@
   align-items: center;
   margin-bottom: 0.5em;
 }
-.sectionHeader > div {
-  position: relative;
-  width: 0.8em;
-  height: 0.8em;
-  background-color: black;
-  border-radius: 50%;
-  margin-right: 1.5em;
-}
+
 .sectionItem {
   display: flex;
   align-items: flex-start;
   margin-left: 0.15em;
 }
 .itemDecorator {
-  width: 0.8em;
-  height: 0.8em;
+  width: 0.5em;
+  height: 0.5em;
   background-color: black;
   border-radius: 50%;
   margin-right: 1.5em;

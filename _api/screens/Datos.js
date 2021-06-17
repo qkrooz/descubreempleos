@@ -37,11 +37,12 @@ import axios from "axios";
 import apiRoute from "../resources/apiRoute";
 // components
 import Footer from "../components/Footer";
+import CVmodal from "../components/CVmodal";
 // modals
 import CustomModal from "../components/Modals";
 // styles
 import style from "../../styles/datos.module.css";
-const DatosContext = React.createContext();
+export const DatosContext = React.createContext();
 const Datos = React.memo(() => {
   const toast = useToast();
   // states
@@ -55,7 +56,9 @@ const Datos = React.memo(() => {
     gradoEducativo: false,
     cursosCertificaciones: false,
   });
-  const [modal_cv_vis, set_modal_cv_vis] = useState(false);
+  const [information_complete, set_information_complete] = useState(false);
+
+  const [cvmodal_vis, set_cvmodal_vis] = useState(false);
   // context
   const { userInfoState, secondaryInfoState } = useContext(MainContext);
   const [userInfo] = userInfoState;
@@ -91,13 +94,22 @@ const Datos = React.memo(() => {
       .catch((error) => console.log(error));
   };
   useEffect(() => {
-      setUserImageError(false);
+    if (secondaryInfo.EXPERIENCIA_LABORAL && secondaryInfo.GRADO_EDUCATIVO && secondaryInfo.CURSOS_CERTIFICACIONES) {
+      set_information_complete(true);
+    } else {
+      set_information_complete(false);
+    }
+  }, []);
+  useEffect(() => {
+    setUserImageError(false);
   }, [userInfo.IMAGE_URL]);
   return (
     <DatosContext.Provider
       value={{
         workingOrderState: [workingOrder, setWorkingOrder],
         editionModalsState: [editionModals, setEditionModals],
+        cvmodal_vis_state: [cvmodal_vis, set_cvmodal_vis],
+        information_complete_state: [information_complete, set_information_complete],
       }}
     >
       <div className={style.container}>
@@ -133,7 +145,18 @@ const Datos = React.memo(() => {
             )}
             <span className={style.personalLabel}>{`${userInfo.NAMES} ${userInfo.LAST_NAME} ${userInfo.MOTHERS_LAST_NAME}`}</span>
             <span className={style.userTitle}>{secondaryInfo.TITULO ? secondaryInfo.TITULO : <Badge>titulo no disponible</Badge>}</span>
-            <button className={style.CVButton} onClick={() => set_modal_cv_vis((modal_cv_vis) => !modal_cv_vis)}>
+            <button
+              className={style.CVButton}
+              onClick={
+                information_complete
+                  ? () => set_cvmodal_vis((cvmodal_vis) => !cvmodal_vis)
+                  : () => {
+                      if (!toast.isActive("cv_disclaimer")) {
+                        toast({ id: "cv_disclaimer", position: "bottom", description: "Completa tu información para poder generar tu CV" });
+                      }
+                    }
+              }
+            >
               Generar CV
             </button>
             <div className={style.disponibleContainer}>
@@ -280,6 +303,7 @@ const Datos = React.memo(() => {
       <ExperienciaLaboralEdition />
       <GradoEducativoEdition />
       <CursosCertificacionesEdition />
+      <CVmodal />
       <Footer />
     </DatosContext.Provider>
   );

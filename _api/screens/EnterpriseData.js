@@ -23,7 +23,7 @@ const EnterpriseData = React.memo(() => {
   const [content, setContent] = useState(0);
   return (
     <>
-      <Flex w="100%">
+      <Flex w="100%" minHeight="calc(100vh - 8.6em)">
         <Flex w="25%" pl="1em" pt="1em" direction="column">
           <BoxComponent
             onClick={() => {

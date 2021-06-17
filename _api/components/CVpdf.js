@@ -1,18 +1,6 @@
 import React from "react";
 import apiRoute from "../resources/apiRoute";
-import {
-  Page,
-  Text,
-  View,
-  Document,
-  StyleSheet,
-  Image,
-  Font,
-} from "@react-pdf/renderer";
-Font.register({
-  family: "MyriadPro-Regular",
-  src: "./fonts/MyriadPro-Regular.otf",
-});
+import { Page, Text, View, Document, StyleSheet, Image } from "@react-pdf/renderer";
 
 const styles = StyleSheet.create({
   header: {
@@ -29,7 +17,6 @@ const styles = StyleSheet.create({
   page: {
     flexDirection: "column",
     backgroundColor: "#F1F2F4",
-    fontFamily: "MyriadPro-Regular",
   },
   section: {
     margin: 10,
@@ -43,9 +30,7 @@ const CVpdf = React.memo(({ userInfo, secondaryInfo }) => {
       <Page size="LETTER" style={styles.page}>
         <View style={styles.header}>
           <View style={styles.logoContainer}>
-            <Text style={{ fontSize: 10, margin: 0, padding: 0 }}>
-              Descubre
-            </Text>
+            <Text style={{ fontSize: 10, margin: 0, padding: 0 }}>Descubre</Text>
             <Text style={{ fontSize: 10 }}>El curriculum de</Text>
           </View>
           <View style={styles.userImageContainer}>

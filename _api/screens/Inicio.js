@@ -6,7 +6,7 @@ import Footer from "../components/Footer";
 export default function InicioComponent() {
   return (
     <>
-      <div className={style.container}>
+      <div className={style.container} style={{ minHeight: "calc(100vh - 8.6em)" }}>
         <div className={style.left}>
           <p className={style.redtext}> Recomendación del día</p>
           {/* <Card className={style.card}>

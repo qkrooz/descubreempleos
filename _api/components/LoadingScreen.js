@@ -7,7 +7,7 @@ export default function LoadingScreen({ visible }) {
       <div className={style.container}>
         <div className={style.imageContainer}>
           <div className={style.loader}>Loading...</div>
-          <img src="./favicon.png" alt="descubrelogo" />
+          <img src="/favicon.png" alt="descubrelogo" />
         </div>
       </div>
     );

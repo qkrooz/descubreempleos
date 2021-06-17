@@ -7,44 +7,34 @@ import Footer from "../components/Footer";
 export default function BusquedaComponent() {
   return (
     <>
-      <SearchContainer>
-        <Text fontWeight="bold" fontSize="1.2em" mb="1em">
-          Encuentra ese trabajo que has estado esperando
-        </Text>
-        <Formik initialValues={{ KEYSTRING: "", UBICATION: "" }}>
-          {({ values, handleChange, errors }) => (
-            <Form>
-              <Flex align="flex-end">
-                <Flex direction="column" width="25%" mr="1em">
-                  <Text mb="0.5em">¿Qué estás buscando?</Text>
-                  <Field
-                    value={values.KEYSTRING}
-                    name="KEYSTRING"
-                    onChange={handleChange}
-                    style={{ color: "black" }}
-                    placeholder="Palabras clave"
-                  />
+      <div style={{ minHeight: "calc(100vh - 8.6em)" }}>
+        <SearchContainer>
+          <Text fontWeight="bold" fontSize="1.2em" mb="1em">
+            Encuentra ese trabajo que has estado esperando
+          </Text>
+          <Formik initialValues={{ KEYSTRING: "", UBICATION: "" }}>
+            {({ values, handleChange, errors }) => (
+              <Form>
+                <Flex align="flex-end">
+                  <Flex direction="column" width="25%" mr="1em">
+                    <Text mb="0.5em">¿Qué estás buscando?</Text>
+                    <Field value={values.KEYSTRING} name="KEYSTRING" onChange={handleChange} style={{ color: "black" }} placeholder="Palabras clave" />
+                  </Flex>
+                  <Flex direction="column" width="25%" mr="1em">
+                    <Text mb="0.5em">¿Dónde estás buscando?</Text>
+                    <Field value={values.UBICATION} name="UBICATION" onChange={handleChange} style={{ color: "black" }} placeholder="Ubicación" />
+                  </Flex>
+                  <Button colorScheme="yellow">Buscar</Button>
                 </Flex>
-                <Flex direction="column" width="25%" mr="1em">
-                  <Text mb="0.5em">¿Dónde estás buscando?</Text>
-                  <Field
-                    value={values.UBICATION}
-                    name="UBICATION"
-                    onChange={handleChange}
-                    style={{ color: "black" }}
-                    placeholder="Ubicación"
-                  />
-                </Flex>
-                <Button colorScheme="yellow">Buscar</Button>
-              </Flex>
-            </Form>
-          )}
-        </Formik>
-      </SearchContainer>
-      <ResultsContainer>
-        <div></div>
-        <div></div>
-      </ResultsContainer>
+              </Form>
+            )}
+          </Formik>
+        </SearchContainer>
+        <ResultsContainer>
+          <div></div>
+          <div></div>
+        </ResultsContainer>
+      </div>
       <Footer />
     </>
   );
