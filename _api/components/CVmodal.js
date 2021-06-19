@@ -16,7 +16,7 @@ export default function CVmodal() {
   const [information_complete] = information_complete_state;
   if (information_complete) {
     return (
-      <Modal isOpen={cvmodal_vis} size="6xl" onClose={() => set_cvmodal_vis((cvmodal_vis) => !cvmodal_vis)}>
+      <Modal isOpen={cvmodal_vis} size="5xl" onClose={() => set_cvmodal_vis((cvmodal_vis) => !cvmodal_vis)}>
         <ModalOverlay />
         <ModalContent>
           <ModalBody padding={0}>
