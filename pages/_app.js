@@ -10,6 +10,7 @@ const App = React.memo(({ Component, pageProps }) => {
   const [userInfo, setUserInfo] = useState({});
   const [secondaryInfo, setSecondaryInfo] = useState({});
   const [index_loadingScreen, set_index_loadingScreen] = useState(false);
+  const [already_searched, set_already_searched] = useState(false);
   // functions
   const ResetInfo = () => {
     set_index_loadingScreen(true);
@@ -17,6 +18,7 @@ const App = React.memo(({ Component, pageProps }) => {
     localStorage.setItem("secondaryInfo", JSON.stringify({}));
     setUserInfo({});
     setSecondaryInfo({});
+    setTimeout(() => set_index_loadingScreen(false), 1500);
   };
   const SetInfo = (data) => {
     localStorage.setItem("userInfo", JSON.stringify(data.userInfo));
@@ -59,6 +61,7 @@ const App = React.memo(({ Component, pageProps }) => {
         userInfoState: [userInfo, setUserInfo],
         secondaryInfoState: [secondaryInfo, setSecondaryInfo],
         index_loadingScreenState: [index_loadingScreen, set_index_loadingScreen],
+        already_searched_state: [already_searched, set_already_searched],
         // functions
         ResetInfo: ResetInfo,
         SetInfo: SetInfo,

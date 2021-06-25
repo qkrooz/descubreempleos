@@ -57,7 +57,6 @@ const Login = React.memo(() => {
             PASSWORD: "",
           }}
           onSubmit={(values) => {
-            console.log(values);
             axios
               .post(`${apiRoute}/login.php`, values)
               .then(({ data }) => {

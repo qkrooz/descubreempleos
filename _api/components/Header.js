@@ -107,9 +107,6 @@ export const EnterpriseHeader = React.memo(() => {
         </Link>
       </nav>
       <div className={header.navButtonsContainer}>
-        <button className={header.navButton}>
-          <ChatBubble style={{ fontSize: "1.8em", color: "white" }} />
-        </button>
         <Menu>
           <MenuButton>
             <MenuIcon style={{ fontSize: "2em" }} />
